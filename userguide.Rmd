@@ -1,9 +1,30 @@
 ---
 title: "User Manual"
-author: "Hannah M. Carroll, Ph.D."
-date: "12/7/2020"
+author: "BayClump v. 0.9"
+date: "Updated 12/14/2020"
 output: html_document
 ---
 
-## User manual
+## Contact Information
+
+**Developers**
+
+Hannah M. Carroll hcarroll@epss.ucla.edu  
+Cristian Román-Palacios cromanpa94@email.arizona.edu  
+
+**Senior author**
+
+Aradhna Tripati atripati@g.ucla.edu  
+
+**GitHub Repo**
+
+https://github.com/Tripati-Lab/BayClump
+
+**Bug Reports and Issues**
+
+https://github.com/Tripati-Lab/BayClump/issues  
+
+## BayClump Basics
+
+User guide here!  
 
