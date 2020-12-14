@@ -42,13 +42,16 @@ body <- dashboardBody(
                                        ),
                 
                     # Download template
-                    downloadButton("BayClump_template.csv", label = "Download data template"),
+                    downloadButton("BayClump_template.csv", label = "Download calibration data template"),
                     
                     # Upload data
                     textInput("path", "File:"),
-                    actionButton("browse", "Browse"),
-                    #tags$br(),
-                    actionButton("upload", "Upload data"),
+                    actionButton("browse", "Browse", 
+                                 icon = icon("search", lib = "font-awesome")
+                                 ),
+                    actionButton("upload", "Upload calibration data", 
+                                 icon = icon("upload", lib = "font-awesome")
+                                 ),
                     
                     # Uncertainties
                     radioButtons("uncertainties", " ",
@@ -174,7 +177,7 @@ body <- dashboardBody(
       #Manuscript
       tabItem(tabName = "manuscript",
               fluidRow(
-                column(12, "Manuscript here"
+                column(12, "Our manuscript here (if open access)"
                   #includeHTML("Our manuscript here")
                   ))),
     
@@ -182,13 +185,7 @@ body <- dashboardBody(
     tabItem(tabName = "download",
             fluidRow(
               column(12,
-                     "Download link here"))),
-    
-      #Contact info
-      tabItem(tabName = "contact",
-              fluidRow(
-                column(12,
-                  includeMarkdown("contactinfo.Rmd"))))
+                     "Package BayClump as an Electron app for desktop and put download links here!")))
       )
 )
 
@@ -226,6 +223,10 @@ sidebarMenu(
   menuItem("Petersen et al., 2019", tabName = "petersen", 
            icon = icon("table", lib = "font-awesome")
            ),
+  
+  menuItem("Manuscript", tabName = "manuscript", 
+           icon = icon("scroll", lib = "font-awesome")
+  ),
   
   menuItem("Download BayClump", tabName = "download", 
            icon = icon("laptop-code", lib = "font-awesome")
