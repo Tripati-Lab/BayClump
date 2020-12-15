@@ -36,7 +36,7 @@ body <- dashboardBody(
                     title = "Step 1: Calibration Options", solidHeader = TRUE,
                   column(12,
                     radioButtons("calset", "Select calibration set",
-                                       choices = c('Roman-Palacios et al. (Petersen et al., 2019)' = 'petersen',
+                                       choices = c('Román-Palacios et al. (Petersen et al., 2019)' = 'petersen',
                                                    "Use my calibration data" = 'mycal',
                                                    "Use both" = "both")
                                        ),
@@ -133,6 +133,66 @@ body <- dashboardBody(
     
        #Reconstruction tab
        tabItem(tabName = "reconstruction",
+               fluidRow(
+                 box(width = 6, 
+                     title = "Step 1: Calibration Options", solidHeader = TRUE,
+                     column(12,
+                            radioButtons("calset2", "Select calibration set",
+                                         choices = c("Use calibration data and options from Calibration tab" = 'usecaltab',
+                                                     'Use Román-Palacios et al. (Petersen et al., 2019)' = 'petersen2',
+                                                     "Use my calibration data" = 'mycal2',
+                                                     "Use both Román-Palacios et al. (Petersen et al., 2019) and my calibration data" = "both2")
+                            ),
+                            
+                            # Download templates
+                            downloadButton("BayClump_cal_template.csv", label = "Download calibration data template"),
+                            downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
+                            
+                            # Upload data
+                            textInput("path2", "File:"),
+                            actionButton("browse2", "Browse", 
+                                         icon = icon("search", lib = "font-awesome")
+                            ),
+                            actionButton("upload2", "Upload calibration data", 
+                                         icon = icon("upload", lib = "font-awesome")
+                            ),
+                            
+                            actionButton("upload3", "Upload data for reconstructions", 
+                                         icon = icon("upload", lib = "font-awesome")
+                            ),
+                            
+                            # Uncertainties
+                            radioButtons("uncertainties2", " ",
+                                         c("My data contain uncertainties" = "myuncertainties",
+                                           "Use uncertainties from Daëron et al." = "usedaeron")
+                            ),
+                            
+                            # Digestion temperature
+                            div(style="display:inline-block; vertical-align:top;", 
+                                selectInput(width = "175px",
+                                            "digesttemp2", "Digestion temperature",
+                                            c(" " = "NULL",
+                                              "0°C" = "zero",
+                                              "25°C" = "twentyfive",
+                                              "70°C" = "seventy",
+                                              "90°C" = "ninety")
+                               )
+                            ),
+                            div(style="display:inline-block; vertical-align:top; ", 
+                               textInput(width = "175px",
+                                          "othertemp2", "OR input temperature (°C)"
+                                )
+                            ),
+                            
+                            # Misc options
+                            checkboxInput('scale2', 'Scale data'),
+                            checkboxInput('calcuncertainties2', "Calculate uncertanties")
+                            
+                     )
+                 ),
+                 box(width = 6,
+                     "More reconstruction options here!!!")
+               ),  
               fluidRow(
                box(width = 12,
                     column(12,
