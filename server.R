@@ -20,6 +20,15 @@ server <- function(input, output, session) {
   output$dummytext <- renderUI({
     HTML("What output options do we want?")})
   
+  #Fit the regression models under default parameters
+  RF_improper<-fitClumpedRegressions(calibrationData=Petersen,
+                                     hasMaterial = F,n.iter= 1000, burninFrac=.5)
+  RP_improper<-regressionParameters(CompleteModelFit=RF_improper)
+  
+  output$calibration_table <- DT::renderDataTable({
+    datatable(RP_improper) 
+  })
+  
 
 # Calibration plots tab
 

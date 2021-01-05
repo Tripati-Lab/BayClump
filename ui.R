@@ -115,7 +115,8 @@ body <- dashboardBody(
                 box(width = 4,
                     title = "Step 3: Output options", solidHeader = TRUE,
                   column(12,
-                        htmlOutput("dummytext")
+                         htmlOutput("dummytext"),
+                         DT::DTOutput("calibration_table")
                          )
         )
         )

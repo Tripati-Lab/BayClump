@@ -1,0 +1,21 @@
+"","Year","Publication","AdditionalTaxonomicInfo","Genus","Species","CurrentGenus","CurrentSpecies","ForamEcogroup","EcoGroupPub","Sample Name","Mineralogy","Natural/Synthetic","N","D47","D47_SD","T2","Temp_Error","d18O water","d18O water SD","Acid T","pH","Reprocessed From","n_measurements","Material"
+"146",2018,"Peral","Foraminifera","Globigerina","Globigerina bulloides","Globigerina","Globigerina bulloides","Top 30 to 50m. Isotopes of C&O known to be out of equilibrium w seawater","Curry and Matthews, 1981; Kahn and Williams, 1981; Deuser and Ross, 1989; Sautter and Thunell, 1991; Spero and Lea 1996; Niebler et al 1999","MD12-3401_G_-bulloides","C","Natural",8,0.74730348,0.00451189,12.8697540670434,0.5,NA,NA,"90",NA,"Petersen",8,1
+"176",2017,"Kelson",NA,NA,NA,NA,NA,NA,NA,"140527_4_UWcp14_50C_2","C","synthetic",4,0.62553629,0.0113928,9.51717265547842,0.36,NA,NA,"25/90",NA,"Petersen",4,2
+"162",2014,"Tang",NA,NA,NA,NA,NA,NA,NA,"C29","C","synthetic",3,0.66078765,0.00629987,11.2494262441071,0.5,NA,NA,"90/100",NA,"Petersen",3,2
+"49",2013,"Henkes","Bivalve","Arctica","Arctica islandica","Arctica","Arctica islandica",NA,NA,"WG061278","A","Natural",3,0.72904714,0.01232698,12.9532634273772,2,NA,NA,"90",NA,"Petersen",3,1
+"118",2018,"Breitenbach","Foraminifera","Globigerina","Globigerina bulloides","Globigerina","Globigerina bulloides","Top 30 to 50m. Isotopes of C&O known to be out of equilibrium w seawater","Curry and Matthews, 1981; Kahn and Williams, 1981; Deuser and Ross, 1989; Sautter and Thunell, 1991; Spero and Lea 1996; Niebler et al 1999","T90-01B","C","Natural",9,0.69567759,0.00737019,12.3244501469675,5,NA,NA,"70",NA,"Petersen",9,1
+"19",2013,"Henkes","Gastropoda","Conus","Conus ermineus","Conus","Conus ermineus",NA,NA,"FGS-1-3","A","Natural",3,0.69553093,0.00524936,11.6523358957111,0.8,NA,NA,"90",NA,"Petersen",3,1
+"28",2013,"Henkes","Bivalve","Crassostrea","Crassostrea virginica","Crassostrea","Crassostrea virginica",NA,NA,"HPL-3","C","Natural",3,0.70045923,0.00617583,11.3481715783397,0.1,NA,NA,"90",NA,"Petersen",3,1
+"168",2014,"Tang",NA,NA,NA,NA,NA,NA,NA,"C24","C","synthetic",2,0.74507878,0.00067,12.9253368884042,0.5,NA,NA,"90/100",NA,"Petersen",2,2
+"198",2017,"Kelson",NA,NA,NA,NA,NA,NA,NA,"140820_9_UWcp14_50C_8","unkn","synthetic",3,0.63822757,0.01454905,9.81771232625318,0.33,NA,NA,"25/90",NA,"Petersen",3,2
+"113",2018,"Breitenbach","Foraminifera",NA,NA,NA,NA,NA,NA,"BOFS30K","C","Natural",11,0.69916492,0.01235919,11.9358373546413,5,NA,NA,"70",NA,"Petersen",11,1
+"196",2017,"Kelson",NA,NA,NA,NA,NA,NA,NA,"140820_1_UWcp14_70C_CA_4","C","synthetic",5,0.57344306,0.00694103,8.44314897457217,1,NA,NA,"25/90",NA,"Petersen",5,2
+"8",2013,"Henkes","Rhychonellata","Ecnomiosa","Ecnomiosa gerda","Ecnomiosa","Ecnomiosa gerda",NA,NA,"Brach-m2","C","Natural",3,0.76021853,0.01489061,12.8789929426016,1,NA,NA,"90",NA,"Petersen",3,1
+"97",2017,"Katz","Coccoliths","Coccolithus","Coccolithus braarudii","Coccolithus","Coccolithus braarudii",NA,NA,"Clept15","C","Natural",3,0.73465487,0.00883059,12.0437782910234,0.2,NA,NA,"90",NA,"Petersen",3,1
+"156",2014,"Tang",NA,NA,NA,NA,NA,NA,NA,"C19","C","synthetic",4,0.70995349,0.00233171,12.9253368884042,0.5,NA,NA,"90/100",NA,"Petersen",4,2
+"106",2018,"Breitenbach","Foraminifera","Globigerinoides","Globigerinoides sacculifer","Trilobatus","Trilobatus sacculifer","1 Open ocean mixed-layer tropical/subtropical with symbionts","Aze et al 2011","T86-10B","C","Natural",11,0.67637824,0.01519518,11.772586243833,5,NA,NA,"70",NA,"Petersen",11,1
+"157",2014,"Tang",NA,NA,NA,NA,NA,NA,NA,"C30","C","synthetic",5,0.68102826,0.02424687,11.2494262441071,0.5,NA,NA,"90/100",NA,"Petersen",5,2
+"188",2017,"Kelson",NA,NA,NA,NA,NA,NA,NA,"140805_12_UWcp14_70C_CA_5","C","synthetic",3,0.57168578,0.00768004,8.4924303465194,1,NA,NA,"25/90",NA,"Petersen",3,2
+"194",2017,"Kelson",NA,NA,NA,NA,NA,NA,NA,"140814_1_UWcp14_60C_2","C","synthetic",3,0.62195491,0.01476483,8.69393436588149,2.31,NA,NA,"25/90",NA,"Petersen",3,2
+"48",2013,"Henkes","Rhychonellata","Lacazella","Lacazella spp","Lacazella","Lacazella spp",NA,NA,"RBJ-1-3","C","Natural",3,0.68525063,0.00522396,11.063118993608,1,NA,NA,"90",NA,"Petersen",3,1
+"183",2017,"Kelson",NA,NA,NA,NA,NA,NA,NA,"140727_1_UWcp14_50C_3","C","synthetic",3,0.64905931,0.01791445,9.63571017315877,0.12,NA,NA,"25/90",NA,"Petersen",3,2
