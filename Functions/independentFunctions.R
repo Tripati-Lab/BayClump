@@ -275,14 +275,9 @@ fitBayesianInteractionANCOVASimple<-function(calibrationData,
 
 
 
-##Example
+##Examples
 require(R2jags)
 library(IsoplotR)
-
-Material
-dput(Complete_Calibration_List[1:10,c('T2','Temp_Error','D47','D47_SD', 'Material')])
-
-
 
 SampleData <-
   structure(
