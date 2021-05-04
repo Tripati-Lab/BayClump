@@ -42,63 +42,66 @@ body <- dashboardBody(
                                        ),
                 
                     # Download template
-                    downloadButton("BayClump_template.csv", label = "Download calibration data template"),
+                    downloadButton("BayClump_cal_temp", label = "Download calibration data template"),
                     
                     # Upload data
-                    textInput("path", "File:"),
-                    actionButton("browse", "Browse", 
-                                 icon = icon("search", lib = "font-awesome")
-                                 ),
-                    actionButton("upload", "Upload calibration data", 
-                                 icon = icon("upload", lib = "font-awesome")
+                    fileInput("calibrationdata", "Select calibration data file", accept = ".csv" 
                                  ),
                     
                     # Uncertainties
                     radioButtons("uncertainties", " ",
                                  c("My data contain uncertainties" = "myuncertainties",
-                                   "Use uncertainties from Daëron et al." = "usedaeron")
+                                   "Use uncertainties from Daëron et al., 2020" = "usedaeron")
                                  ),
                     
-                    # Digestion temperature
+                    # Reference frame
                     div(style="display:inline-block; vertical-align:top;", 
-                        selectInput(width = "175px",
-                                    "digesttemp", "Digestion temperature",
-                                c(" " = "NULL",
-                                  "0°C" = "zero",
-                                  "25°C" = "twentyfive",
-                                  "70°C" = "seventy",
-                                  "90°C" = "ninety")
-                                )
+                        radioButtons("refframe", "Reference frame",
+                                c("Use the carbon dioxide equilibrium scale (CDES)" = "cdes",
+                                  "I am using my own calibration data in a different reference frame" = "myown")
+                                ),                    
+                        bsTooltip('refframe', "CDES must be chosen if using calibration data from Román-Palacios et al. (Petersen et al., 2019)",
+                                  placement = "bottom", trigger = "hover",
+                                  options = NULL)
                       ),
-                    div(style="display:inline-block; vertical-align:top; ", 
-                        textInput(width = "175px",
-                                  "othertemp", "OR input temperature (°C)"
-                              )
-                        ),
-                    
+
+
                     # Misc options
-                    checkboxInput('scale', 'Scale data'),
-                    checkboxInput('calcuncertainties', "Calculate uncertanties")
+                    checkboxGroupInput('misc', "Miscellaneous options",
+                    c("Scale data" = 'scale',
+                      "Calculate uncertanties" = 'calcuncertainties')
+                    )
                     
                   )
                         ),
                 
                 # Model selection
                 box(width = 4,
-                    title = "Step 2: Select models", solidHeader = TRUE,
-                  column(12,
-                         checkboxInput('linear', "Linear model"),
-                         checkboxInput('bayes', "Bayesian model"),
-                         checkboxInput('york', "York regression"),
+                    title = "Step 2: Select Models", solidHeader = TRUE,
+                  column(12, "The Bayesian model can take up to three minutes to run",
+
+
+
+
+
+                          checkboxInput("simulateLM_measured", "Linear model", FALSE),
+                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
+                          checkboxInput("simulateYork_measured", "York regression", FALSE),
+                          checkboxInput("simulateDeming", "Deming regression", FALSE),
+                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian linear model", FALSE),
+                        #  checkboxInput("fitBayesianMainANCOVASimple", "Bayesian main effects ANCOVA", FALSE),
+                        #  checkboxInput("fitBayesianInteractionANCOVASimple", "Bayesian interaction effects ANCOVA", FALSE),
+
+                    bsTooltip('simulateBLM_measuredMaterial', "Running the Bayesian model can take a few minutes. Please be patient.",
+                                   placement = "bottom", trigger = "hover",
+                                   options = NULL),
                   
                     # Summary stats panel
-                    plotOutput(
-                    "dummyplot"
-                    ),
-                    
+                    tableOutput("contents"),
+
                     # Run models
                     div(style="display:inline-block; vertical-align:top;", 
-                      actionButton('runmodels', "Run selected models", 
+                      actionButton('runmods', "Run selected models", 
                                  icon = icon("cogs", lib = "font-awesome")
                   )
                     ),
@@ -107,17 +110,22 @@ body <- dashboardBody(
                                    icon = icon("trash-alt", lib = "font-awesome"))),
                                                bsTooltip('reset', "Warning: This resets EVERYTHING, including data inputs",
                                                          placement = "bottom", trigger = "hover",
-                                                         options = NULL)
-                      
-                  
+                                                         options = NULL),
+                  verbatimTextOutput("modresults")
+
                 )
-                ),
+                  ),
                 box(width = 4,
-                    title = "Step 3: Output options", solidHeader = TRUE,
-                  column(12,
-                         htmlOutput("dummytext"),
-                         DT::DTOutput("calibration_table")
-                         )
+                    title = "Step 3: Output Options", solidHeader = TRUE,
+                  column(12, verbatimTextOutput("lmcal"),
+                             verbatimTextOutput("lminversecal"),
+                             verbatimTextOutput("york"),
+                             verbatimTextOutput("deming"),
+                             verbatimTextOutput("blin")
+                         ),
+                  
+                  # Download all calibration data
+                  downloadButton("downloadcalibrations", label = "Download calibration output")
         )
         )
     ),
@@ -128,25 +136,32 @@ body <- dashboardBody(
                box(width = 12,
                     column(12,
                   title = "Calibration plots", solidHeader = TRUE,
-                    plotlyOutput("examplefig")
+                    plotlyOutput("rawcaldata")
                  # dataTableOutput("caldata")
-                  )))),
+                  ))),
+              fluidRow(
+                box(width = 12,
+                    column(12,
+                           plotlyOutput("calibrationmodels")
+                        )
+                  
+                )
+              )
+              ),
+
     
        #Reconstruction tab
        tabItem(tabName = "reconstruction",
                fluidRow(
                  box(width = 6, 
-                     title = "Step 1: Calibration Options", solidHeader = TRUE,
+                     title = "Step 1: Reconstruction setup", solidHeader = TRUE,
                      column(12,
-                            radioButtons("calset2", "Select calibration set",
+                            radioButtons("calset2", "Pick your calibration",
                                          choices = c("Use calibration data and options from Calibration tab" = 'usecaltab',
-                                                     'Use Román-Palacios et al. (Petersen et al., 2019)' = 'petersen2',
-                                                     "Use my calibration data" = 'mycal2',
-                                                     "Use both Román-Palacios et al. (Petersen et al., 2019) and my calibration data" = "both2")
+                                                     'Use Román-Palacios et al. defaults (Petersen et al., 2019)' = 'petersen2')
                             ),
                             
                             # Download templates
-                            downloadButton("BayClump_cal_template.csv", label = "Download calibration data template"),
                             downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
                             
                             # Upload data
@@ -154,41 +169,12 @@ body <- dashboardBody(
                             actionButton("browse2", "Browse", 
                                          icon = icon("search", lib = "font-awesome")
                             ),
-                            actionButton("upload2", "Upload calibration data", 
-                                         icon = icon("upload", lib = "font-awesome")
-                            ),
                             
                             actionButton("upload3", "Upload data for reconstructions", 
                                          icon = icon("upload", lib = "font-awesome")
                             ),
                             
-                            # Uncertainties
-                            radioButtons("uncertainties2", " ",
-                                         c("My data contain uncertainties" = "myuncertainties",
-                                           "Use uncertainties from Daëron et al." = "usedaeron")
-                            ),
-                            
-                            # Digestion temperature
-                            div(style="display:inline-block; vertical-align:top;", 
-                                selectInput(width = "175px",
-                                            "digesttemp2", "Digestion temperature",
-                                            c(" " = "NULL",
-                                              "0°C" = "zero",
-                                              "25°C" = "twentyfive",
-                                              "70°C" = "seventy",
-                                              "90°C" = "ninety")
-                               )
-                            ),
-                            div(style="display:inline-block; vertical-align:top; ", 
-                               textInput(width = "175px",
-                                          "othertemp2", "OR input temperature (°C)"
-                                )
-                            ),
-                            
-                            # Misc options
-                            checkboxInput('scale2', 'Scale data'),
-                            checkboxInput('calcuncertainties2', "Calculate uncertanties")
-                            
+                            checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame")
                      )
                  ),
                  box(width = 6,
@@ -223,16 +209,16 @@ body <- dashboardBody(
     
       #Petersen et al cal set
       tabItem(tabName = "petersen",
-              fluidRow(
-                column(12, "Petersen data here"
-                 # dataTableOutput("petersenetal")
-                  ))),
+                column(12,
+              fluidRow("Petersen et al. calibration data",
+                  dataTableOutput("Petersendat")
+                  ))), 
     
       #Citations tab
       tabItem(tabName = "citations",
               fluidRow(
-                column(12,"Citations here"
-                  #dataTableOutput("citations")
+                column(12#,
+                  #includeHTML("citations.html")
                   ))),
     
       #Manuscript
@@ -257,7 +243,7 @@ body <- dashboardBody(
 
 sidebar <- dashboardSidebar(width = 200,
 sidebarMenu(
-  menuItem("Calibration Setup", tabName = "calibration", 
+  menuItem("Calibrations", tabName = "calibration", 
            icon = icon("drafting-compass", lib = "font-awesome")
            ),
     
@@ -265,7 +251,7 @@ sidebarMenu(
            icon =icon("chart-bar", lib = "font-awesome")
            ),
 
-  menuItem("Reconstruction", tabName = "reconstruction", 
+  menuItem("Reconstructions", tabName = "reconstruction", 
            icon = icon("chart-area", lib = "font-awesome")
            ),
            
