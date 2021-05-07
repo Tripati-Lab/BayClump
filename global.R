@@ -13,8 +13,8 @@ bibtex::write.bib(packages, file = "Rpackages.bib", append = FALSE, verbose = TR
 
 # Load necessary data
 
-BayClump_calibration_template <- read.csv("BayClump_calibration_template.csv")
-BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
+BayClump_calibration_template <- read.csv("BayClump_template.csv")
+#BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
 Petersen <- read.csv("Data/SampleData.csv")
 Material <- NULL
 Complete_Calibration_List <- NULL

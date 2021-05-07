@@ -80,7 +80,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates=100, samples=30, genera
     
   }
   
-  tot = pbmclapply(1:replicates, mc.cores = 4, single_rep)
+  tot = mclapply(1:replicates, mc.cores = 4, single_rep)
   
   
   if(isMixed == F){

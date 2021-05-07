@@ -5,7 +5,7 @@ server <- function(input, output, session) {
 # Calibration tab
   
   output$BayClump_cal_temp <- downloadHandler(
-       filename = "BayClump_calibration_template.csv",
+       filename = "BayClump_template.csv",
        content = function(file) {
          write.csv(BayClump_calibration_template, file, row.names = FALSE)
        }
@@ -69,7 +69,7 @@ server <- function(input, output, session) {
        calData <- NULL
        calData <- calibrationData()
        
-       calData$T2 <- calData$Temperature + 273.15 # Convert temperature in degrees C to Kelvin 
+       calData$T2 <- calData$T2 + 273.15 # Convert temperature in degrees C to Kelvin 
        calData$Temp_Error <- calData$Temp_Error + 273.15 # Convert error in degrees C to Kelvin 
        
        if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
@@ -159,20 +159,45 @@ server <- function(input, output, session) {
 
     #     checkboxInput("linear", "Linear model", FALSE),
          if(input$simulateBLM_measuredMaterial != FALSE) {
-           #sink(file = "Bayeslinmodtext.txt", type = "output")
-           bayeslincals <- simulateBLM_measuredMaterial(calData)
-           #sink()
+           sink(file = "Bayeslinmodtext.txt", type = "output")
+           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates=5, isMixed=F)
+           sink()
            
            print(noquote("Bayesian linear model complete"))
-           #output$blin <- renderPrint({
-           #  head(bayeslincals$BLM_Measured_errors)
-           #  head(bayeslincals$BLM_Measured_no_errors)
-           #})
+           output$blin <- renderPrint({
+             
+             for (i in 1:length(bayeslincals)) {
+               print(names(bayeslincals)[i])
+               print(head(bayeslincals[[i]]))
+             }
+
+           })
            
-           #sink(file = "Bayesian linear model calibration.txt")
-           #print(bayeslincals)
-           #sink()
+           sink(file = "Bayesian linear model calibration.txt")
+           print(bayeslincals)
+           sink()
          }
+         
+         if(input$simulateBLMM_measuredMaterial != FALSE) {
+           sink(file = "BayeslinMixmodtext.txt", type = "output")
+           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates=5, isMixed=T)
+           sink()
+           
+           print(noquote("Bayesian linear simple and mixed models complete"))
+           output$blin <- renderPrint({
+             
+             for (i in 1:length(bayeslincals)) {
+               print(names(bayeslincals)[i])
+               print(head(bayeslincals[[i]]))
+             }
+             
+           })
+           
+           sink(file = "Bayesian linear model calibration.txt")
+           print(bayeslincals)
+           sink()
+         }
+         
  
     #     calibrationData2 <<- calibrationData()
          

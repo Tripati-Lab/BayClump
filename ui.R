@@ -88,7 +88,9 @@ body <- dashboardBody(
                           checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                           checkboxInput("simulateYork_measured", "York regression", FALSE),
                           checkboxInput("simulateDeming", "Deming regression", FALSE),
-                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian linear model", FALSE),
+                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear models", FALSE),
+                          checkboxInput("simulateBLMM_measuredMaterial", "Bayesian simple and mixed linear models", FALSE),
+                         
                         #  checkboxInput("fitBayesianMainANCOVASimple", "Bayesian main effects ANCOVA", FALSE),
                         #  checkboxInput("fitBayesianInteractionANCOVASimple", "Bayesian interaction effects ANCOVA", FALSE),
 
