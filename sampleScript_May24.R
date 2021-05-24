@@ -6,6 +6,7 @@ library(IsoplotR)
 library(deming)
 library(R2jags)
 library(data.table)
+library(ggplot2)
 
 #Read the relevant scripts in the functions folder
 sapply(list.files('Functions', full.names = T), source)
@@ -35,5 +36,14 @@ simulateAll(data, replicates=5, samples=100, generations=1000, isMixed=T)
 
 
 
-##Thanks for all your patience, Hannah! Hope that this is much more organized!
+##Regression confidence intervals
+
+##First, if only the confidence interval for a single model is requested
+datReplicatesSingle<-simulateYork_measured(data=data, replicates=5, samples=100)
+outCI<-RegressionSingleCI(data=datReplicatesSingle, from=5, to=15, length.out=100)
+outCI$dataUncertainties
+
+
+
+
 
