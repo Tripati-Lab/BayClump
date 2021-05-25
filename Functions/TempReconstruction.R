@@ -93,11 +93,11 @@ TempReconstructionBayesian<-function(dataCalibration,
   colnames(perfBayesianModelComplete)[c(1,2,8,9,6,5,7)]<-c('replicate','model', 'y', 'errory', 'median_est','ci_lower_est','ci_upper_est')
   
   
-  sum<-cbind.data.frame(ddply(perfBayesianModelComplete,.(y),function(x) median(x$median_est)),
-                   lowerCI=ddply(perfBayesianModelComplete,.(y),function(x) quantile(x$median_est, 0.025))[,2],
-                   upperCI=ddply(perfBayesianModelComplete,.(y),function(x) quantile(x$median_est, 0.975))[,2])
+  sum<-cbind.data.frame(ddply(perfBayesianModelComplete,.(model,y),function(x) median(x$median_est)),
+                   lowerCI=ddply(perfBayesianModelComplete,.(model,y),function(x) quantile(x$median_est, 0.025))[,2],
+                   upperCI=ddply(perfBayesianModelComplete,.(model,y),function(x) quantile(x$median_est, 0.975))[,2])
   
-  colnames(sum)[c(1:2)]<-c('targetD47', 'MedianPrediction')
+  colnames(sum)[c(2:3)]<-c('targetD47', 'MedianPrediction')
   
   return(list('summary'=sum, 'replicates'=perfBayesianModelComplete))
 }
