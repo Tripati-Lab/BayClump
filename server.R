@@ -69,7 +69,7 @@ server <- function(input, output, session) {
        calData <- NULL
        calData <- calibrationData()
        
-       calData$T2 <- calData$T2 + 273.15 # Convert temperature in degrees C to Kelvin 
+       calData$T2 <- calData$Temperature + 273.15 # Convert temperature in degrees C to Kelvin 
        calData$Temp_Error <- calData$Temp_Error + 273.15 # Convert error in degrees C to Kelvin 
        
        if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
@@ -77,6 +77,7 @@ server <- function(input, output, session) {
        }
        
  #      if(input$misc == "scale") {
+#         calData$Temperature <- scale(calData$Temperature)
 #         calData$T2 <- scale(calData$T2)
 #         calData$Temp_Error <- scale(calData$Temp_error)
 #         calData$D47 <- scale(calData$D47)
@@ -102,14 +103,68 @@ server <- function(input, output, session) {
            sink(file = "linmodtext.txt", type = "output")
            lmcals <- simulateLM_measured(calData)
            sink()
-           #lmcal_df = data.frame(lmcals) #Class = prediction
+           
+           #lmci <- as.data.frame(lmcals)
+           lmci <- RegressionSingleCI(data = lmcals, from = min(calData$T2), to = max(calData$T2))
+           lmcalci <- as.data.frame(lmci)
+           
+           output$lmcalibration <- renderPlotly({
+             lmfig <- plot_ly(calibrationData()
+             )
+             lmfig <- lmfig %>%
+                 add_trace(x = ~Temperature + 273.15, 
+                           y = ~D47,
+                           type = 'scatter', 
+                           mode = 'markers', 
+                           marker = list(color = 'black'),
+                           opacity = 0.5,
+                           name = "Raw data",
+                           text = as.character(calibrationData()$Sample.Name),
+                           hovertemplate = paste(
+                             "<b>Sample: %{text}</b><br><br>",
+                             "Temperature (K): %{x}<br>",
+                             "Δ<sub>47</sub> (‰): %{y}<br>",
+                             "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                             "Type: ", as.character(calibrationData()$Material),
+                             "<extra></extra>"))
+             lmfig <- lmfig %>% 
+               add_ribbons(data = lmcalci,
+                           x = ~x,
+                           y = ~median_est,
+                           ymin = ~ci_lower_est,
+                           ymax = ~ci_upper_est,
+                           line = list(color = '#ffd166'),
+                           fillcolor = '#ffd166',
+                           opacity = 0.5,
+                           name = '95% CI',
+                           hovertemplate = paste(
+                             "Temperature (K): %{x}<br>",
+                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+               add_lines(data = lmcalci,
+                         x = ~x,
+                         y = ~median_est,
+                         name = 'Median estimate',
+                         line = list(color = "black", dash = 'dash'),
+                         hovertemplate = paste(
+                           "Temperature (K): %{x}<br>",
+                           "Δ<sub>47</sub> (‰): %{y}<br>"))
+             lmfig <- lmfig %>% layout(title = '<b> Linear calibration model </b>',
+                                       legend=list(title=list(text='Legend')),
+                                       xaxis = list(title = 'Temperature (K)'), 
+                                       yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+             
+             return(lmfig)
+           })
+           
            print(noquote("Linear regression complete"))
            output$lmcal <- renderPrint({
              head(lmcals)
            })
-           sink(file = "Linear regression calibration.txt")
-           print(lmcals)
-           sink()
+
+           addWorksheet(wb, "Linear regression") # Add a blank sheet
+           addWorksheet(wb, "Linear regression CI") # Add a blank sheet 
+           writeData(wb, sheet = "Linear regression", lmcals) # Write regression data
+           writeData(wb, sheet = "Linear regression CI", lmcalci)
            
          }
          
@@ -117,14 +172,66 @@ server <- function(input, output, session) {
            sink(file = "inverselinmodtext.txt", type = "output")
            lminversecals <- simulateLM_inverseweights(calData)
            sink()
-           #lminversecals_df = data.frame(lminversecals) #Class = prediction
+           
+           lminverseci <- RegressionSingleCI(data = lminversecals, from = min(calData$T2), to = max(calData$T2))
+           lminversecalci <- as.data.frame(lminverseci)
+           
+           output$lminversecalibration <- renderPlotly({
+             lminversefig <- plot_ly(data = calibrationData()
+             )
+             lminversefig <- lminversefig %>% 
+               add_trace(x = ~Temperature + 273.15, 
+                         y = ~D47,
+                         type = 'scatter', 
+                         mode = 'markers', 
+                         marker = list(color = 'black'),
+                         opacity = 0.5,
+                         name = 'Raw data',
+                         text = as.character(calibrationData()$Sample.Name),
+                         hovertemplate = paste(
+                           "<b>Sample: %{text}</b><br><br>",
+                           "Temperature (K): %{x}<br>",
+                           "Δ<sub>47</sub> (‰): %{y}<br>",
+                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                           "Type: ", as.character(calibrationData()$Material),
+                           "<extra></extra>")) %>%
+               add_ribbons(data = lminversecalci,
+                           x = ~x,
+                           y = ~median_est,
+                           ymin = ~ci_lower_est,
+                           ymax = ~ci_upper_est,
+                           line = list(color = '#ffd166'),
+                           fillcolor = '#ffd166',
+                           opacity = 0.5,
+                           name = '95% CI',
+                           hovertemplate = paste(
+                             "Temperature (K): %{x}<br>",
+                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+               add_lines(data = lminversecalci,
+                         x = ~x,
+                         y = ~median_est,
+                         name = 'Median estimate',
+                         line = list(color = "black", dash = 'dash'),
+                         hovertemplate = paste(
+                           "Temperature (K): %{x}<br>",
+                           "Δ<sub>47</sub> (‰): %{y}<br>"))
+             lminversefig <- lminversefig %>% layout(title = '<b> Inverse linear calibration model </b>',
+                                       legend=list(title=list(text='Legend')),
+                                       xaxis = list(title = 'Temperature (K)'), 
+                                       yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+             
+             return(lminversefig)
+           })
+           
            print(noquote("Inverse linear regression complete"))
            output$lminversecal <- renderPrint({
              head(lminversecals)
            })
-           sink(file = "Inverse linear regression calibration.txt")
-           print(lminversecals)
-           sink()
+           
+           addWorksheet(wb, "Inverse linear regression") # Add a blank sheet
+           addWorksheet(wb, "Inverse linear regression CI") # Add a blank sheet 
+           writeData(wb, sheet = "Inverse linear regression", lminversecals) # Write regression data
+           writeData(wb, sheet = "Inverse linear regression CI", lminversecalci)
            
          }
          
@@ -132,14 +239,66 @@ server <- function(input, output, session) {
            sink(file = "yorkmodtext.txt", type = "output")
           yorkcals <- simulateYork_measured(calData)
           sink()
-          #yorkcal_df = data.frame(yorkcals) #Class = prediction
+          
+          yorkci <- RegressionSingleCI(data = yorkcals, from = min(calData$T2), to = max(calData$T2))
+          yorkcalci <- as.data.frame(yorkci)
+          
+          output$yorkcalibration <- renderPlotly({
+            yorkfig <- plot_ly(data = calibrationData()
+            )
+            yorkfig <- yorkfig %>% 
+              add_trace(x = ~Temperature + 273.15, 
+                        y = ~D47,
+                        type = 'scatter', 
+                        mode = 'markers', 
+                        marker = list(color = 'black'),
+                        opacity = 0.5,
+                        name = 'Raw data',
+                        text = as.character(calibrationData()$Sample.Name),
+                        hovertemplate = paste(
+                          "<b>Sample: %{text}</b><br><br>",
+                          "Temperature (K): %{x}<br>",
+                          "Δ<sub>47</sub> (‰): %{y}<br>",
+                          "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                          "Type: ", as.character(calibrationData()$Material),
+                          "<extra></extra>")) %>%
+              add_ribbons(data = yorkcalci,
+                          x = ~x,
+                          y = ~median_est,
+                          ymin = ~ci_lower_est,
+                          ymax = ~ci_upper_est,
+                          line = list(color = '#ffd166'),
+                          fillcolor = '#ffd166',
+                          opacity = 0.5,
+                          name = '95% CI',
+                          hovertemplate = paste(
+                            "Temperature (K): %{x}<br>",
+                            "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+              add_lines(data = yorkcalci,
+                        x = ~x,
+                        y = ~median_est,
+                        name = 'Median estimate',
+                        line = list(color = "black", dash = 'dash'),
+                        hovertemplate = paste(
+                          "Temperature (K): %{x}<br>",
+                          "Δ<sub>47</sub> (‰): %{y}<br>"))
+            yorkfig <- yorkfig %>% layout(title = '<b> York calibration model </b>',
+                                                    legend=list(title=list(text='Legend')),
+                                                    xaxis = list(title = 'Temperature (K)'), 
+                                                    yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+            
+            return(yorkfig)
+          })
+          
           print(noquote("York regression complete"))
           output$york <- renderPrint({
            head(yorkcals)
           })
-          sink(file = "York regression calibration.txt")
-          print(yorkcals)
-          sink()
+
+          addWorksheet(wb, "York regression") # Add a blank sheet
+          addWorksheet(wb, "York regression CI") # Add a blank sheet 
+          writeData(wb, sheet = "York regression", yorkcals) # Write regression data
+          writeData(wb, sheet = "York regression CI", yorkcalci)
         
          }
 
@@ -147,14 +306,66 @@ server <- function(input, output, session) {
            sink(file = "demingmodtext.txt", type = "output")
            demingcals <- simulateDeming(calData)
             sink()
+            
+            demingci <- RegressionSingleCI(data = demingcals, from = min(calData$T2), to = max(calData$T2))
+            demingcalci <- as.data.frame(demingci)
+            
+            output$demingcalibration <- renderPlotly({
+              demingfig <- plot_ly(data = calibrationData()
+              )
+              demingfig <- demingfig %>% 
+                add_trace(x = ~Temperature + 273.15, 
+                          y = ~D47,
+                          type = 'scatter', 
+                          mode = 'markers', 
+                          marker = list(color = 'black'),
+                          opacity = 0.5,
+                          name = 'Raw data',
+                          text = as.character(calibrationData()$Sample.Name),
+                          hovertemplate = paste(
+                            "<b>Sample: %{text}</b><br><br>",
+                            "Temperature (K): %{x}<br>",
+                            "Δ<sub>47</sub> (‰): %{y}<br>",
+                            "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                            "Type: ", as.character(calibrationData()$Material),
+                            "<extra></extra>")) %>%
+                add_ribbons(data = demingcalci,
+                            x = ~x,
+                            y = ~median_est,
+                            ymin = ~ci_lower_est,
+                            ymax = ~ci_upper_est,
+                            line = list(color = '#ffd166'),
+                            fillcolor = '#ffd166',
+                            opacity = 0.5,
+                            name = '95% CI',
+                            hovertemplate = paste(
+                              "Temperature (K): %{x}<br>",
+                              "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+                add_lines(data = demingcalci,
+                          x = ~x,
+                          y = ~median_est,
+                          name = 'Median estimate',
+                          line = list(color = "black", dash = 'dash'),
+                          hovertemplate = paste(
+                            "Temperature (K): %{x}<br>",
+                            "Δ<sub>47</sub> (‰): %{y}<br>"))
+              demingfig <- demingfig %>% layout(title = '<b> Deming calibration model </b>',
+                                                      legend=list(title=list(text='Legend')),
+                                                      xaxis = list(title = 'Temperature (K)'), 
+                                                      yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+              
+              return(demingfig)
+            })
            print(noquote("Deming regression complete"))
            output$deming <- renderPrint({
              head(demingcals)
            })
            
-            sink(file = "Deming calibration.txt")
-            print(demingcals)
-            sink()
+           addWorksheet(wb, "Deming regression") # Add a blank sheet
+           addWorksheet(wb, "Deming regression CI") # Add a blank sheet 
+           writeData(wb, sheet = "Deming regression", demingcals) # Write regression data
+           writeData(wb, sheet = "Deming regression CI", demingcalci)
+           
            }
 
     #     checkboxInput("linear", "Linear model", FALSE),
@@ -162,6 +373,56 @@ server <- function(input, output, session) {
            sink(file = "Bayeslinmodtext.txt", type = "output")
            bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates=5, isMixed=F)
            sink()
+           
+           bayeslinci <- RegressionSingleCI(data = bayeslincals, from = min(calData$T2), to = max(calData$T2))
+           bayeslincalci <- as.data.frame(bayeslinci)
+           
+           output$bayeslincalibration <- renderPlotly({
+             bayeslinfig <- plot_ly(data = calibrationData()
+             )
+             bayeslinfig <- bayeslinfig %>% 
+               add_trace(x = ~Temperature + 273.15, 
+                         y = ~D47,
+                         type = 'scatter', 
+                         mode = 'markers', 
+                         marker = list(color = 'black'),
+                         opacity = 0.5,
+                         name = 'Raw data',
+                         text = as.character(calibrationData()$Sample.Name),
+                         hovertemplate = paste(
+                           "<b>Sample: %{text}</b><br><br>",
+                           "Temperature (K): %{x}<br>",
+                           "Δ<sub>47</sub> (‰): %{y}<br>",
+                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                           "Type: ", as.character(calibrationData()$Material),
+                           "<extra></extra>")) %>%
+               add_ribbons(data = bayeslincalci,
+                           x = ~x,
+                           y = ~median_est,
+                           ymin = ~ci_lower_est,
+                           ymax = ~ci_upper_est,
+                           line = list(color = '#ffd166'),
+                           fillcolor = '#ffd166',
+                           opacity = 0.5,
+                           name = '95% CI',
+                           hovertemplate = paste(
+                             "Temperature (K): %{x}<br>",
+                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+               add_lines(data = bayeslincalci,
+                         x = ~x,
+                         y = ~median_est,
+                         name = 'Median estimate',
+                         line = list(color = "black", dash = 'dash'),
+                         hovertemplate = paste(
+                           "Temperature (K): %{x}<br>",
+                           "Δ<sub>47</sub> (‰): %{y}<br>"))
+             bayeslinfig <- bayeslinfig %>% layout(title = '<b> Bayesian linear calibration model </b>',
+                                                     legend=list(title=list(text='Legend')),
+                                                     xaxis = list(title = 'Temperature (K)'), 
+                                                     yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+             
+             return(bayeslinfig)
+           })
            
            print(noquote("Bayesian linear model complete"))
            output$blin <- renderPrint({
@@ -173,29 +434,11 @@ server <- function(input, output, session) {
 
            })
            
-           sink(file = "Bayesian linear model calibration.txt")
-           print(bayeslincals)
-           sink()
-         }
-         
-         if(input$simulateBLMM_measuredMaterial != FALSE) {
-           sink(file = "BayeslinMixmodtext.txt", type = "output")
-           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates=5, isMixed=T)
-           sink()
+           addWorksheet(wb, "Bayesian linear regression") # Add a blank sheet
+           addWorksheet(wb, "Bayesian linear regression CI") # Add a blank sheet 
+           writeData(wb, sheet = "Bayesian linear regression", cbind((bayeslincals)[i], bayeslincals[[i]])) # Write regression data
+           writeData(wb, sheet = "Bayesian linear regression CI", bayeslincalci)
            
-           print(noquote("Bayesian linear simple and mixed models complete"))
-           output$blin <- renderPrint({
-             
-             for (i in 1:length(bayeslincals)) {
-               print(names(bayeslincals)[i])
-               print(head(bayeslincals[[i]]))
-             }
-             
-           })
-           
-           sink(file = "Bayesian linear model calibration.txt")
-           print(bayeslincals)
-           sink()
          }
          
  
@@ -206,45 +449,22 @@ server <- function(input, output, session) {
                    #source(fitClumpedRegressions(x))  
        })
        
-      # saveWorkbook(wb, file = "tempcalworkbook.xlsx") # Save to a temporary workbook in the environment
        
                  })
      
      output$modresults <- renderPrint({
         modresult()
      })
-     
+
      output$downloadcalibrations <- downloadHandler(
        filename = function() { 
-         paste("Calibration_output_", Sys.Date(), ".zip", sep="")
+         paste("Calibration_output_", Sys.time(), ".xlsx", sep="")
        },
-       content = function(file) {
-
-         files <- ls()
-         
-         #create an empty list to receive the reads
-         cal_list<-list()
-         
-         # Loop counter
-         j <- 1
-         
-         for (i in files){
-           
-           #set the name of the file I'm looking for
-           f <- paste0(paste(gsub('\\s+','_',i),"calibration.txt", sep=""))
-           
-           #check its existence and it does exist, get it to the list
-           if (file.exists(f)) {
-             # Store stack
-             cal_list[[j]]<-stack(f)
-             
-             # Increment loop counter
-             j <- j + 1
-           }
+      
+        content = function(file) {
+          saveWorkbook(wb, file, overwrite = TRUE)
          }
-         
-         zip(cal_list, file)
-       })
+       )
      
     
     ########################### Example code
@@ -260,28 +480,28 @@ server <- function(input, output, session) {
     minlength <- length(unique(calibrationData()$Mineralogy))
     output$rawcaldata <- renderPlotly({
   rawcalfig <- plot_ly(calibrationData(), 
-                       y = ~Temperature, 
-                       x = ~D47, 
+                       x = ~Temperature, 
+                       y = ~D47, 
                        type = 'scatter', 
                        mode = 'lines+markers', 
                        linetype = ~Material, 
                        color = ~Mineralogy,
                        colors = viridis_pal(option = "D")(minlength),
-                       error_x = ~list(array = ~D47_SD, color = '#000000'),
-                       error_y = ~list(array = ~Temp_Error, color = '#000000'),
+                       opacity = 0.6,
+                       error_y = ~list(array = ~D47_SD, color = '#000000'),
+                       error_x = ~list(array = ~Temp_Error, color = '#000000'),
                        text = as.character(calibrationData()$Sample.Name),
                        hovertemplate = paste(
                          "<b>Sample: %{text}</b><br><br>",
-                         "Temperature (°C): %{y}<br>",
-                         "Δ<sub>47</sub> (‰): %{x}<br>",
+                         "Temperature (°C): %{x}<br>",
+                         "Δ<sub>47</sub> (‰): %{y}<br>",
                          "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
                          "Type: ", as.character(calibrationData()$Material),
                          "<extra></extra>"))
- # rawcalfig <- rawcalfig %>% add_trace(, name = 'Δ47', mode = 'lines+markers')
   rawcalfig <- rawcalfig %>% layout(title = '<b> Raw calibration data from user input </b>',
                              legend=list(title=list(text='Material and mineralogy')),
-                             yaxis = list(title = 'Temperature (°C)'), 
-                             xaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+                             xaxis = list(title = 'Temperature (°C)'), 
+                             yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
 
     return(rawcalfig)
 })
@@ -289,11 +509,49 @@ server <- function(input, output, session) {
 
      # Calibration models plots
      
-  observe({
-    output$calibrationmodels <- renderPlot({
-      plot(yorkcals)
-    })
-  })
+#  observe({
+    #minlength <- length(unique(calibrationData()$Mineralogy))
+   # output$lmcalibration <- renderPlotly({
+  #    lmfig <- plot_ly(data = lmcalci#calibrationData(), 
+                        #   y = ~Temperature, 
+                         #  x = ~D47, 
+                          # type = 'scatter', 
+                          # mode = 'markers' 
+                           #linetype = ~Material, 
+                           #color = ~Mineralogy,
+                           #colors = viridis_pal(option = "D")(minlength),
+                          # error_x = ~list(array = ~D47_SD, color = '#000000'),
+                          # error_y = ~list(array = ~Temp_Error, color = '#000000'),
+                          # text = as.character(calibrationData()$Sample.Name),
+                           #hovertemplate = paste(
+                          #   "<b>Sample: %{text}</b><br><br>",
+                          #   "Temperature (°C): %{y}<br>",
+                          #   "Δ<sub>47</sub> (‰): %{x}<br>",
+                          #   "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                          #   "Type: ", as.character(calibrationData()$Material),
+                          #   "<extra></extra>")
+#                       )
+#      lmfig <- lmfig %>% 
+ #       add_ribbons(data = lmcalci,
+  #                  x = ~x,
+   #                 y = ~median_est,
+    #                ymin = ~ci_lower_est,
+     #               ymax = ~ci_upper_est,
+      #              line = list(color = 'rgba(7, 164, 181, 0.05)'),
+       #             fillcolor = 'rgba(7, 164, 181, 0.2)',
+        #            name = '95% CI') %>%
+#        add_lines(data = lmcalci,
+ #                 x = ~x,
+  #                y = ~median_est,
+   #               line = list(color = "black", dash = 'dash'))
+    #  lmfig <- lmfig %>% layout(title = '<b> Linear calibration model </b>',
+#                                        legend=list(title=list(text='Material and mineralogy')),
+ #                                       yxaxis = list(title = 'Temperature (K)', autorange="reversed"), 
+  #                                      xaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.4f'))
+      
+   #   return(lmfig)
+    #}) 
+#  })
   
 # Reconstruction tab
 

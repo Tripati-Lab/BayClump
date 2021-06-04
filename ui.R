@@ -36,9 +36,11 @@ body <- dashboardBody(
                     title = "Step 1: Calibration Options", solidHeader = TRUE,
                   column(12,
                     radioButtons("calset", "Select calibration set",
-                                       choices = c('Román-Palacios et al. (Petersen et al., 2019)' = 'petersen',
-                                                   "Use my calibration data" = 'mycal',
-                                                   "Use both" = "both")
+                                       choices = c('Román-Palacios et al. - Model 1' = 'model1',
+                                                   'Román-Palacios et al. - Model 2' = 'model2',
+                                                   "Use Román-Palacios et al. - Models 1 & 2" = 'model1and2',
+                                                   "Upload my own calibration data" = 'mycal',
+                                                   "Use all" = "all")
                                        ),
                 
                     # Download template
@@ -69,7 +71,7 @@ body <- dashboardBody(
                     # Misc options
                     checkboxGroupInput('misc', "Miscellaneous options",
                     c("Scale data" = 'scale',
-                      "Calculate uncertanties" = 'calcuncertainties')
+                      "Calculate uncertainties" = 'calcuncertainties')
                     )
                     
                   )
@@ -89,7 +91,7 @@ body <- dashboardBody(
                           checkboxInput("simulateYork_measured", "York regression", FALSE),
                           checkboxInput("simulateDeming", "Deming regression", FALSE),
                           checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear models", FALSE),
-                          checkboxInput("simulateBLMM_measuredMaterial", "Bayesian simple and mixed linear models", FALSE),
+                        #  checkboxInput("simulateBLMM_measuredMaterial", "Bayesian simple and mixed linear models", FALSE),
                          
                         #  checkboxInput("fitBayesianMainANCOVASimple", "Bayesian main effects ANCOVA", FALSE),
                         #  checkboxInput("fitBayesianInteractionANCOVASimple", "Bayesian interaction effects ANCOVA", FALSE),
@@ -139,19 +141,41 @@ body <- dashboardBody(
                     column(12,
                   title = "Calibration plots", solidHeader = TRUE,
                     plotlyOutput("rawcaldata")
-                 # dataTableOutput("caldata")
-                  ))),
+                 
+                    ))),
+              
               fluidRow(
                 box(width = 12,
                     column(12,
-                           plotlyOutput("calibrationmodels")
-                        )
-                  
-                )
-              )
+                           plotlyOutput("lmcalibration")
+                    ))),
+              
+              fluidRow(
+                box(width = 12,
+                    column(12,
+                           plotlyOutput("lminversecalibration")
+                    ))),
+              
+              fluidRow(
+                box(width = 12,
+                    column(12,
+                           plotlyOutput("yorkcalibration")
+                    ))),
+              
+              fluidRow(
+                box(width = 12,
+                    column(12,
+                           plotlyOutput("demingcalibration")
+                    ))),
+              
+              fluidRow(
+                box(width = 12,
+                    column(12,
+                           plotlyOutput("bayeslincalibration")
+                    )))
               ),
 
-    
+
        #Reconstruction tab
        tabItem(tabName = "reconstruction",
                fluidRow(

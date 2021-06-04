@@ -1,11 +1,40 @@
+if("tidyverse" %in% installed.packages() == TRUE) {remove.packages("tidyverse")} # Tidyverse breaks the app by calling sample.int instead of sample if it's even installed
+
+# To work in shinyapps.io, each package has be loaded individually instead of with lapply
+library(shiny)
+library(shinydashboard)
+library(dplyr)
+library(xtable)
+library(viridis)
+library(data.table)
+library(plotly)
+library(bibtex)
+library(readxl)
+library(lme4)
+library(rjags)
+library(R2jags)
+library(IsoplotR)
+library(chemCal)
+library(investr)
+library(MCMCvis)
+library(DT)
+library(knitcitations)
+library(pbapply)
+library(deming)
+library(shinyBS)
+library(ggridges)
+library(ggpubr)
+library(pbmcapply)
+library(openxlsx)
 
 packages <- c("shiny", "shinydashboard", "dplyr", "xtable", "viridis", "data.table", "shinyBS", "plotly", "bibtex",
-              "readxl", "lme4", "ggplot2", "R2jags", "IsoplotR", "chemCal", "investr", "MCMCvis", "ggplot2", "ggthemr",
-              "ggridges", "data.table", "ggpubr", "DT", "knitcitations", "tictoc", "openxlsx", "pbapply", "deming", "pbmcapply")
+              "readxl", "lme4", "ggplot2", "rjags", "R2jags", "IsoplotR", "chemCal", "investr", "MCMCvis",
+              "ggridges", "ggpubr", "DT", "knitcitations", "openxlsx", "pbapply", "deming", "pbmcapply")
 
-new.packages <- packages[!(packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-lapply(packages, require, character.only = TRUE)
+
+#new.packages <- packages[!(packages %in% installed.packages()[,"Package"])]
+#if(length(new.packages)) install.packages(new.packages)
+#lapply(packages, library, character.only = TRUE)
 
 bibtex::write.bib(packages, file = "Rpackages.bib", append = FALSE, verbose = TRUE)
 
@@ -13,10 +42,11 @@ bibtex::write.bib(packages, file = "Rpackages.bib", append = FALSE, verbose = TR
 
 # Load necessary data
 
-BayClump_calibration_template <- read.csv("BayClump_template.csv")
-#BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
+BayClump_calibration_template <- read.csv("BayClump_calibration_template.csv")
+BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
 Petersen <- read.csv("Data/SampleData.csv")
 Material <- NULL
 Complete_Calibration_List <- NULL
 # Load necessary scripts
 sapply(list.files('Functions', full.names = T), source)
+
