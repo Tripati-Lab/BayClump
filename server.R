@@ -69,8 +69,11 @@ server <- function(input, output, session) {
        calData <- NULL
        calData <- calibrationData()
        
-       calData$T2 <- calData$Temperature + 273.15 # Convert temperature in degrees C to Kelvin 
-       calData$Temp_Error <- calData$Temp_Error + 273.15 # Convert error in degrees C to Kelvin 
+       ##If temperature is in degree celsius
+       
+       calData$T2 <- (10^6)/(calData$Temperature + 273.15)^2 
+       calData$Temp_Error <- (10^6)/(calData$Temp_Error + 273.15)^2
+       
        
        if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
          calData$Temp_Error <- 1
