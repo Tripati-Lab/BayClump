@@ -59,10 +59,10 @@ body <- dashboardBody(
                     # Reference frame
                     div(style="display:inline-block; vertical-align:top;", 
                         radioButtons("refframe", "Reference frame",
-                                c("Use the carbon dioxide equilibrium scale (CDES)" = "cdes",
+                                c("Use the Intercarb carbon dioxide equilibrium scale at 90°C (I-CDES 90)" = "icdes90",
                                   "I am using my own calibration data in a different reference frame" = "myown")
                                 ),                    
-                        bsTooltip('refframe', "CDES must be chosen if using calibration data from Román-Palacios et al. (Petersen et al., 2019)",
+                        bsTooltip('refframe', "I-CDES 90 must be chosen if using calibration data from Román-Palacios et al.",
                                   placement = "bottom", trigger = "hover",
                                   options = NULL)
                       ),
@@ -80,17 +80,14 @@ body <- dashboardBody(
                 # Model selection
                 box(width = 4,
                     title = "Step 2: Select Models", solidHeader = TRUE,
-                  column(12, "The Bayesian model can take up to three minutes to run",
-
-
-
-
-
+                  column(12, "For help choosing an appropriate number of bootstrap replicates, see the User Manual",
+                          selectInput("replication", label = "Number of bootstrap replicates", 
+                                      choices = c("50", "100", "500", "1000"), selected = "100"),
                           checkboxInput("simulateLM_measured", "Linear model", FALSE),
                           checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                           checkboxInput("simulateYork_measured", "York regression", FALSE),
                           checkboxInput("simulateDeming", "Deming regression", FALSE),
-                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear models", FALSE),
+                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear model", FALSE),
                         #  checkboxInput("simulateBLMM_measuredMaterial", "Bayesian simple and mixed linear models", FALSE),
                          
                         #  checkboxInput("fitBayesianMainANCOVASimple", "Bayesian main effects ANCOVA", FALSE),
@@ -120,16 +117,22 @@ body <- dashboardBody(
                 )
                   ),
                 box(width = 4,
-                    title = "Step 3: Output Options", solidHeader = TRUE,
-                  column(12, verbatimTextOutput("lmcal"),
-                             verbatimTextOutput("lminversecal"),
-                             verbatimTextOutput("york"),
-                             verbatimTextOutput("deming"),
-                             verbatimTextOutput("blin")
+                    title = "Step 3: Calibration Output", solidHeader = TRUE,
+                  column(12, "Truncated output from each selected model",
+                             tags$h4("Linear model"),
+                             verbatimTextOutput("lmcal", placeholder = TRUE),
+                             tags$h4("Inverse weighted linear model"),
+                             verbatimTextOutput("lminversecal", placeholder = TRUE),
+                             tags$h4("York regression"),
+                             verbatimTextOutput("york", placeholder = TRUE),
+                             tags$h4("Deming regression"),
+                             verbatimTextOutput("deming", placeholder = TRUE),
+                             tags$h4("Bayesian simple linear model"),
+                             verbatimTextOutput("blin", placeholder = TRUE)
                          ),
                   
                   # Download all calibration data
-                  downloadButton("downloadcalibrations", label = "Download calibration output")
+                  downloadButton("downloadcalibrations", label = "Download full calibration output with confidence intervals")
         )
         )
     ),
@@ -232,14 +235,7 @@ body <- dashboardBody(
             fluidRow(
               column(12,
                      "Recorded demo here"))),
-    
-      #Petersen et al cal set
-      tabItem(tabName = "petersen",
-                column(12,
-              fluidRow("Petersen et al. calibration data",
-                  dataTableOutput("Petersendat")
-                  ))), 
-    
+
       #Citations tab
       tabItem(tabName = "citations",
               fluidRow(
@@ -292,14 +288,10 @@ sidebarMenu(
   menuItem("Citations", tabName = "citations", 
            icon = icon("align-right", lib = "font-awesome")
            ),
-  
-  menuItem("Petersen et al., 2019", tabName = "petersen", 
-           icon = icon("table", lib = "font-awesome")
-           ),
-  
+
   menuItem("Manuscript", tabName = "manuscript", 
            icon = icon("scroll", lib = "font-awesome")
-  ),
+           ),
   
   menuItem("Download BayClump", tabName = "download", 
            icon = icon("laptop-code", lib = "font-awesome")

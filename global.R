@@ -44,7 +44,9 @@ bibtex::write.bib(packages, file = "Rpackages.bib", append = FALSE, verbose = TR
 
 BayClump_calibration_template <- read.csv("BayClump_calibration_template.csv")
 BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
-Petersen <- read.csv("Data/SampleData.csv")
+Petersen <- read.csv("Data/SampleData.csv") # PETERSEN PLACEHOLDER
+Anderson <- read.csv("Data/SampleData2.csv") # ANDERSON PLACEHOLDER
+PetersenAnderson <- rbind(Petersen, Anderson)
 Material <- NULL
 Complete_Calibration_List <- NULL
 # Load necessary scripts

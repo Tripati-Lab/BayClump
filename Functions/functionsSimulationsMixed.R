@@ -1,5 +1,5 @@
 
-simulateYork_measured<<-function(data, replicates=100, samples=10){
+simulateYork_measured<<-function(data, replicates, samples=10){
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
     Reg<-york(cbind.data.frame(dataSub$T2, dataSub$Temp_Error, dataSub$D47, dataSub$D47_SD))
@@ -8,7 +8,7 @@ simulateYork_measured<<-function(data, replicates=100, samples=10){
 }
 
 
-simulateLM_measured<<-function(data, replicates=100, samples=30){
+simulateLM_measured<<-function(data, replicates, samples=30){
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
     dataSub$y_SE<-dataSub$D47_SD/sqrt(2)
@@ -18,7 +18,7 @@ simulateLM_measured<<-function(data, replicates=100, samples=30){
 }
 
 
-simulateLM_inverseweights<<-function(data, replicates=100, samples=30){
+simulateLM_inverseweights<<-function(data, replicates, samples=30){
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
     Reg<-summary(lm(D47~ T2,  dataSub))
@@ -27,7 +27,7 @@ simulateLM_inverseweights<<-function(data, replicates=100, samples=30){
 }
 
 
-simulateDeming<<-function(data, replicates=100, samples=30){
+simulateDeming<<-function(data, replicates, samples=30){
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
     dataSub$y_SE<-abs(dataSub$D47_SD/sqrt(20))
@@ -38,7 +38,7 @@ simulateDeming<<-function(data, replicates=100, samples=30){
 }
 
 
-simulateBLM_measuredMaterial<<-function(data, replicates=100, samples=30, generations=20000, isMixed=F){
+simulateBLM_measuredMaterial<<-function(data, replicates, samples=30, generations=20000, isMixed=F){
   
   data_BR_Measured<-data
   

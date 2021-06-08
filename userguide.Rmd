@@ -27,4 +27,5 @@ https://github.com/Tripati-Lab/BayClump/issues
 ## BayClump Basics
 
 User guide here!  
-
+ - Cal Data can have no blanks or Na values  
+ - Sample calibration data are provided in I-CDES 90 (and what that means)
