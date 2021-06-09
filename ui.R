@@ -146,7 +146,10 @@ body <- dashboardBody(
                     plotlyOutput("rawcaldata")
                  
                     ))),
-              
+              fluidRow(
+                box(width = 12, 
+                    column(12, "Placeholder for text about the models here!"
+                ))),
               fluidRow(
                 box(width = 12,
                     column(12,

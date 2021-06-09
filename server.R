@@ -186,11 +186,6 @@ server <- function(input, output, session) {
              
              return(lmfig)
            })
-           
-           print(noquote("Linear regression complete"))
-           output$lmcal <- renderPrint({
-             head(lmcals)
-           })
 
            addWorksheet(wb, "Linear regression") # Add a blank sheet
            addWorksheet(wb, "Linear regression CI") # Add a blank sheet 
@@ -200,6 +195,11 @@ server <- function(input, output, session) {
            
            writeData(wb, sheet = "Linear regression", lmcals) # Write regression data
            writeData(wb, sheet = "Linear regression CI", lmcalci2)
+           
+           print(noquote("Linear regression complete"))
+           output$lmcal <- renderPrint({
+             head(lmcalci2)
+           })
            
          }
          
@@ -258,11 +258,6 @@ server <- function(input, output, session) {
              return(lminversefig)
            })
            
-           print(noquote("Inverse linear regression complete"))
-           output$lminversecal <- renderPrint({
-             head(lminversecals)
-           })
-           
            addWorksheet(wb, "Inverse linear regression") # Add a blank sheet
            addWorksheet(wb, "Inverse linear regression CI") # Add a blank sheet 
            
@@ -271,6 +266,11 @@ server <- function(input, output, session) {
 
            writeData(wb, sheet = "Inverse linear regression", lminversecals) # Write regression data
            writeData(wb, sheet = "Inverse linear regression CI", lminversecalci2)
+           
+           print(noquote("Inverse linear regression complete"))
+           output$lminversecal <- renderPrint({
+             head(lminversecalci2)
+           })
            
          }
          
@@ -328,11 +328,6 @@ server <- function(input, output, session) {
             
             return(yorkfig)
           })
-          
-          print(noquote("York regression complete"))
-          output$york <- renderPrint({
-           head(yorkcals)
-          })
 
           addWorksheet(wb, "York regression") # Add a blank sheet
           addWorksheet(wb, "York regression CI") # Add a blank sheet 
@@ -342,6 +337,11 @@ server <- function(input, output, session) {
           
           writeData(wb, sheet = "York regression", yorkcals) # Write regression data
           writeData(wb, sheet = "York regression CI", yorkcalci2)
+          
+          print(noquote("York regression complete"))
+          output$york <- renderPrint({
+            head(yorkcalci2)
+          })
         
          }
 
@@ -399,11 +399,7 @@ server <- function(input, output, session) {
               
               return(demingfig)
             })
-           print(noquote("Deming regression complete"))
-           output$deming <- renderPrint({
-             head(demingcals)
-           })
-           
+
            addWorksheet(wb, "Deming regression") # Add a blank sheet
            addWorksheet(wb, "Deming regression CI") # Add a blank sheet 
            
@@ -412,6 +408,11 @@ server <- function(input, output, session) {
            
            writeData(wb, sheet = "Deming regression", demingcals) # Write regression data
            writeData(wb, sheet = "Deming regression CI", demingcalci2)
+           
+           print(noquote("Deming regression complete"))
+           output$deming <- renderPrint({
+             head(demingcalci2)
+           })
            
            }
 
@@ -470,17 +471,7 @@ server <- function(input, output, session) {
              
              return(bayeslinfig)
            })
-           
-           print(noquote("Bayesian linear model complete"))
-           output$blin <- renderPrint({
-             
-             for (i in 1:length(bayeslincals)) {
-               print(names(bayeslincals)[i])
-               print(head(bayeslincals[[i]]))
-             }
 
-           })
-           
            addWorksheet(wb, "Bayesian linear model") # Add a blank sheet
            addWorksheet(wb, "Bayesian linear model CI") # Add a blank sheet 
            
@@ -489,6 +480,17 @@ server <- function(input, output, session) {
            
            writeData(wb, sheet = "Bayesian linear model", cbind((bayeslincals)[i], bayeslincals[[i]])) # Write regression data
            writeData(wb, sheet = "Bayesian linear model CI", bayeslincalci2)
+           
+           
+           print(noquote("Bayesian linear model complete"))
+           output$blin <- renderPrint({
+             
+             for (i in 1:length(bayeslincals)) {
+               print(names(bayeslincalci2)[i])
+               print(head(bayeslincalci2[[i]]))
+             }
+             
+           })
            
          }
          
