@@ -40,16 +40,15 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
 }")
 
     ##Mixed Model (interaction effects; multiple slopes and intercepts)
-    BLM3<-" model{
-    tau0 ~ dunif(1e-1,5)
-    mu0 ~ dnorm(0,1)
-
+  BLM3<-paste(" model{
+  
     # Diffuse normal priors for predictors
         for (i in 1:K) {
-            beta[i] ~  dnorm(mu0, tau0)
-            alpha[i] ~  dnorm(mu0, tau0)
-        }
-        
+            beta[i] ~  ", alphaBLM1," \n ",
+              
+              " alpha[i] ~  ", betaBLM1," \n ",
+              " }
+
 
     # Gamma prior for standard deviation
     tau ~ dgamma(1e-3, 1e-3) # precision
@@ -68,7 +67,7 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
 
         mu[i] <- alpha[type[i]] + beta[type[i]] * x1[i]
     }
-}"
+}")
     
 
     LM_No_error_Data <- list(x = calibrationData$T2 , y = calibrationData$D47,
