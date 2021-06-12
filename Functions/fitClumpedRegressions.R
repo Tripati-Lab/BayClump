@@ -1,7 +1,7 @@
 fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial=F, 
                                 returnModels=T, n.iter= 50000, burninFrac=0.1,
                                 alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
-                                useInits=T){
+                                useInits=T, D47error="D47error"){
     
     ##Models
   BLM1<-paste(" model{
@@ -78,7 +78,7 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     if(hasMaterial == T){
       
       
-      Y= IsoplotR::york(cbind(calibrationData[,c('T2','Temp_Error','D47','D47_SD')]))
+      Y= IsoplotR::york(cbind(calibrationData[,c('T2','Temp_Error','D47',D47error)]))
       M0=lm(D47 ~ T2, calibrationData)
       M1=lm(D47 ~ T2+Material, calibrationData)
       M2=lm(D47 ~ T2*Material, calibrationData)
@@ -86,11 +86,11 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
       
       ##Create the calibrationDatasets for Bayesian Models
       LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
-                      errx = calibrationData$Temp_Error, erry = calibrationData$D47_SD, 
+                      errx = calibrationData$Temp_Error, erry = calibrationData[,D47error], 
                       N=nrow(calibrationData))
  
       ANCOVA2_Data <- list(obsx1 = calibrationData$T2 , obsy = calibrationData$D47 , 
-                           errx1 = calibrationData$Temp_Error, erry = calibrationData$D47_SD, 
+                           errx1 = calibrationData$Temp_Error, erry = calibrationData[,D47error], 
                            K=length(unique(calibrationData$Material)),
                            N=nrow(calibrationData),
                            type= as.numeric(calibrationData$Material))
@@ -143,7 +143,7 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
       Y=IsoplotR::york(calibrationData[,c('T2','Temp_Error','D47','D47_SD')])
       M0=lm(D47 ~ T2, calibrationData)
       LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
-                      errx = calibrationData$Temp_Error, erry = calibrationData$D47_SD, 
+                      errx = calibrationData$Temp_Error, erry = calibrationData[,D47error], 
                       N=nrow(calibrationData))
       ##Fit the models
       inits <- if(useInits==T){ function () {

@@ -1,314 +1,314 @@
-Sample.Name,Mineralogy,Material,N,D47,D47_SD,Temperature,Temp_Error
-LV 15 CM,Dolomite,Natural,16,0.637,0.022,25.5,5.7
-LV 71 CM,Dolomite,Natural,16,0.619,0.019,25.5,5.7
-Qatar 1,Dolomite,Natural,25,0.611,0.015,32,6
-Leeds 23,Dolomite,Synthetic,16,0.508,0.017,70,2
-Leeds 1,Dolomite,Synthetic,12,0.497,0.014,70,2
-Leeds 6,Dolomite,Synthetic,11,0.523,0.02,70,2
-Leeds 12,Dolomite,Synthetic,8,0.504,0.037,70,2
-Leeds 20,Dolomite,Synthetic,9,0.515,0.042,70,2
-Leeds 81,Dolomite,Synthetic,18,0.515,0.022,70,2
-Leeds 82,Dolomite,Synthetic,21,0.499,0.016,70,2
-Leeds 83,Dolomite,Synthetic,41,0.513,0.015,70,2
-Leeds 21,Dolomite,Synthetic,6,0.426,0.027,140,2
-Leeds 14,Dolomite,Synthetic,15,0.398,0.014,140,2
-Leeds 22,Dolomite,Synthetic,9,0.401,0.015,140,2
-Leeds 15,Dolomite,Synthetic,21,0.409,0.021,140,2
-Leeds 34,Dolomite,Synthetic,6,0.322,0.054,220,2
-Leeds 41,Dolomite,Synthetic,6,0.348,0.025,220,2
-Leeds 84,Dolomite,Synthetic,12,0.311,0.018,220,2
-Leeds 85,Dolomite,Synthetic,16,0.316,0.028,220,2
-Leeds 86,Dolomite,Synthetic,11,0.32,0.017,220,2
-Ab-1,Aragonite,Natural,3,0.7679185,0.01041691,-1,2
-Ab-2,Aragonite,Natural,3,0.76607542,0.00659912,-1,2
-Ab-3,Aragonite,Natural,3,0.74889223,0.02020052,-1,2
-Ac-1_B-12,Aragonite,Natural,6,0.77348394,0.00278529,-1,2
-Ac-1_B-14,Aragonite,Natural,3,0.77808716,0.00535896,2,2
-Ac-2,Aragonite,Natural,3,0.74983746,0.0111864,2,2
-Brach-m1,Calcite,Natural,3,0.75385961,0.0024896,5.5,1
-Brach-m2,Calcite,Natural,3,0.76021853,0.01489061,5.5,1
-Cc-1_B-12,Aragonite,Natural,3,0.75197465,0.01053873,-1,2
-Cc-1_B-14,Aragonite,Natural,3,0.75198252,0.01275677,2,2
-Cc-2_B-12,Aragonite,Natural,3,0.82914071,0.04970208,-1,2
-Cc-2_B-14,Aragonite,Natural,3,0.76010417,0.01308367,2,2
-Cc-3,Aragonite,Natural,3,0.76369902,0.009147,2,2
-Ci-1,Calcite,Natural,3,0.7705641,0.01179255,-1,2
-Ci-2,Calcite,Natural,3,0.74439561,0.00476912,-1,2
-Ci-3,Calcite,Natural,5,0.76759973,0.00863099,-1,2
-FGS-1-1,Aragonite,Natural,3,0.6601453,0.00570956,27.5,2.2
-FGS-1-2,Aragonite,Natural,3,0.68849425,0.00477051,23,1.5
-FGS-1-3,Aragonite,Natural,3,0.69553093,0.00524936,19.8,0.8
-GB3-5,Calcite,Natural,3,0.76819722,0.01099931,-1,1
-GB4-3,Calcite,Natural,3,0.75257638,0.03204879,-1,1
-Ha-1,Aragonite,Natural,3,0.75766689,0.00769264,-1,2
-Ha-2,Aragonite,Natural,3,0.77151392,0.00517582,-1,2
-Ha-3,Aragonite,Natural,6,0.7824778,0.00920375,-1,2
-HMB-3,Calcite,Natural,2,0.70752567,0.035845,10.5,1
-HPL-1,Calcite,Natural,3,0.73284903,0.00744191,14.4,0.5
-HPL-2,Calcite,Natural,2,0.68483836,0.00356,27.3,0.2
-HPL-3,Calcite,Natural,3,0.70045923,0.00617583,23.7,0.1
-Mt-1,Aragonite,Natural,3,0.75858537,0.00693158,-1,2
-Mt-2,Aragonite,Natural,4,0.74321442,0.01175713,-1,2
-Mt-3,Aragonite,Natural,3,0.76236666,0.00410596,-1,2
-Mya-16,Aragonite,Natural,3,0.71564977,0.00405036,15.9,1.7
-Mya-3.5,Aragonite,Natural,2,0.74471771,0.0227,3.4,0.8
-Mya-8.5,Aragonite,Natural,3,0.7130446,0.01237604,8.6,2.2
-Mytilus-12,Calcite,Natural,2,0.76552681,0.019265,12,0.5
-Mytilus-15,Calcite,Natural,4,0.73863977,0.00495615,15,0.5
-Mytilus-4,Calcite,Natural,5,0.77438406,0.00785292,4,0.5
-Mytilus-8,Calcite,Natural,4,0.7553619,0.00761441,8,0.5
-P105,Aragonite,Natural,3,0.70680078,0.00592635,20,1
-P110,Aragonite,Natural,3,0.69028722,0.01077931,20,1
-P132,Aragonite,Natural,3,0.72157967,0.00643836,24.5,0.5
-P52,Aragonite,Natural,3,0.70839121,0.00089802,24.5,0.5
-P8-30,Aragonite,Natural,3,0.71596748,0.00353273,24.5,0.5
-P95,Aragonite,Natural,3,0.70493854,0.00682718,20,1
-Pp-1,Aragonite,Natural,3,0.68667265,0.00094626,29.5,3
-Pp-2,Aragonite,Natural,3,0.69771981,0.01374225,29.5,3
-Pp-3,Aragonite,Natural,6,0.69256708,0.00805919,29.5,3
-RBJ-1-3,Calcite,Natural,3,0.68525063,0.00522396,27.5,1
-WG061278,Aragonite,Natural,3,0.72904714,0.01232698,4.7,2
-Dwyvillei,Calcite,Natural,27,0.7382461,0.00327537,10,1
-Ghirsuta,Calcite,Natural,2,0.7387534,0.006115,9,1
-Spondylussp,Calcite,Natural,10,0.68116586,0.00599834,29,1
-Coldseepcc,Calcite,Natural,6,0.7510117,0.00610385,9,0.1
-Ostricheggshell,Calcite,Natural,15,0.66895649,0.00529129,38,0.6
-Gruber,Calcite,Natural,2,0.68684498,0.014415,26,1
-Ginflata,Calcite,Natural,2,0.71983335,0.003875,14,1
-GA1,Calcite,Natural,3,0.702,0.005,28.4,0.15
-GA2,Calcite,Natural,3,0.696,0.005,27.8,0.15
-GLT,Calcite,Natural,5,0.705,0.011,27.8,0.15
-GS,Calcite,Natural,3,0.688,0.011,27.8,0.15
-GT,Calcite,Natural,3,0.702,0.012,27.8,0.15
-BS,Calcite,Natural,3,0.706,0.005,27.8,0.15
-BT,Calcite,Natural,3,0.72,0.004,27.8,0.15
-MA1,Calcite,Natural,3,0.764,0.006,13.4,0.3
-MA2,Calcite,Natural,3,0.75,0.004,13.4,0.3
-MB,Calcite,Natural,3,0.736,0.005,13.4,0.3
-ML,Calcite,Natural,3,0.746,0.01,13.4,0.3
-MP,Calcite,Natural,3,0.756,0.012,13.4,0.3
-MS,Calcite,Natural,3,0.736,0.006,13.4,0.3
-YA1,Calcite,Natural,3,0.701,0.012,18.5,0.54
-YA2,Calcite,Natural,4,0.687,0.015,18.5,0.54
-YLP,Calcite,Natural,3,0.722,0.015,18.5,0.54
-YLR,Calcite,Natural,3,0.716,0.006,18.5,0.54
-YLT,Calcite,Natural,3,0.711,0.011,18.5,0.54
-YS,Calcite,Natural,3,0.717,0.01,18.5,0.54
-YT,Calcite,Natural,3,0.725,0.005,18.5,0.54
-SDA1,Calcite,Natural,3,0.765,0.005,8.5,0.2
-SDA2,Calcite,Natural,3,0.768,0.008,8.5,0.2
-SDS,Calcite,Natural,3,0.753,0.012,8.5,0.2
-SDLT,Calcite,Natural,3,0.741,0.005,8.5,0.2
-SDT,Calcite,Natural,4,0.758,0.01,8.5,0.2
-70CCalcite3-30-2011,Aragonite,Synthetic,4,0.57840203,0.01246262,70,1
-25CCalcite1-12-2011,Calcite,Synthetic,4,0.67553539,0.01308577,25,1
-5CAragonite,Aragonite,Synthetic,4,0.7282001,0.01390007,5,1
-25CAragonite10-17-2013,Aragonite,Synthetic,4,0.67476363,0.00940621,25,1
-70CCalcite10-10-2013,Calcite,Synthetic,4,0.58475944,0.00575787,70,1
-5CCalcite1-12-2012,Calcite,Synthetic,4,0.7244196,0.00297037,5,1
-50CAragonite3-14-2014,Aragonite,Synthetic,5,0.60525142,0.00646074,50,1
-50CCalcite3-24-2014,Calcite,Synthetic,4,0.59123331,0.00799109,50,1
-AC30dolo,Dolomite,Natural,4,0.67560951,0.01941949,27,5
-250-I-7-d-1,Dolomite,Synthetic,4,0.39938998,0.00412328,250,2
-O-T-5-d-1,Dolomite,Synthetic,6,0.3918709,0.00622607,218,2
-200-p-30-d-1,Dolomite,Synthetic,4,0.42709399,0.00244576,200,2
-IODP-d-2,Dolomite,Natural,3,0.69536878,0.00457022,21,11
-Barb1pt10-1,Dolomite,Natural,4,0.70670783,0.00494408,28,5
-MIZd-1,Dolomite,Natural,3,0.56699276,0.00840327,70,10
-235-O-12-1,Dolomite,Synthetic,5,0.39261708,0.01610374,235,2
-O-H-2-1,Dolomite,Synthetic,4,0.42023927,0.01415495,218,2
-Mg-1,Mixed,Synthetic,2,0.5583657,0.003515,79.9,0.1
-DPT12-10-salt,Mixed,Natural,2,0.67918039,0.00616,11.3,0.1
-DTP10-12-crust,Mixed,Natural,2,0.75726259,0.004865,11.3,0.1
-209,Mixed,Synthetic,2,0.623614,0.008565,60,0.1
-Mg-3,Mixed,Synthetic,3,0.55914658,0.00149169,79.9,0.1
-CIS006-Epacifica,Aragonite,Natural,7,0.72171055,0.01192918,6,1
-CIS020-Pp,Aragonite,Natural,7,0.67063397,0.00376613,25,3
-CIS004-PDalli,Calcite,Natural,5,0.73001319,0.00441739,7,1
-CIS022-Calbidus,Aragonite,Natural,2,0.70703157,0.01134,18.8,5.5
-CIS023-Pcanal,Calcite,Natural,2,0.70742944,0.00029,14.5,3
-CIS025-Marenaria,Aragonite,Natural,2,0.72073041,0.01158,11,2.7
-Ehux15,Calcite,Natural,3,0.72168674,0.00290082,15,0.2
-Ehux25,Calcite,Natural,3,0.70065252,0.00484265,25,0.2
-Ehux20,Calcite,Natural,5,0.71101256,0.00380801,20,0.2
-Ehux7,Calcite,Natural,2,0.74973192,0.003425,7,0.2
-Cpel20,Calcite,Natural,3,0.72367555,0.00365147,20,0.2
-Cpel10,Calcite,Natural,4,0.74941197,0.00499563,10,0.2
-Clept20,Calcite,Natural,5,0.7187992,0.00389608,20,0.2
-Ehux10,Calcite,Natural,3,0.74201907,0.01012242,10,0.2
-Cpel15,Calcite,Natural,5,0.73628034,0.00571449,15,0.2
-Clept15,Calcite,Natural,3,0.73465487,0.00883059,15,0.2
-Clept10,Calcite,Natural,3,0.74568916,0.00420555,10,0.2
-T86-08B,Calcite,Natural,10,0.71418631,0.00831732,15,5
-GCP-1,Calcite,Natural,21,0.65557168,0.00834392,24.5,1
-WIND_10B,Calcite,Natural,9,0.70180493,0.0063353,23,5
-MCP-1,Calcite,Natural,22,0.68390228,0.0070377,18.6,2
-SHAK4-3MA,Calcite,Natural,7,0.68095439,0.00894756,18.3,5
-T90-04B,Calcite,Natural,7,0.72052135,0.00799385,12,5
-SHAK7-6ME,Calcite,Natural,7,0.6884493,0.00699279,16.5,5
-T86-10B,Calcite,Natural,11,0.67637824,0.01519518,18.3,5
-T90-08B,Calcite,Natural,7,0.6948622,0.01054393,11,5
-BSP-1,Calcite,Natural,21,0.71046117,0.00610887,8.9,0.5
-T90-03B,Calcite,Natural,8,0.71186812,0.01856833,11.3,5
-T88-07B,Calcite,Natural,8,0.68825503,0.00550933,12,5
-DSP-1,Calcite,Natural,11,0.75736989,0.00906811,3.2,0.8
-OWB-1,Calcite,Natural,21,0.73084784,0.00837953,9.1,1
-BOFS30K,Calcite,Natural,11,0.69916492,0.01235919,16.3,5
-BOFS30K,Calcite,Natural,7,0.68176339,0.0134774,20,5
-BOFS30K,Calcite,Natural,7,0.69306121,0.01429007,16.3,5
-MD77191,Calcite,Natural,9,0.69654029,0.00760671,17,5
-IODP1436,Calcite,Natural,10,0.68850213,0.00904424,18.6,5
-T90-01B,Calcite,Natural,9,0.69567759,0.00737019,11.7,5
-T88-07B,Calcite,Natural,9,0.70432334,0.0046052,12,5
-MD012414,Calcite,Natural,7,0.73886698,0.01144005,2.5,5
-LOMROG_2009_PC-09,Calcite,Natural,12,0.75178473,0.00787913,-1.2,5
-NAICA1,Aragonite,Natural,17,0.61468215,0.00847162,47,1.5
-MD00-2360_G_-ruber,Calcite,Natural,7,0.67372751,0.00534912,24.7,0.5
-SU90-03_G_-bulloides,Calcite,Natural,6,0.72945247,0.00402182,12.5,0.6
-MD95-2014_G_-bulloides,Calcite,Natural,8,0.73494282,0.00452646,8.1,0.5
-MD08-3182_N_-pachyderma-(s_),Calcite,Natural,4,0.73964762,0.00327055,8.6,0.7
-MD08-3179_G_-inflata_315-355,Calcite,Natural,4,0.72680079,0.00887898,13.2,0.7
-MD02-2577_G_-menardi-menardi,Calcite,Natural,8,0.69524061,0.0054256,18.3,0.5
-MOCOSED_Cibicides-wuellerstorfi,Calcite,Natural,16,0.77522869,0.00371148,-1.6,0.4
-MD08-3182_G_-bulloides,Calcite,Natural,15,0.73986775,0.00327994,8.3,0.4
-MOCOSED_N_-pachyderma-(s_),Calcite,Natural,8,0.7550353,0.00453785,2.9,0.5
-MD08-3179_G_-inflata_355-400,Calcite,Natural,4,0.71485094,0.00427089,14.5,0.7
-MD12-3426_Orbulina-universa,Calcite,Natural,4,0.68577788,0.00563434,23.3,0.7
-MD02-2577_Orbulina-universa,Calcite,Natural,4,0.70035396,0.00905088,20.8,0.7
-MD08-3179_G_-truncatulinoides-(s_),Calcite,Natural,12,0.72159207,0.00403523,14.8,0.4
-MD12-3426_G_-menardi-menardi,Calcite,Natural,7,0.70292637,0.00899515,17.1,0.5
-MD08-3179_G_-ruber,Calcite,Natural,8,0.70413794,0.00637467,20.3,0.5
-MD02-2577_G_-ruber,Calcite,Natural,8,0.68041884,0.00501942,25.1,0.5
-MD03-2680_N_-pachyderma-(d_),Calcite,Natural,4,0.73596543,0.00683075,8.9,0.7
-2FPA1_Uvigerina-mediterranea,Calcite,Natural,31,0.73291615,0.00192689,9.4,0.3
-MD00-2360_G_-menardi-menardi,Calcite,Natural,20,0.6927372,0.00311163,18.4,0.3
-MD08-3179_G_-inflata_400-450,Calcite,Natural,4,0.70713526,0.00333104,15,0.7
-MD00-2360_Orbulina-universa,Calcite,Natural,8,0.69055534,0.00324173,23.4,0.5
-MD08-3179_G_-truncatulinoides-(d_),Calcite,Natural,16,0.71435058,0.0038944,15,0.4
-MD04-2720_N_-pachyderma-(d_),Calcite,Natural,4,0.76833395,0.00252069,-0.4,0.7
-MD12-3401_G_-bulloides,Calcite,Natural,8,0.74730348,0.00451189,5.6,0.5
-MD08-3179_G_-inflata_250-315,Calcite,Natural,4,0.70881989,0.00784368,15.5,0.7
-MD08-3179_G_-inflata_450-500,Calcite,Natural,3,0.70990503,0.00668392,14.3,0.8
-MD08-3179_G_-inflata_200-250,Calcite,Natural,4,0.7075355,0.00736561,16.7,0.7
-C20,Calcite,Synthetic,3,0.72196241,0.00623996,5,0.5
-C26,Calcite,Synthetic,4,0.73773522,0.00171528,5,0.5
-C18,Calcite,Synthetic,4,0.71876003,0.01890831,5,0.5
-C27,Calcite,Synthetic,6,0.73500998,0.00828731,5,0.5
-C50,Calcite,Synthetic,5,0.74515306,0.00955277,5,0.5
-C48,Calcite,Synthetic,4,0.72915094,0.00317321,5,0.5
-C19,Calcite,Synthetic,4,0.70995349,0.00233171,5,0.5
-C30,Calcite,Synthetic,5,0.68102826,0.02424687,25,0.5
-C22,Calcite,Synthetic,2,0.77349255,0.004325,5,0.5
-C54,Calcite,Synthetic,3,0.66080397,0.01447923,25,0.5
-C57,Calcite,Synthetic,2,0.6487373,0.00468,25,0.5
-C58,Calcite,Synthetic,3,0.69059424,0.0077635,25,0.5
-C29,Calcite,Synthetic,3,0.66078765,0.00629987,25,0.5
-C32,Calcite,Synthetic,2,0.68554797,0.00746,25,0.5
-C6,Calcite,Synthetic,2,0.6235633,0.04732,40,0.5
-C34,Calcite,Synthetic,3,0.65392947,0.00619137,25,0.5
-C7,Calcite,Synthetic,2,0.68564185,0.057065,40,0.5
-C15,Calcite,Synthetic,2,0.60593922,0.03027,40,0.5
-C24,Calcite,Synthetic,2,0.74507878,0.00067,5,0.5
-C45,Calcite,Synthetic,2,0.63321644,0.060515,40,0.5
-C44,Calcite,Synthetic,1,0.68339523,0.0245,40,0.5
-C12,Calcite,Synthetic,3,0.61704809,0.01391157,40,0.5
-C9,Calcite,Synthetic,1,0.61123126,0.0245,40,0.5
-140516_2_UWcp14_50C_1,Calcite,Synthetic,6,0.64832294,0.01408721,47,0.36
-140522_2_UWcp14_80C_1,Calcite,Synthetic,6,0.56287439,0.00500045,77,0.36
-140522_3_UWcp14_21C_1,Calcite,Synthetic,6,0.70026512,0.00831805,22,0.22
-140527_4_UWcp14_50C_2,Calcite,Synthetic,4,0.62553629,0.0113928,51,0.36
-140603_8_UWcp14_50C_CA_3,unkn,Synthetic,3,0.61722681,0.02175019,56,0.63
-140606_1_UWcp14_70C_CA_1,Aragonite,Synthetic,6,0.58825919,0.01206646,74,0.95
-140625_1_UWcp14_24C_CA_1,Calcite,Synthetic,3,0.68762329,0.00831628,24,0.76
-140721_7_UWcp14_80C_2,Calcite,Synthetic,3,0.56576189,0.01128915,78,1.28
-140723_7_UWcp14_40C_1,Calcite,Synthetic,3,0.63208676,0.01195501,43,1.46
-140725_1_UWcp14_70C_2,Aragonite,Synthetic,3,0.61445632,0.01151955,71,0.45
-140727_1_UWcp14_50C_3,Calcite,Synthetic,3,0.64905931,0.01791445,49,0.12
-140802_1_UWcp14_70C_4,Calcite,Synthetic,4,0.58633226,0.00636331,72,0.43
-140802_3_UWcp14_20C_4,unkn,Synthetic,4,0.7028901,0.01978196,23,0.33
-140804_3_UWcp14_20C_9,Calcite,Synthetic,7,0.69344257,0.00849479,23,0.33
-140804_5_UWcp14_20C_CA_5,unkn,Synthetic,2,0.71774789,0.00131,23,0.33
-140805_12_UWcp14_70C_CA_5,Calcite,Synthetic,3,0.57168578,0.00768004,70,1
-140805_14_UWcp14_50C_5,Calcite,Synthetic,6,0.63014945,0.00478966,48,0.77
-140806_12_UWcp14_50C_4,unkn,Synthetic,3,0.64964859,0.01486071,47,1.32
-140807_11_UWcp14_20C_10,Calcite,Synthetic,3,0.69223687,0.00420661,24,0.43
-140813_1_UWcp14_60C_1,Aragonite,Synthetic,3,0.59076864,0.01521071,61,0.86
-140813_6_UWcp14_20C_CA_11,Calcite,Synthetic,3,0.72065015,0.009186,23,0.34
-140814_1_UWcp14_60C_2,Calcite,Synthetic,3,0.62195491,0.01476483,66,2.31
-140814_4_UWcp14_35C_1,unkn,Synthetic,3,0.68523748,0.0065354,35,0.71
-140820_1_UWcp14_70C_CA_4,Calcite,Synthetic,5,0.57344306,0.00694103,71,1
-140820_5_UWcp14_50C_7,Calcite,Synthetic,3,0.6222117,0.00648497,54,1.98
-140820_9_UWcp14_50C_8,unkn,Synthetic,3,0.63822757,0.01454905,46,0.33
-141013_2_UWcp14_80C_3,Aragonite,Synthetic,3,0.54854462,0.01468831,80,0.64
-141014_2_UWcp14_70C_DS2,Aragonite,Synthetic,8,0.58245398,0.01218408,72,0.38
-141014_3_UWcp14_80C_DS,Aragonite,Synthetic,3,0.54378939,0.01845996,86,0.04
-141117_3_50C_CA_10,Calcite,Synthetic,3,0.62340048,0.01320287,50,0.74
-141121_6_UWcp14_50C_CA_9,Calcite,Synthetic,3,0.63262625,0.00658058,49,0.53
-141121_8_UWcp14_50C_DS2,Calcite,Synthetic,3,0.61667318,0.01091683,51,0.3
-141209_5_UWcp14_4C_2,Calcite,Synthetic,6,0.76209647,0.02262465,6,0.05
-141209_8_UWcp14_8C_2,Calcite,Synthetic,3,0.75735071,0.02071418,9,0.12
-141210_3_UWcp14_20C_DS,Calcite,Synthetic,3,0.71839631,0.00928199,26,0.73
-141210_5_UWcp14_50C_DS,Calcite,Synthetic,3,0.61745539,0.00518955,55,0.32
-141212_5_UWcp14_8C_3,Calcite,Synthetic,3,0.7459505,0.01405223,9,0.12
-141218_4_UWcp14_4C_1,Calcite,Synthetic,5,0.77112939,0.01515866,6,0.05
-141218_6_UWcp14_3C_2,unkn,Synthetic,2,0.76438778,0.005775,9,1.67
-150122_2_4C_4,Calcite,Synthetic,3,0.73309271,0.00996658,6,0.05
-150122_5_20C_CA_13,Calcite,Synthetic,5,0.70774905,0.00544819,24,1.03
-150122_7_4C_3,Calcite,Synthetic,3,0.74572594,0.00201866,6,0.05
-150205_8_8C_CA_4,Calcite,Synthetic,2,0.73812304,0.006245,9,0.12
-150212_6_8C_1,Calcite,Synthetic,3,0.76224053,0.00729719,9,0.12
-150212_7_20C_G_14,Calcite,Synthetic,2,0.70034213,0.005655,21,0.49
-150309_2_4C_5,Calcite,Synthetic,3,0.74987513,0.01670016,6,0.05
-150309_7_8C_CA_5,Calcite,Synthetic,3,0.75614918,0.00856297,13,0.12
-150410_3_20C_Z_15,Calcite,Synthetic,4,0.74158066,0.00672045,20,1.45
-150410_6_20C_CA_16,Calcite,Synthetic,4,0.74780571,0.00916003,23,0.42
-150422_7_4C_6,Calcite,Synthetic,2,0.77814308,0.00432,6,0.05
-150601_4_20C_Z_2,Calcite,Synthetic,3,0.71983917,0.0146582,22,0.17
-150601_8_8C_6,Calcite,Synthetic,2,0.76901386,0.001725,9,0.15
-150618_4_50C_Z_1,Aragonite,Synthetic,2,0.62846244,0.01445,50,0.83
-150618_6_30C_Z_1,Aragonite,Synthetic,2,0.64317241,0.015925,36,0.49
-150618_7_4C_Z_3,Calcite,Synthetic,3,0.76290594,0.00998225,4,0.33
-150715_11_50C_Z_2,Aragonite,Synthetic,2,0.63483668,0.01394,50,1
-G. bulloides,Calcite,Natural,16,0.706,0.006,13.5,0.2
-G. truncat.,Calcite,Natural,15,0.713,0.008,11.6,0.8
-G. inflata,Calcite,Natural,15,0.71,0.008,12.3,1
-O. universa,Calcite,Natural,15,0.707,0.008,13.1,0.8
-G. bulloides,Calcite,Natural,30,0.714,0.006,11.6,0.8
-G. truncat.,Calcite,Natural,15,0.713,0.008,11.1,0.9
-O. universa,Calcite,Natural,15,0.704,0.005,12.1,0.5
-G. hirsuta,Calcite,Natural,19,0.723,0.007,9.6,1.1
-N. dutertrei,Calcite,Natural,20,0.679,0.008,23.3,0.7
-G. bulloides,Calcite,Natural,18,0.713,0.006,9,0.2
-G. inflata,Calcite,Natural,18,0.719,0.007,8.7,0.4
-N. pachyderma,Calcite,Natural,20,0.755,0.008,0.4,0.3
-N. pachyderma,Calcite,Natural,28,0.756,0.006,0.8,0.5
-N. pachyderma,Calcite,Natural,21,0.75,0.006,4.3,0.3
-G. ruber w. s.l.,Calcite,Natural,18,0.715,0.008,17,1.1
-G. bulloides,Calcite,Natural,15,0.708,0.006,13,1.1
-G. truncat.,Calcite,Natural,16,0.723,0.008,11.8,1.1
-G. inflata,Calcite,Natural,16,0.721,0.007,11.3,1
-T. trilobus,Calcite,Natural,16,0.669,0.005,26,0.8
-G. ruber w. s.s.,Calcite,Natural,20,0.653,0.006,27.3,0.2
-G. ruber w. s.l.,Calcite,Natural,18,0.682,0.006,27.3,0.2
-G. ruber pink,Calcite,Natural,18,0.678,0.008,27.3,0.2
-T. trilobus,Calcite,Natural,17,0.665,0.009,27,0.4
-P. obliquiloculata,Calcite,Natural,16,0.664,0.005,24.2,0.8
-G. conglobatus,Calcite,Natural,16,0.67,0.008,25.5,0.7
-G. bulloides,Calcite,Natural,30,0.729,0.005,7.7,0.9
-G. truncat.,Calcite,Natural,16,0.731,0.007,7.3,0.9
-G. inflata,Calcite,Natural,20,0.729,0.008,8.1,1
-G. ruber w. s.s.,Calcite,Natural,17,0.684,0.007,25.4,0.9
-T. trilobus,Calcite,Natural,22,0.683,0.006,24.6,0.9
-T. sacculifer,Calcite,Natural,15,0.676,0.005,24.5,0.9
-P. obliquiloculata,Calcite,Natural,21,0.678,0.006,19.1,1.1
-O. universa,Calcite,Natural,16,0.672,0.007,24,0.9
-G. conglobatus,Calcite,Natural,20,0.69,0.007,23.9,0.9
-G. tumida,Calcite,Natural,16,0.688,0.006,17.3,1.1
-G. ruber w. s.s.,Calcite,Natural,19,0.686,0.008,24.6,1
-T. trilobus,Calcite,Natural,23,0.671,0.005,23.5,1
-T. sacculifer,Calcite,Natural,25,0.675,0.006,23.7,1
-N. dutertrei,Calcite,Natural,20,0.678,0.005,19.7,0.8
-P. obliquiloculata,Calcite,Natural,21,0.68,0.005,20.4,0.8
-O. universa,Calcite,Natural,19,0.679,0.006,22.8,1
-G. menardii,Calcite,Natural,20,0.702,0.006,15.6,0.9
-G. tumida,Calcite,Natural,20,0.7,0.005,14.2,0.9
+Sample.Name,Mineralogy,Material,N,D47,D47error,Temperature,Temp_Error
+LV 15 CM,Dolomite,Natural,16,0.637,0.027564681,25.5,5.7
+LV 71 CM,Dolomite,Natural,16,0.619,0.024149507,25.5,5.7
+Qatar 1,Dolomite,Natural,25,0.611,0.019189809,32,6
+Leeds 23,Dolomite,Synthetic,16,0.508,0.023851575,70,2
+Leeds 1,Dolomite,Synthetic,12,0.497,0.019858655,70,2
+Leeds 6,Dolomite,Synthetic,11,0.523,0.027655349,70,2
+Leeds 12,Dolomite,Synthetic,8,0.504,0.052117846,70,2
+Leeds 20,Dolomite,Synthetic,9,0.515,0.058525573,70,2
+Leeds 81,Dolomite,Synthetic,18,0.515,0.030656253,70,2
+Leeds 82,Dolomite,Synthetic,21,0.499,0.022650078,70,2
+Leeds 83,Dolomite,Synthetic,41,0.513,0.020942695,70,2
+Leeds 21,Dolomite,Synthetic,6,0.426,0.04136747,140,2
+Leeds 14,Dolomite,Synthetic,15,0.398,0.022191492,140,2
+Leeds 22,Dolomite,Synthetic,9,0.401,0.023687492,140,2
+Leeds 15,Dolomite,Synthetic,21,0.409,0.032836559,140,2
+Leeds 34,Dolomite,Synthetic,6,0.322,0.095162496,220,2
+Leeds 41,Dolomite,Synthetic,6,0.348,0.042378969,220,2
+Leeds 84,Dolomite,Synthetic,12,0.311,0.032276937,220,2
+Leeds 85,Dolomite,Synthetic,16,0.316,0.049809765,220,2
+Leeds 86,Dolomite,Synthetic,11,0.32,0.030052038,220,2
+Ab-1,Aragonite,Natural,3,0.7679185,0.011887249,-1,2
+Ab-2,Aragonite,Natural,3,0.76607542,0.007539634,-1,2
+Ab-3,Aragonite,Natural,3,0.74889223,0.023342797,-1,2
+Ac-1_B-12,Aragonite,Natural,6,0.77348394,0.003166976,-1,2
+Ac-1_B-14,Aragonite,Natural,3,0.77808716,0.006075281,2,2
+Ac-2,Aragonite,Natural,3,0.74983746,0.012918342,2,2
+Brach-m1,Calcite,Natural,3,0.75385961,0.002867374,5.5,1
+Brach-m2,Calcite,Natural,3,0.76021853,0.017078246,5.5,1
+Cc-1_B-12,Aragonite,Natural,3,0.75197465,0.012153089,-1,2
+Cc-1_B-14,Aragonite,Natural,3,0.75198252,0.014710819,2,2
+Cc-2_B-12,Aragonite,Natural,3,0.82914071,0.054583382,-1,2
+Cc-2_B-14,Aragonite,Natural,3,0.76010417,0.01500697,2,2
+Cc-3,Aragonite,Natural,3,0.76369902,0.010466888,2,2
+Ci-1,Calcite,Natural,3,0.7705641,0.013433938,-1,2
+Ci-2,Calcite,Natural,3,0.74439561,0.005527597,-1,2
+Ci-3,Calcite,Natural,5,0.76759973,0.009851292,-1,2
+FGS-1-1,Aragonite,Natural,3,0.6601453,0.007027209,27.5,2.2
+FGS-1-2,Aragonite,Natural,3,0.68849425,0.005749296,23,1.5
+FGS-1-3,Aragonite,Natural,3,0.69553093,0.00629431,19.8,0.8
+GB3-5,Calcite,Natural,3,0.76819722,0.012549577,-1,1
+GB4-3,Calcite,Natural,3,0.75257638,0.036943356,-1,1
+Ha-1,Aragonite,Natural,3,0.75766689,0.008837639,-1,2
+Ha-2,Aragonite,Natural,3,0.77151392,0.005892604,-1,2
+Ha-3,Aragonite,Natural,6,0.7824778,0.010404682,-1,2
+HMB-3,Calcite,Natural,2,0.70752567,0.042614509,10.5,1
+HPL-1,Calcite,Natural,3,0.73284903,0.00869315,14.4,0.5
+HPL-2,Calcite,Natural,2,0.68483836,0.004301857,27.3,0.2
+HPL-3,Calcite,Natural,3,0.70045923,0.007379109,23.7,0.1
+Mt-1,Aragonite,Natural,3,0.75858537,0.007958478,-1,2
+Mt-2,Aragonite,Natural,4,0.74321442,0.013637798,-1,2
+Mt-3,Aragonite,Natural,3,0.76236666,0.004702543,-1,2
+Mya-16,Aragonite,Natural,3,0.71564977,0.004787881,15.9,1.7
+Mya-3.5,Aragonite,Natural,2,0.74471771,0.026304498,3.4,0.8
+Mya-8.5,Aragonite,Natural,3,0.7130446,0.014656267,8.6,2.2
+Mytilus-12,Calcite,Natural,2,0.76552681,0.022018555,12,0.5
+Mytilus-15,Calcite,Natural,4,0.73863977,0.00576671,15,0.5
+Mytilus-4,Calcite,Natural,5,0.77438406,0.008923865,4,0.5
+Mytilus-8,Calcite,Natural,4,0.7553619,0.008761102,8,0.5
+P105,Aragonite,Natural,3,0.70680078,0.007049183,20,1
+P110,Aragonite,Natural,3,0.69028722,0.012974064,20,1
+P132,Aragonite,Natural,3,0.72157967,0.00757937,24.5,0.5
+P52,Aragonite,Natural,3,0.70839121,0.001066963,24.5,0.5
+P8-30,Aragonite,Natural,3,0.71596748,0.00417507,24.5,0.5
+P95,Aragonite,Natural,3,0.70493854,0.008131407,20,1
+Pp-1,Aragonite,Natural,3,0.68667265,0.00114192,29.5,3
+Pp-2,Aragonite,Natural,3,0.69771981,0.016451948,29.5,3
+Pp-3,Aragonite,Natural,6,0.69256708,0.009684127,29.5,3
+RBJ-1-3,Calcite,Natural,3,0.68525063,0.006310665,27.5,1
+WG061278,Aragonite,Natural,3,0.72904714,0.014437064,4.7,2
+Dwyvillei,Calcite,Natural,27,0.7382461,0.003812061,10,1
+Ghirsuta,Calcite,Natural,2,0.7387534,0.007114538,9,1
+Spondylussp,Calcite,Natural,10,0.68116586,0.007267828,29,1
+Coldseepcc,Calcite,Natural,6,0.7510117,0.00704337,9,0.1
+Ostricheggshell,Calcite,Natural,15,0.66895649,0.00646938,38,0.6
+Gruber,Calcite,Natural,2,0.68684498,0.017393432,26,1
+Ginflata,Calcite,Natural,2,0.71983335,0.00456726,14,1
+GA1,Calcite,Natural,3,0.702,0.005967624,28.4,0.15
+GA2,Calcite,Natural,3,0.696,0.005993291,27.8,0.15
+GLT,Calcite,Natural,5,0.705,0.013100809,27.8,0.15
+GS,Calcite,Natural,3,0.688,0.013261678,27.8,0.15
+GT,Calcite,Natural,3,0.702,0.014322297,27.8,0.15
+BS,Calcite,Natural,3,0.706,0.005950694,27.8,0.15
+BT,Calcite,Natural,3,0.72,0.004714045,27.8,0.15
+MA1,Calcite,Natural,3,0.764,0.006864431,13.4,0.3
+MA2,Calcite,Natural,3,0.75,0.004618802,13.4,0.3
+MB,Calcite,Natural,3,0.736,0.005828155,13.4,0.3
+ML,Calcite,Natural,3,0.746,0.011577921,13.4,0.3
+MP,Calcite,Natural,3,0.756,0.013801311,13.4,0.3
+MS,Calcite,Natural,3,0.736,0.006993786,13.4,0.3
+YA1,Calcite,Natural,3,0.701,0.014332509,18.5,0.54
+YA2,Calcite,Natural,4,0.687,0.018097263,18.5,0.54
+YLP,Calcite,Natural,3,0.722,0.017653168,18.5,0.54
+YLR,Calcite,Natural,3,0.716,0.007090792,18.5,0.54
+YLT,Calcite,Natural,3,0.711,0.013045415,18.5,0.54
+YS,Calcite,Natural,3,0.717,0.011809742,18.5,0.54
+YT,Calcite,Natural,3,0.725,0.005872202,18.5,0.54
+SDA1,Calcite,Natural,3,0.765,0.00571662,8.5,0.2
+SDA2,Calcite,Natural,3,0.768,0.009128709,8.5,0.2
+SDS,Calcite,Natural,3,0.753,0.013828777,8.5,0.2
+SDLT,Calcite,Natural,3,0.741,0.005808459,8.5,0.2
+SDT,Calcite,Natural,4,0.758,0.01148591,8.5,0.2
+70CCalcite3-30-2011,Aragonite,Synthetic,4,0.57840203,0.016386811,70,1
+25CCalcite1-12-2011,Calcite,Synthetic,4,0.67553539,0.015921179,25,1
+5CAragonite,Aragonite,Synthetic,4,0.7282001,0.016288895,5,1
+25CAragonite10-17-2013,Aragonite,Synthetic,4,0.67476363,0.011450879,25,1
+70CCalcite10-10-2013,Calcite,Synthetic,4,0.58475944,0.007529623,70,1
+5CCalcite1-12-2012,Calcite,Synthetic,4,0.7244196,0.00348992,5,1
+50CAragonite3-14-2014,Aragonite,Synthetic,5,0.60525142,0.008304517,50,1
+50CCalcite3-24-2014,Calcite,Synthetic,4,0.59123331,0.010392657,50,1
+AC30dolo,Dolomite,Natural,4,0.67560951,0.023625986,27,5
+250-I-7-d-1,Dolomite,Synthetic,4,0.39938998,0.006524455,250,2
+O-T-5-d-1,Dolomite,Synthetic,6,0.3918709,0.009945863,218,2
+200-p-30-d-1,Dolomite,Synthetic,4,0.42709399,0.003742416,200,2
+IODP-d-2,Dolomite,Natural,3,0.69536878,0.005480618,21,11
+Barb1pt10-1,Dolomite,Natural,4,0.70670783,0.005881194,28,5
+MIZd-1,Dolomite,Natural,3,0.56699276,0.011159881,70,10
+235-O-12-1,Dolomite,Synthetic,5,0.39261708,0.025700535,235,2
+O-H-2-1,Dolomite,Synthetic,4,0.42023927,0.021835343,218,2
+Mg-1,Mixed,Synthetic,2,0.5583657,0.004703985,79.9,0.1
+DPT12-10-salt,Mixed,Natural,2,0.67918039,0.007474603,11.3,0.1
+DTP10-12-crust,Mixed,Natural,2,0.75726259,0.005590615,11.3,0.1
+209,Mixed,Synthetic,2,0.623614,0.010845996,60,0.1
+Mg-3,Mixed,Synthetic,3,0.55914658,0.001994875,79.9,0.1
+CIS006-Epacifica,Aragonite,Natural,7,0.72171055,0.014042003,6,1
+CIS020-Pp,Aragonite,Natural,7,0.67063397,0.004598885,25,3
+CIS004-PDalli,Calcite,Natural,5,0.73001319,0.005170117,7,1
+CIS022-Calbidus,Aragonite,Natural,2,0.70703157,0.013486326,18.8,5.5
+CIS023-Pcanal,Calcite,Natural,2,0.70742944,0.000344791,14.5,3
+CIS025-Marenaria,Aragonite,Natural,2,0.72073041,0.013640244,11,2.7
+Ehux15,Calcite,Natural,3,0.72168674,0.003414652,15,0.2
+Ehux25,Calcite,Natural,3,0.70065252,0.005785378,25,0.2
+Ehux20,Calcite,Natural,5,0.71101256,0.004516057,20,0.2
+Ehux7,Calcite,Natural,2,0.74973192,0.003955556,7,0.2
+Cpel20,Calcite,Natural,3,0.72367555,0.004292357,20,0.2
+Cpel10,Calcite,Natural,4,0.74941197,0.005770719,10,0.2
+Clept20,Calcite,Natural,5,0.7187992,0.004595408,20,0.2
+Ehux10,Calcite,Natural,3,0.74201907,0.011751054,10,0.2
+Cpel15,Calcite,Natural,5,0.73628034,0.006659719,15,0.2
+Clept15,Calcite,Natural,3,0.73465487,0.010302629,15,0.2
+Clept10,Calcite,Natural,3,0.74568916,0.004870167,10,0.2
+T86-08B,Calcite,Natural,10,0.71418631,0.009841871,15,5
+GCP-1,Calcite,Natural,21,0.65557168,0.010305286,24.5,1
+WIND_10B,Calcite,Natural,9,0.70180493,0.007562388,23,5
+MCP-1,Calcite,Natural,22,0.68390228,0.008510082,18.6,2
+SHAK4-3MA,Calcite,Natural,7,0.68095439,0.010842904,18.3,5
+T90-04B,Calcite,Natural,7,0.72052135,0.009417434,12,5
+SHAK7-6ME,Calcite,Natural,7,0.6884493,0.008427806,16.5,5
+T86-10B,Calcite,Natural,11,0.67637824,0.018476131,18.3,5
+T90-08B,Calcite,Natural,7,0.6948622,0.012648912,11,5
+BSP-1,Calcite,Natural,21,0.71046117,0.007247541,8.9,0.5
+T90-03B,Calcite,Natural,8,0.71186812,0.02200762,11.3,5
+T88-07B,Calcite,Natural,8,0.68825503,0.006640856,12,5
+DSP-1,Calcite,Natural,11,0.75736989,0.010419881,3.2,0.8
+OWB-1,Calcite,Natural,21,0.73084784,0.009801808,9.1,1
+BOFS30K,Calcite,Natural,11,0.69916492,0.014780877,16.3,5
+BOFS30K,Calcite,Natural,7,0.68176339,0.016322598,20,5
+BOFS30K,Calcite,Natural,7,0.69306121,0.017165188,16.3,5
+MD77191,Calcite,Natural,9,0.69654029,0.009114309,17,5
+IODP1436,Calcite,Natural,10,0.68850213,0.010899823,18.6,5
+T90-01B,Calcite,Natural,9,0.69567759,0.008836386,11.7,5
+T88-07B,Calcite,Natural,9,0.70432334,0.005487347,12,5
+MD012414,Calcite,Natural,7,0.73886698,0.013308981,2.5,5
+LOMROG_2009_PC-09,Calcite,Natural,12,0.75178473,0.00908723,-1.2,5
+NAICA1,Aragonite,Natural,17,0.61468215,0.010805408,47,1.5
+MD00-2360_G_-ruber,Calcite,Natural,7,0.67372751,0.006516887,24.7,0.5
+SU90-03_G_-bulloides,Calcite,Natural,6,0.72945247,0.004708951,12.5,0.6
+MD95-2014_G_-bulloides,Calcite,Natural,8,0.73494282,0.005279976,8.1,0.5
+MD08-3182_N_-pachyderma-(s_),Calcite,Natural,4,0.73964762,0.003802843,8.6,0.7
+MD08-3179_G_-inflata_315-355,Calcite,Natural,4,0.72680079,0.010414907,13.2,0.7
+MD02-2577_G_-menardi-menardi,Calcite,Natural,8,0.69524061,0.006506991,18.3,0.5
+MOCOSED_Cibicides-wuellerstorfi,Calcite,Natural,16,0.77522869,0.004215336,-1.6,0.4
+MD08-3182_G_-bulloides,Calcite,Natural,15,0.73986775,0.003813194,8.3,0.4
+MOCOSED_N_-pachyderma-(s_),Calcite,Natural,8,0.7550353,0.005222356,2.9,0.5
+MD08-3179_G_-inflata_355-400,Calcite,Natural,4,0.71485094,0.005051387,14.5,0.7
+MD12-3426_Orbulina-universa,Calcite,Natural,4,0.68577788,0.006803796,23.3,0.7
+MD02-2577_Orbulina-universa,Calcite,Natural,4,0.70035396,0.010815137,20.8,0.7
+MD08-3179_G_-truncatulinoides-(s_),Calcite,Natural,12,0.72159207,0.004750315,14.8,0.4
+MD12-3426_G_-menardi-menardi,Calcite,Natural,7,0.70292637,0.010728858,17.1,0.5
+MD08-3179_G_-ruber,Calcite,Natural,8,0.70413794,0.007596767,20.3,0.5
+MD02-2577_G_-ruber,Calcite,Natural,8,0.68041884,0.006085067,25.1,0.5
+MD03-2680_N_-pachyderma-(d_),Calcite,Natural,4,0.73596543,0.007962321,8.9,0.7
+2FPA1_Uvigerina-mediterranea,Calcite,Natural,31,0.73291615,0.002250763,9.4,0.3
+MD00-2360_G_-menardi-menardi,Calcite,Natural,20,0.6927372,0.003738554,18.4,0.3
+MD08-3179_G_-inflata_400-450,Calcite,Natural,4,0.70713526,0.003961217,15,0.7
+MD00-2360_Orbulina-universa,Calcite,Natural,8,0.69055534,0.003901015,23.4,0.5
+MD08-3179_G_-truncatulinoides-(d_),Calcite,Natural,16,0.71435058,0.004607707,15,0.4
+MD04-2720_N_-pachyderma-(d_),Calcite,Natural,4,0.76833395,0.002875706,-0.4,0.7
+MD12-3401_G_-bulloides,Calcite,Natural,8,0.74730348,0.005219273,5.6,0.5
+MD08-3179_G_-inflata_250-315,Calcite,Natural,4,0.70881989,0.009316481,15.5,0.7
+MD08-3179_G_-inflata_450-500,Calcite,Natural,3,0.70990503,0.007932884,14.3,0.8
+MD08-3179_G_-inflata_200-250,Calcite,Natural,4,0.7075355,0.008756582,16.7,0.7
+C20,Calcite,Synthetic,3,0.72196241,0.007343862,5,0.5
+C26,Calcite,Synthetic,4,0.73773522,0.001997031,5,0.5
+C18,Calcite,Synthetic,4,0.71876003,0.02230287,5,0.5
+C27,Calcite,Synthetic,6,0.73500998,0.009666449,5,0.5
+C50,Calcite,Synthetic,5,0.74515306,0.011066405,5,0.5
+C48,Calcite,Synthetic,4,0.72915094,0.003716123,5,0.5
+C19,Calcite,Synthetic,4,0.70995349,0.002767321,5,0.5
+C30,Calcite,Synthetic,5,0.68102826,0.029381443,25,0.5
+C22,Calcite,Synthetic,2,0.77349255,0.004917655,5,0.5
+C54,Calcite,Synthetic,3,0.66080397,0.017811855,25,0.5
+C57,Calcite,Synthetic,2,0.6487373,0.005810472,25,0.5
+C58,Calcite,Synthetic,3,0.69059424,0.009342134,25,0.5
+C29,Calcite,Synthetic,3,0.66078765,0.007749981,25,0.5
+C32,Calcite,Synthetic,2,0.68554797,0.009009899,25,0.5
+C6,Calcite,Synthetic,2,0.6235633,0.059924506,40,0.5
+C34,Calcite,Synthetic,3,0.65392947,0.007656342,25,0.5
+C7,Calcite,Synthetic,2,0.68564185,0.068916175,40,0.5
+C15,Calcite,Synthetic,2,0.60593922,0.038886413,40,0.5
+C24,Calcite,Synthetic,2,0.74507878,0.0007762,5,0.5
+C45,Calcite,Synthetic,2,0.63321644,0.076047851,40,0.5
+C44,Calcite,Synthetic,1,0.68339523,0.029636718,40,0.5
+C12,Calcite,Synthetic,3,0.61704809,0.017709922,40,0.5
+C9,Calcite,Synthetic,1,0.61123126,0.031337425,40,0.5
+140516_2_UWcp14_50C_1,Calcite,Synthetic,6,0.64832294,0.017495618,47,0.36
+140522_2_UWcp14_80C_1,Calcite,Synthetic,6,0.56287439,0.006665049,77,0.36
+140522_3_UWcp14_21C_1,Calcite,Synthetic,6,0.70026512,0.009940089,22,0.22
+140527_4_UWcp14_50C_2,Calcite,Synthetic,4,0.62553629,0.0144047,51,0.36
+140603_8_UWcp14_50C_CA_3,unkn,Synthetic,3,0.61722681,0.027684754,56,0.63
+140606_1_UWcp14_70C_CA_1,Aragonite,Synthetic,6,0.58825919,0.015732419,74,0.95
+140625_1_UWcp14_24C_CA_1,Calcite,Synthetic,3,0.68762329,0.010028912,24,0.76
+140721_7_UWcp14_80C_2,Calcite,Synthetic,3,0.56576189,0.015008746,78,1.28
+140723_7_UWcp14_40C_1,Calcite,Synthetic,3,0.63208676,0.015037014,43,1.46
+140725_1_UWcp14_70C_2,Aragonite,Synthetic,3,0.61445632,0.014695691,71,0.45
+140727_1_UWcp14_50C_3,Calcite,Synthetic,3,0.64905931,0.022236237,49,0.12
+140802_1_UWcp14_70C_4,Calcite,Synthetic,4,0.58633226,0.008310194,72,0.43
+140802_3_UWcp14_20C_4,unkn,Synthetic,4,0.7028901,0.023595306,23,0.33
+140804_3_UWcp14_20C_9,Calcite,Synthetic,7,0.69344257,0.010201109,23,0.33
+140804_5_UWcp14_20C_CA_5,unkn,Synthetic,2,0.71774789,0.00154627,23,0.33
+140805_12_UWcp14_70C_CA_5,Calcite,Synthetic,3,0.57168578,0.010157452,70,1
+140805_14_UWcp14_50C_5,Calcite,Synthetic,6,0.63014945,0.006033689,48,0.77
+140806_12_UWcp14_50C_4,unkn,Synthetic,3,0.64964859,0.018437427,47,1.32
+140807_11_UWcp14_20C_10,Calcite,Synthetic,3,0.69223687,0.005055975,24,0.43
+140813_1_UWcp14_60C_1,Aragonite,Synthetic,3,0.59076864,0.019789771,61,0.86
+140813_6_UWcp14_20C_CA_11,Calcite,Synthetic,3,0.72065015,0.01082092,23,0.34
+140814_1_UWcp14_60C_2,Calcite,Synthetic,3,0.62195491,0.01872186,66,2.31
+140814_4_UWcp14_35C_1,unkn,Synthetic,3,0.68523748,0.007894991,35,0.71
+140820_1_UWcp14_70C_CA_4,Calcite,Synthetic,5,0.57344306,0.009165977,71,1
+140820_5_UWcp14_50C_7,Calcite,Synthetic,3,0.6222117,0.008221269,54,1.98
+140820_9_UWcp14_50C_8,unkn,Synthetic,3,0.63822757,0.018211548,46,0.33
+141013_2_UWcp14_80C_3,Aragonite,Synthetic,3,0.54854462,0.01983197,80,0.64
+141014_2_UWcp14_70C_DS2,Aragonite,Synthetic,8,0.58245398,0.015964743,72,0.38
+141014_3_UWcp14_80C_DS,Aragonite,Synthetic,3,0.54378939,0.025033144,86,0.04
+141117_3_50C_CA_10,Calcite,Synthetic,3,0.62340048,0.016721868,50,0.74
+141121_6_UWcp14_50C_CA_9,Calcite,Synthetic,3,0.63262625,0.008273525,49,0.53
+141121_8_UWcp14_50C_DS2,Calcite,Synthetic,3,0.61667318,0.013901735,51,0.3
+141209_5_UWcp14_4C_2,Calcite,Synthetic,6,0.76209647,0.025916532,6,0.05
+141209_8_UWcp14_8C_2,Calcite,Synthetic,3,0.75735071,0.023802317,9,0.12
+141210_3_UWcp14_20C_DS,Calcite,Synthetic,3,0.71839631,0.010951133,26,0.73
+141210_5_UWcp14_50C_DS,Calcite,Synthetic,3,0.61745539,0.006604302,55,0.32
+141212_5_UWcp14_8C_3,Calcite,Synthetic,3,0.7459505,0.016270101,9,0.12
+141218_4_UWcp14_4C_1,Calcite,Synthetic,5,0.77112939,0.017262241,6,0.05
+141218_6_UWcp14_3C_2,unkn,Synthetic,2,0.76438778,0.006605339,9,1.67
+150122_2_4C_4,Calcite,Synthetic,3,0.73309271,0.011640368,6,0.05
+150122_5_20C_CA_13,Calcite,Synthetic,5,0.70774905,0.006476086,24,1.03
+150122_7_4C_3,Calcite,Synthetic,3,0.74572594,0.002337618,6,0.05
+150205_8_8C_CA_4,Calcite,Synthetic,2,0.73812304,0.007268889,9,0.12
+150212_6_8C_1,Calcite,Synthetic,3,0.76224053,0.00835814,9,0.12
+150212_7_20C_G_14,Calcite,Synthetic,2,0.70034213,0.006757367,21,0.49
+150309_2_4C_5,Calcite,Synthetic,3,0.74987513,0.019285289,6,0.05
+150309_7_8C_CA_5,Calcite,Synthetic,3,0.75614918,0.00984738,13,0.12
+150410_3_20C_Z_15,Calcite,Synthetic,4,0.74158066,0.007804034,20,1.45
+150410_6_20C_CA_16,Calcite,Synthetic,4,0.74780571,0.010592598,23,0.42
+150422_7_4C_6,Calcite,Synthetic,2,0.77814308,0.00489727,6,0.05
+150601_4_20C_Z_2,Calcite,Synthetic,3,0.71983917,0.017276784,22,0.17
+150601_8_8C_6,Calcite,Synthetic,2,0.76901386,0.00196708,9,0.15
+150618_4_50C_Z_1,Aragonite,Synthetic,2,0.62846244,0.018227545,50,0.83
+150618_6_30C_Z_1,Aragonite,Synthetic,2,0.64317241,0.019857096,36,0.49
+150618_7_4C_Z_3,Calcite,Synthetic,3,0.76290594,0.011428598,4,0.33
+150715_11_50C_Z_2,Aragonite,Synthetic,2,0.63483668,0.017495718,50,1
+G. bulloides,Calcite,Natural,16,0.706,0.007140833,13.5,0.2
+G. truncat.,Calcite,Natural,15,0.713,0.009474258,11.6,0.8
+G. inflata,Calcite,Natural,15,0.71,0.009494253,12.3,1
+O. universa,Calcite,Natural,15,0.707,0.009514375,13.1,0.8
+G. bulloides,Calcite,Natural,30,0.714,0.007100716,11.6,0.8
+G. truncat.,Calcite,Natural,15,0.713,0.009474258,11.1,0.9
+O. universa,Calcite,Natural,15,0.704,0.005959141,12.1,0.5
+G. hirsuta,Calcite,Natural,19,0.723,0.008232446,9.6,1.1
+N. dutertrei,Calcite,Natural,20,0.679,0.009708566,23.3,0.7
+G. bulloides,Calcite,Natural,18,0.713,0.007105694,9,0.2
+G. inflata,Calcite,Natural,18,0.719,0.008255314,8.7,0.4
+N. pachyderma,Calcite,Natural,20,0.755,0.009206965,0.4,0.3
+N. pachyderma,Calcite,Natural,28,0.756,0.006900656,0.8,0.5
+N. pachyderma,Calcite,Natural,21,0.75,0.006928203,4.3,0.3
+G. ruber w. s.l.,Calcite,Natural,18,0.715,0.009460998,17,1.1
+G. bulloides,Calcite,Natural,15,0.708,0.00713074,13,1.1
+G. truncat.,Calcite,Natural,16,0.723,0.00940851,11.8,1.1
+G. inflata,Calcite,Natural,16,0.721,0.008243856,11.3,1
+T. trilobus,Calcite,Natural,16,0.669,0.006113036,26,0.8
+G. ruber w. s.s.,Calcite,Natural,20,0.653,0.007424969,27.3,0.2
+G. ruber w. s.l.,Calcite,Natural,18,0.682,0.007265392,27.3,0.2
+G. ruber pink,Calcite,Natural,18,0.678,0.009715723,27.3,0.2
+T. trilobus,Calcite,Natural,17,0.665,0.011036508,27,0.4
+P. obliquiloculata,Calcite,Natural,16,0.664,0.006136009,24.2,0.8
+G. conglobatus,Calcite,Natural,16,0.67,0.009773556,25.5,0.7
+G. bulloides,Calcite,Natural,30,0.729,0.00585607,7.7,0.9
+G. truncat.,Calcite,Natural,16,0.731,0.008187275,7.3,0.9
+G. inflata,Calcite,Natural,20,0.729,0.009369712,8.1,1
+G. ruber w. s.s.,Calcite,Natural,17,0.684,0.00846389,25.4,0.9
+T. trilobus,Calcite,Natural,22,0.683,0.007260072,24.6,0.9
+T. sacculifer,Calcite,Natural,15,0.676,0.006081303,24.5,0.9
+P. obliquiloculata,Calcite,Natural,21,0.678,0.007286793,19.1,1.1
+O. universa,Calcite,Natural,16,0.672,0.008539126,24,0.9
+G. conglobatus,Calcite,Natural,20,0.69,0.00842701,23.9,0.9
+G. tumida,Calcite,Natural,16,0.688,0.007233642,17.3,1.1
+G. ruber w. s.s.,Calcite,Natural,19,0.686,0.009658906,24.6,1
+T. trilobus,Calcite,Natural,23,0.671,0.006103919,23.5,1
+T. sacculifer,Calcite,Natural,25,0.675,0.007302967,23.7,1
+N. dutertrei,Calcite,Natural,20,0.678,0.006072327,19.7,0.8
+P. obliquiloculata,Calcite,Natural,21,0.68,0.006063391,20.4,0.8
+O. universa,Calcite,Natural,19,0.679,0.007281425,22.8,1
+G. menardii,Calcite,Natural,20,0.702,0.007161149,15.6,0.9
+G. tumida,Calcite,Natural,20,0.7,0.005976143,14.2,0.9

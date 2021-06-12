@@ -1,44 +1,47 @@
 
-simulateYork_measured<<-function(data, replicates, samples=10){
+simulateYork_measured<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
-    Reg<-york(cbind.data.frame(dataSub$T2, dataSub$Temp_Error, dataSub$D47, dataSub$D47_SD))
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub$y_SE<-dataSub[,D47error]
+    dataSub$x_SE<-dataSub$Temp_Error
+    Reg<-york(cbind.data.frame(dataSub$T2, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
     cbind.data.frame('intercept'=Reg$a[1],'slope'=Reg$b[1])
   }))
 }
 
 
-simulateLM_measured<<-function(data, replicates, samples=30){
+simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
-    dataSub$y_SE<-dataSub$D47_SD/sqrt(2)
-    Reg<-summary(lm(D47~ T2,  dataSub, weights = 1/y_SE^2))
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub$y_SE<-dataSub[,D47error]
+    dataSub$x_SE<-dataSub$Temp_Error
+    Reg<-summary(lm(D47~ T2,  dataSub, weights = y_SE))
     cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
   }))
 }
 
 
-simulateLM_inverseweights<<-function(data, replicates, samples=30){
+simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     Reg<-summary(lm(D47~ T2,  dataSub))
     cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
   }))
 }
 
 
-simulateDeming<<-function(data, replicates, samples=30){
+simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), samples, replace = T),]
-    dataSub$y_SE<-abs(dataSub$D47_SD/sqrt(20))
-    dataSub$x_SE<-abs(dataSub$Temp_Error/sqrt(20))
-    Reg<-deming(D47 ~ T2, dataSub, xstd= 1/dataSub$x_SE, ystd= dataSub$y_SE)
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub$y_SE<-dataSub[,D47error]
+    dataSub$x_SE<-dataSub$Temp_Error
+    Reg<-deming(D47 ~ T2, dataSub, xstd= dataSub$x_SE, ystd= dataSub$y_SE)
     cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
   }))
 }
 
 
-simulateBLM_measuredMaterial<<-function(data, replicates, samples=30, generations=20000, isMixed=F){
+simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generations=20000, isMixed=F){
   
   data_BR_Measured<-data
   
@@ -46,27 +49,26 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=30, generation
     
     
     if(isMixed == F){
-      dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), samples, replace = T),]
+      dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
       
     }else{
       material1<-data_BR_Measured[data_BR_Measured$Material ==1,]
-      dataSub1<-material1[sample(seq_along(material1[,1]), round(samples/2), replace = T),]
+      dataSub1<-material1[sample(seq_along(material1[,1]), round(if(is.null(samples)){nrow(data)}else{nrow(data)*samples}/2), replace = T),]
       
       material2<-data_BR_Measured[data_BR_Measured$Material ==2,]
-      dataSub2<-material2[sample(seq_along(material2[,1]), round(samples/2), replace = T),]
+      dataSub2<-material2[sample(seq_along(material2[,1]), round(if(is.null(samples)){nrow(data)}else{nrow(data)*samples}/2), replace = T),]
       
       dataSub<-rbind.data.frame(dataSub1,dataSub2)
     }
     
     Reg<-fitClumpedRegressions(calibrationData=dataSub,
-                               hasMaterial = T, n.iter = generations)
+                               hasMaterial = isMixed, n.iter = generations)
     
     
-    if(length(unique(dataSub$Material))==1 ){
+    if(isMixed==F ){
       list(
         cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
-        cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]),
-        cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c(2),1]))
+        cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]))
       
     }else{
       
@@ -74,13 +76,13 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=30, generation
         cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1,2),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c(3,4),1], 
-                         'material'=c(1,2)))
+                         'material'=unique(dataSub$Material )))
       
     }
     
   }
   
-  tot = mclapply(1:replicates, mc.cores = 4, single_rep)
+  tot = lapply(1:replicates, single_rep)
   
   
   if(isMixed == F){

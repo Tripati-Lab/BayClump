@@ -111,7 +111,7 @@ server <- function(input, output, session) {
 #         calData$T2 <- scale(calData$T2)
 #         calData$Temp_Error <- scale(calData$Temp_error)
 #         calData$D47 <- scale(calData$D47)
-#         calData$D47_SD <- scale(calData$D47_SD)
+#         calData$D47error <- scale(calData$D47error)
 #       }
 
        withProgress(message = 'Running selected models, please wait', {
@@ -541,7 +541,7 @@ server <- function(input, output, session) {
                        color = ~Mineralogy,
                        colors = viridis_pal(option = "D", end = 0.9)(minlength),
                        opacity = 0.6,
-                       error_y = ~list(array = ~D47_SD, color = '#000000'),
+                       error_y = ~list(array = ~D47error, color = '#000000'),
                        error_x = ~list(array = ~Temp_Error, color = '#000000'),
                        text = as.character(calibrationData()$Sample.Name),
                        hovertemplate = paste(

@@ -1,14 +1,14 @@
-Sample Name,Mineralogy,Material,N,D47,D47_SD,Temperature,Temp_Error
-Leeds 41,D,Synthetic,6,0.348,0.025,220,2
-Leeds 84,D,Synthetic,12,0.311,0.018,220,2
-Leeds 85,D,Synthetic,16,0.316,0.028,220,2
-Leeds 86,D,Synthetic,11,0.32,0.017,220,2
-Ab-1,A,Natural,3,0.7679185,0.01041691,-1,2
-Ab-2,A,Natural,3,0.76607542,0.00659912,-1,2
-Ab-3,A,Natural,3,0.74889223,0.02020052,-1,2
-Ac-1_B-12,A,Natural,6,0.77348394,0.00278529,-1,2
-Ac-1_B-14,A,Natural,3,0.77808716,0.00535896,2,2
-Ac-2,A,Natural,3,0.74983746,0.0111864,2,2
+Sample Name,Mineralogy,Material,N,D47,D47error,Temperature,Temp_Error
+Leeds 41,D,Synthetic,6,0.348,0.01767767,220,2
+Leeds 84,D,Synthetic,12,0.311,0.012727922,220,2
+Leeds 85,D,Synthetic,16,0.316,0.01979899,220,2
+Leeds 86,D,Synthetic,11,0.32,0.012020815,220,2
+Ab-1,A,Natural,3,0.7679185,0.007365868,-1,2
+Ab-2,A,Natural,3,0.76607542,0.004666283,-1,2
+Ab-3,A,Natural,3,0.74889223,0.014283925,-1,2
+Ac-1_B-12,A,Natural,6,0.77348394,0.001969497,-1,2
+Ac-1_B-14,A,Natural,3,0.77808716,0.003789357,2,2
+Ac-2,A,Natural,3,0.74983746,0.007909979,2,2
 Brach-m1,C,Natural,3,0.75385961,0.0024896,5.5,1
 Brach-m2,C,Natural,3,0.76021853,0.01489061,5.5,1
-Cc-1_B-12,A,Natural,3,0.75197465,0.01053873,-1,2
+Cc-1_B-12,A,Natural,3,0.75197465,0.007452007,-1,2
