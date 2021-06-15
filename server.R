@@ -429,7 +429,7 @@ server <- function(input, output, session) {
     #     checkboxInput("linear", "Linear model", FALSE),
          if(input$simulateBLM_measuredMaterial != FALSE) {
            sink(file = "Bayeslinmodtext.txt", type = "output")
-           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates = replicates, isMixed=F)
+           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=10000, replicates = replicates, isMixed=F)
            sink()
            
            bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$T2), to = max(calData$T2))
@@ -525,7 +525,7 @@ server <- function(input, output, session) {
            
            output$blinnoerr <- renderPrint({
              
-             do.call(rbind.data.frame,apply(bayeslincalcinoerror, 2, function(x){
+             do.call(rbind.data.frame,apply(bayeslincals$BLM_Measured_no_errors, 2, function(x){
                cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
              }))
              
@@ -533,7 +533,7 @@ server <- function(input, output, session) {
            
            output$blinwerr <- renderPrint({
              
-             do.call(rbind.data.frame,apply(bayeslincalciwitherror, 2, function(x){
+             do.call(rbind.data.frame,apply(bayeslincals$BLM_Measured_errors, 2, function(x){
                cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
              }))
              
