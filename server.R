@@ -102,7 +102,7 @@ server <- function(input, output, session) {
        ##If temperature is in degree celsius
        
        calData$T2 <- (10^6)/(calData$Temperature + 273.15)^2 
-       calData$TempError <- (10^6)/(calData$TempError + 273.15)^2
+       #calData$TempError <- (10^6)/(calData$TempError + 273.15)^2
        
        if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
          calData$TempError <- 1
@@ -429,7 +429,7 @@ server <- function(input, output, session) {
     #     checkboxInput("linear", "Linear model", FALSE),
          if(input$simulateBLM_measuredMaterial != FALSE) {
            sink(file = "Bayeslinmodtext.txt", type = "output")
-           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=10000, replicates = replicates, isMixed=F)
+           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates = replicates, isMixed=F)
            sink()
            
            bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$T2), to = max(calData$T2))
