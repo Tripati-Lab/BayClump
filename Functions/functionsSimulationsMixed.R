@@ -3,7 +3,7 @@ simulateYork_measured<<-function(data, replicates, samples=NULL, D47error="D47er
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
-    dataSub$x_SE<-dataSub$Temp_Error
+    dataSub$x_SE<-dataSub$TempError
     Reg<-york(cbind.data.frame(dataSub$T2, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
     cbind.data.frame('intercept'=Reg$a[1],'slope'=Reg$b[1])
   }))
@@ -14,8 +14,8 @@ simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47erro
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
-    dataSub$x_SE<-dataSub$Temp_Error
-    Reg<-summary(lm(D47~ T2,  dataSub, weights = y_SE))
+    dataSub$x_SE<-dataSub$TempError
+    Reg<-summary(lm(D47 ~ T2,  dataSub))
     cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
   }))
 }
@@ -24,7 +24,9 @@ simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47erro
 simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
-    Reg<-summary(lm(D47~ T2,  dataSub))
+    dataSub$y_SE<-dataSub[,D47error]
+    dataSub$x_SE<-dataSub$TempError
+    Reg<-summary(lm(D47 ~ T2,  dataSub, weights = y_SE))
     cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
   }))
 }
@@ -34,7 +36,7 @@ simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
-    dataSub$x_SE<-dataSub$Temp_Error
+    dataSub$x_SE<-dataSub$TempError
     Reg<-deming(D47 ~ T2, dataSub, xstd= 1/dataSub$x_SE, ystd= 1/dataSub$y_SE)
     cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
   }))
@@ -82,9 +84,13 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     
   }
   
-  tot = lapply(1:replicates, single_rep)
+  # Find out how many cores there are
+  ncores = parallel::detectCores()
   
+  # Use all available cores
+  tot = mclapply(1:replicates, mc.cores = ncores, single_rep)
   
+
   if(isMixed == F){
     
     list('BLM_Measured_errors'=

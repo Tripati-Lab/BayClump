@@ -127,8 +127,10 @@ body <- dashboardBody(
                              verbatimTextOutput("york", placeholder = TRUE),
                              tags$h4("Deming regression"),
                              verbatimTextOutput("deming", placeholder = TRUE),
-                             tags$h4("Bayesian simple linear model"),
-                             verbatimTextOutput("blin", placeholder = TRUE)
+                             tags$h4("Bayesian simple linear model - no errors"),
+                             verbatimTextOutput("blinnoerr", placeholder = TRUE),
+                             tags$h4("Bayesian simple linear model - with errors"),
+                             verbatimTextOutput("blinwerr", placeholder = TRUE)
                          ),
                   
                   # Download all calibration data

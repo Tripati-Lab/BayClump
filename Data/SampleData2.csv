@@ -1,4 +1,4 @@
-Sample.Name,Mineralogy,Material,N,D47,D47error,Temperature,Temp_Error
+Sample.Name,Mineralogy,Material,N,D47,D47error,Temperature,TempError
 IPGP_100-A3,Dolomite,Synthetic,9,0.427,0.018364001,102.3,2
 IPGP_250-A5,Dolomite,Synthetic,9,0.275,0.022883102,252.1,2
 IPGP_350-A9,Dolomite,Synthetic,10,0.232,0.022837507,351.4,2

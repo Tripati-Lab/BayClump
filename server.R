@@ -5,7 +5,7 @@ server <- function(input, output, session) {
 # Calibration tab
   
   output$BayClump_cal_temp <- downloadHandler(
-       filename = "BayClump_template.csv",
+       filename = "BayClump_calibration_template.csv",
        content = function(file) {
          write.csv(BayClump_calibration_template, file, row.names = FALSE)
        }
@@ -56,7 +56,7 @@ server <- function(input, output, session) {
     )
   })
   
-  if(exists("wb")) rm(wb) # Delete an existing workbook in preparation for new results
+  if(exists("wb")) rm(wb) # Delete any existing workbook in preparation for new results
   wb <- createWorkbook("calibration output") # Prepare a workbook for calibration outputs
   
   observe({
@@ -91,8 +91,10 @@ server <- function(input, output, session) {
          {removeWorksheet(wb, "York regression") & removeWorksheet(wb, "York regression CI")}
        if("Deming regression" %in% names(wb) == TRUE) 
          {removeWorksheet(wb, "Deming regression") & removeWorksheet(wb, "Deming regression CI")}
-       if("Bayesian linear model" %in% names(wb) == TRUE) 
-         {removeWorksheet(wb, "Bayesian linear model") & removeWorksheet(wb, "Bayesian linear model CI")}       
+       if("Bayesian model no errors" %in% names(wb) == TRUE) 
+         {removeWorksheet(wb, "Bayesian model no errors") & removeWorksheet(wb, "Bayesian model no errors CI")}
+       if("Bayesian model with errors" %in% names(wb) == TRUE) 
+         {removeWorksheet(wb, "Bayesian model with errors") & removeWorksheet(wb, "Bayesian model with errors CI")}
 
        calData <- NULL
        calData <- calibrationData()
@@ -100,16 +102,16 @@ server <- function(input, output, session) {
        ##If temperature is in degree celsius
        
        calData$T2 <- (10^6)/(calData$Temperature + 273.15)^2 
-       calData$Temp_Error <- (10^6)/(calData$Temp_Error + 273.15)^2
+       calData$TempError <- (10^6)/(calData$TempError + 273.15)^2
        
        if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
-         calData$Temp_Error <- 1
+         calData$TempError <- 1
        }
        
 #       if(input$misc == "scale") {
 #         calData$Temperature <- scale(calData$Temperature)
 #         calData$T2 <- scale(calData$T2)
-#         calData$Temp_Error <- scale(calData$Temp_error)
+#         calData$TempError <- scale(calData$TempError)
 #         calData$D47 <- scale(calData$D47)
 #         calData$D47error <- scale(calData$D47error)
 #       }
@@ -198,7 +200,9 @@ server <- function(input, output, session) {
            
            print(noquote("Linear regression complete"))
            output$lmcal <- renderPrint({
-             head(lmcalci2)
+            do.call(rbind.data.frame,apply(lmcals, 2, function(x){
+               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+             }))
            })
            
          }
@@ -269,7 +273,9 @@ server <- function(input, output, session) {
            
            print(noquote("Inverse linear regression complete"))
            output$lminversecal <- renderPrint({
-             head(lminversecalci2)
+             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
+               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+             }))
            })
            
          }
@@ -340,7 +346,9 @@ server <- function(input, output, session) {
           
           print(noquote("York regression complete"))
           output$york <- renderPrint({
-            head(yorkcalci2)
+            do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
+              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+            }))
           })
         
          }
@@ -411,7 +419,9 @@ server <- function(input, output, session) {
            
            print(noquote("Deming regression complete"))
            output$deming <- renderPrint({
-             head(demingcalci2)
+             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
+               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+             }))
            })
            
            }
@@ -422,8 +432,10 @@ server <- function(input, output, session) {
            bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates = replicates, isMixed=F)
            sink()
            
-           bayeslinci <- RegressionSingleCI(data = bayeslincals, from = min(calData$T2), to = max(calData$T2))
-           bayeslincalci <- as.data.frame(bayeslinci)
+           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$T2), to = max(calData$T2))
+           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
+           bayeslinciwitherror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_errors, from = min(calData$T2), to = max(calData$T2))
+           bayeslincalciwitherror <- as.data.frame(bayeslinciwitherror)
            
            output$bayeslincalibration <- renderPlotly({
              bayeslinfig <- plot_ly(data = calibrationData()
@@ -444,7 +456,7 @@ server <- function(input, output, session) {
                            "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
                            "Type: ", as.character(calibrationData()$Material),
                            "<extra></extra>")) %>%
-               add_ribbons(data = bayeslincalci,
+               add_ribbons(data = bayeslincalcinoerror,
                            x = ~x,
                            y = ~median_est,
                            ymin = ~ci_lower_est,
@@ -452,15 +464,35 @@ server <- function(input, output, session) {
                            line = list(color = '#ffd166'),
                            fillcolor = '#ffd166',
                            opacity = 0.5,
-                           name = '95% CI',
+                           name = '95% CI - no error',
                            hovertemplate = paste(
                              "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                              "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
-               add_lines(data = bayeslincalci,
+               add_lines(data = bayeslincalcinoerror,
                          x = ~x,
                          y = ~median_est,
-                         name = 'Median estimate',
+                         name = 'Median estimate - no error',
                          line = list(color = "black", dash = 'dash'),
+                         hovertemplate = paste(
+                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
+                           "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+               add_ribbons(data = bayeslincalciwitherror,
+                           x = ~x,
+                           y = ~median_est,
+                           ymin = ~ci_lower_est,
+                           ymax = ~ci_upper_est,
+                           line = list(color = '#446455'),
+                           fillcolor = '#446455',
+                           opacity = 0.5,
+                           name = '95% CI - with error',
+                           hovertemplate = paste(
+                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
+                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+               add_lines(data = bayeslincalciwitherror,
+                         x = ~x,
+                         y = ~median_est,
+                         name = 'Median estimate - with error',
+                         line = list(color = "#446455", dash = 'dash'),
                          hovertemplate = paste(
                            "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                            "Δ<sub>47</sub> (‰): %{y}<br>"))
@@ -472,23 +504,38 @@ server <- function(input, output, session) {
              return(bayeslinfig)
            })
 
-           addWorksheet(wb, "Bayesian linear model") # Add a blank sheet
-           addWorksheet(wb, "Bayesian linear model CI") # Add a blank sheet 
+           addWorksheet(wb, "Bayesian model no errors") # Add a blank sheet
+           addWorksheet(wb, "Bayesian model no errors CI") # Add a blank sheet 
+           addWorksheet(wb, "Bayesian model with errors") # Add a blank sheet
+           addWorksheet(wb, "Bayesian model with errors CI") # Add a blank sheet 
            
-           bayeslincalci2 <- bayeslincalci
-           names(bayeslincalci2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+           bayeslincalcinoerror2 <- bayeslincalcinoerror
+           names(bayeslincalcinoerror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
            
-           writeData(wb, sheet = "Bayesian linear model", cbind((bayeslincals)[i], bayeslincals[[i]])) # Write regression data
-           writeData(wb, sheet = "Bayesian linear model CI", bayeslincalci2)
+           bayeslincalciwitherror2 <- bayeslincalciwitherror
+           names(bayeslincalciwitherror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
            
+           writeData(wb, sheet = "Bayesian model no errors", bayeslincals$BLM_Measured_no_errors) # Write regression data
+           writeData(wb, sheet = "Bayesian model no errors CI", bayeslincalcinoerror2)
+           
+           writeData(wb, sheet = "Bayesian model with errors", bayeslincals$BLM_Measured_errors) # Write regression data
+           writeData(wb, sheet = "Bayesian model with errors CI", bayeslincalciwitherror2)
            
            print(noquote("Bayesian linear model complete"))
-           output$blin <- renderPrint({
+           
+           output$blinnoerr <- renderPrint({
              
-             for (i in 1:length(bayeslincals)) {
-               print(names(bayeslincalci2)[i])
-               print(head(bayeslincalci2[[i]]))
-             }
+             do.call(rbind.data.frame,apply(bayeslincalcinoerror, 2, function(x){
+               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+             }))
+             
+           })
+           
+           output$blinwerr <- renderPrint({
+             
+             do.call(rbind.data.frame,apply(bayeslincalciwitherror, 2, function(x){
+               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+             }))
              
            })
            
@@ -542,7 +589,7 @@ server <- function(input, output, session) {
                        colors = viridis_pal(option = "D", end = 0.9)(minlength),
                        opacity = 0.6,
                        error_y = ~list(array = ~D47error, color = '#000000'),
-                       error_x = ~list(array = ~Temp_Error, color = '#000000'),
+                       error_x = ~list(array = ~TempError, color = '#000000'),
                        text = as.character(calibrationData()$Sample.Name),
                        hovertemplate = paste(
                          "<b>Sample: %{text}</b><br><br>",

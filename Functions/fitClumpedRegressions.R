@@ -2,13 +2,13 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
                                 returnModels=T, n.iter= 50000, burninFrac=0.1,
                                 alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
                                 useInits=T, D47error="D47error"){
-    
-    ##Models
+  
+  ##Models
   BLM1<-paste(" model{
     # Diffuse normal priors for predictors
     alpha ~ ", alphaBLM1," \n ",
               "beta ~ ", betaBLM1," \n ", 
-    "# Uniform prior for standard deviation
+              "# Uniform prior for standard deviation
     tauy <- pow(sigma, -2)                               # precision
     sigma ~ dunif(0, 100)                                # diffuse prior for standard deviation
     # Diffuse normal priors for true x
@@ -23,7 +23,7 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
         mu[i] <- alpha+beta*x[i]
     }
 }")
-    
+  
   
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors
@@ -38,8 +38,8 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
                 eta[i] <- alpha + inprod(x[i],beta)
   }
 }")
-
-    ##Mixed Model (interaction effects; multiple slopes and intercepts)
+  
+  ##Mixed Model (interaction effects; multiple slopes and intercepts)
   BLM3<-paste(" model{
   
     # Diffuse normal priors for predictors
@@ -68,107 +68,108 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
         mu[i] <- alpha[type[i]] + beta[type[i]] * x1[i]
     }
 }")
+  
+  
+  LM_No_error_Data <- list(x = calibrationData$T2 , y = calibrationData$D47,
+                           N=nrow(calibrationData))
+  
+  ##Fit linear models
+  if(hasMaterial == T){
     
-
-    LM_No_error_Data <- list(x = calibrationData$T2 , y = calibrationData$D47,
-                             N=nrow(calibrationData))
     
-    ##Fit linear models
-    if(hasMaterial == T){
+    Y= IsoplotR::york(cbind(calibrationData[,c('T2','TempError','D47', 'D47error')]))
+    M0=lm(D47 ~ T2, calibrationData)
+    M1=lm(D47 ~ T2+Material, calibrationData)
+    M2=lm(D47 ~ T2*Material, calibrationData)
+    
+    
+    ##Create the calibrationDatasets for Bayesian Models
+    LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
+                    errx = calibrationData$TempError, erry = calibrationData[,D47error], 
+                    N=nrow(calibrationData))
+    
+    ANCOVA2_Data <- list(obsx1 = calibrationData$T2 , obsy = calibrationData$D47 , 
+                         errx1 = calibrationData$TempError, erry = calibrationData[,D47error], 
+                         K=length(unique(calibrationData$Material)),
+                         N=nrow(calibrationData),
+                         type= as.numeric(calibrationData$Material))
+    
+    ##Fit the models
+    inits <- if(useInits==T){ function () {
+      #list(alpha = rnorm(1,0,.01),
+      #    beta = rnorm(1,0,.01))
       
+      list(alpha = rnorm(1,0.231,0.065),
+           beta = rnorm(1,0.039,0.004))
       
-      Y= IsoplotR::york(cbind(calibrationData[,c('T2','Temp_Error','D47',D47error)]))
-      M0=lm(D47 ~ T2, calibrationData)
-      M1=lm(D47 ~ T2+Material, calibrationData)
-      M2=lm(D47 ~ T2*Material, calibrationData)
+    }}else{NULL}
+    
+    BLM1_fit <- jags(data = LM_Data,inits = inits,
+                     parameters = c("alpha","beta", "tauy"),
+                     model = textConnection(BLM1), n.chains = 3, 
+                     n.iter = n.iter, n.burnin = n.iter*burninFrac, n.thin = 10)
+    #BLM1_fit <- update(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
+    
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
+                              parameters = c("alpha","beta", "tau"),
+                              model = textConnection(BLM1_NoErrors), n.chains = 3,
+                              n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
+    
+    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4)
+    
+    
+    ##ANCOVA 2
+    inits <- if(useInits==T){ function () {
+      #list(alpha = rnorm(ANCOVA2_Data$K,0,0.01),
+      #     beta = rnorm(ANCOVA2_Data$K, 0, 0.01))
       
+      list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
+           beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
       
-      ##Create the calibrationDatasets for Bayesian Models
-      LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
-                      errx = calibrationData$Temp_Error, erry = calibrationData[,D47error], 
-                      N=nrow(calibrationData))
- 
-      ANCOVA2_Data <- list(obsx1 = calibrationData$T2 , obsy = calibrationData$D47 , 
-                           errx1 = calibrationData$Temp_Error, erry = calibrationData[,D47error], 
-                           K=length(unique(calibrationData$Material)),
-                           N=nrow(calibrationData),
-                           type= as.numeric(calibrationData$Material))
-      
-      ##Fit the models
-      inits <- if(useInits==T){ function () {
-        #list(alpha = rnorm(1,0,.01),
-        #    beta = rnorm(1,0,.01))
-        
-        list(alpha = rnorm(1,0.231,0.065),
-             beta = rnorm(1,0.039,0.004))
-        
-      }}else{NULL}
-      
-      BLM1_fit <- jags(data = LM_Data,inits = inits,
-                       parameters = c("alpha","beta", "tauy"),
-                       model = textConnection(BLM1), n.chains = 3, 
-                       n.iter = n.iter, n.burnin = n.iter*burninFrac, n.thin = 10)
-      #BLM1_fit <- update(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-      BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
-      
-      BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
-                                parameters = c("alpha","beta", "tau"),
-                                model = textConnection(BLM1_NoErrors), n.chains = 3,
-                                n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
-      
-      BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4)
-      
-      
-      ##ANCOVA 2
-      inits <- if(useInits==T){ function () {
-        #list(alpha = rnorm(ANCOVA2_Data$K,0,0.01),
-        #     beta = rnorm(ANCOVA2_Data$K, 0, 0.01))
-        
-        list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
-             beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
-        
-      }}else{NULL}
-      
-      BLM3_fit <- jags(data = ANCOVA2_Data,inits = inits,
-                       parameters = c("alpha","beta", "tau0"), 
-                       model = textConnection(BLM3), n.chains = 3,
-                       n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
-      #BLM3_fit <- update(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-      BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
-      
-      
-      CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
-    }else{
-      Y=IsoplotR::york(calibrationData[,c('T2','Temp_Error','D47','D47_SD')])
-      M0=lm(D47 ~ T2, calibrationData)
-      LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
-                      errx = calibrationData$Temp_Error, erry = calibrationData[,D47error], 
-                      N=nrow(calibrationData))
-      ##Fit the models
-      inits <- if(useInits==T){ function () {
-        #list(alpha = rnorm(1,0,.01),
-        #     beta = rnorm(1,0,.01))
-        list(alpha = rnorm(1,0.231,0.065),
-             beta = rnorm(1,0.039,0.004))
-      }}else{NULL}
-      
-      BLM1_fit <- jags(data = LM_Data,inits = inits,
-                       parameters = c("alpha","beta", "tauy"),
-                       model = textConnection(BLM1), n.chains = 3, 
-                       n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
-      #BLM1_fit <- update(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-      BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
-      
-      BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
-                                parameters = c("alpha","beta", "tau"),
-                                model = textConnection(BLM1_NoErrors), n.chains = 3,
-                                n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
-      
-      BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4)
-      
-      CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
-    }
-    attr(CompleteModelFit, 'data') <- calibrationData 
-    return(CompleteModelFit)
+    }}else{NULL}
+    
+    BLM3_fit <- jags(data = ANCOVA2_Data,inits = inits,
+                     parameters = c("alpha","beta", "tau0"), 
+                     model = textConnection(BLM3), n.chains = 3,
+                     n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
+    #BLM3_fit <- update(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+    BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
+    
+    
+    CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
+  }else{
+    Y=IsoplotR::york(calibrationData[,c('T2','TempError','D47','D47error')])
+    M0=lm(D47 ~ T2, calibrationData)
+    LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
+                    errx = calibrationData$TempError, erry = calibrationData[,D47error], 
+                    N=nrow(calibrationData))
+    ##Fit the models
+    inits <- if(useInits==T){ function () {
+      #list(alpha = rnorm(1,0,.01),
+      #     beta = rnorm(1,0,.01))
+      list(alpha = rnorm(1,0.231,0.065),
+           beta = rnorm(1,0.039,0.004))
+    }}else{NULL}
+    
+    BLM1_fit <- jags(data = LM_Data,inits = inits,
+                     parameters = c("alpha","beta", "tauy"),
+                     model = textConnection(BLM1), n.chains = 3, 
+                     n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
+    #BLM1_fit <- update(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
+    
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
+                              parameters = c("alpha","beta", "tau"),
+                              model = textConnection(BLM1_NoErrors), n.chains = 3,
+                              n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
+    
+    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4)
+    
+    CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
   }
+  attr(CompleteModelFit, 'data') <- calibrationData 
+  return(CompleteModelFit)
+}
+
   
