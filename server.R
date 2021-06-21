@@ -75,6 +75,7 @@ server <- function(input, output, session) {
   }) 
 
      modresult <- eventReactive(input$runmods, {
+       hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
        
        # Update the number of bootstrap replicates to run based on user selection
        replicates <- ifelse(input$replication == "50", 50,
@@ -96,16 +97,16 @@ server <- function(input, output, session) {
        if("Bayesian model with errors" %in% names(wb) == TRUE) 
          {removeWorksheet(wb, "Bayesian model with errors") & removeWorksheet(wb, "Bayesian model with errors CI")}
 
-       calData <- NULL
-       calData <- calibrationData()
+       calData <<- NULL
+       calData <<- calibrationData()
        
        ##If temperature is in degree celsius
        
-       calData$T2 <- (10^6)/(calData$Temperature + 273.15)^2 
+       calData$T2 <<- (10^6)/(calData$Temperature + 273.15)^2 
        #calData$TempError <- (10^6)/(calData$TempError + 273.15)^2
        
        if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
-         calData$TempError <- 1
+         calData$TempError <<- 1
        }
        
 #       if(input$misc == "scale") {
@@ -135,7 +136,7 @@ server <- function(input, output, session) {
          
          if(input$simulateLM_measured != FALSE) {
            sink(file = "linmodtext.txt", type = "output")
-           lmcals <- simulateLM_measured(calData, replicates = replicates)
+           lmcals <<- simulateLM_measured(calData, replicates = replicates)
            sink()
            
            lmci <- RegressionSingleCI(data = lmcals, from = min(calData$T2), to = max(calData$T2))
@@ -540,14 +541,8 @@ server <- function(input, output, session) {
            })
            
          }
-         
- 
-    #     calibrationData2 <<- calibrationData()
-         
-         #sapply(list.files('Functions', full.names = T), source)
-           #        sapply(input$selectmods, do.call, args = list())
-                   #source(fitClumpedRegressions(x))  
-       })
+
+                })
        
        
                  })
@@ -616,43 +611,114 @@ server <- function(input, output, session) {
     }
   )
   
-  # Create dummy data
-  trace_3 <- rnorm(100, mean = 3)
-  trace_4 <- rnorm(100, mean = 0.3)
-  trace_5 <- rnorm(100, mean = -3)
-  x2 <- c(1:100)
-  
-  data2 <- data.frame(x2, trace_3, trace_4, trace_5)
-  
-  output$examplefig2 <- renderPlotly({
+  read_batch_with_progress = function(file_path,nrows,no_batches){
+    progress = Progress$new(session, min = 1,max = no_batches)
+    progress$set(message = "Reading reconstruction data")
+    seq_length = ceiling(seq.int(from = 2, to = nrows-2,length.out = no_batches+1))
+    seq_length = seq_length[-length(seq_length)]
     
-    fig2 <- plot_ly(data2, x = ~x2)
-    fig2 <- fig2 %>% add_trace(y = ~trace_3, name = 'trace 3',mode = 'lines')
-    fig2 <- fig2 %>% add_trace(y = ~trace_4, name = 'trace 4', mode = 'lines+markers')
-    fig2 <- fig2 %>% add_trace(y = ~trace_5, name = 'trace 5', mode = 'markers')
-    fig2 <- fig2 %>% layout(legend=list(title=list(text='<b> This is more example code </b>')))
+    #read the first line
+    df = read.csv(file_path,skip = 0,nrows = 1)
+    col_names = colnames(df)
     
-    return(fig2)
+    for(i in seq_along(seq_length)){
+      progress$set(value = i)
+      if(i == no_batches) chunk_size = -1 else chunk_size = seq_length[i+1] - seq_length[i]
+      
+      df_temp = read.csv(file_path, skip = seq_length[i], nrows = chunk_size,header = FALSE,stringsAsFactors = FALSE)
+      colnames(df_temp) = col_names
+      df = rbind(df,df_temp)
+    }
+    
+    progress$close()
+    return(df)
+  }
+  
+  
+  reconstructionData = reactive({
+             req(input$reconstructiondata)
+             n_rows = length(count.fields(input$reconstructiondata$datapath))
+             df_out = read_batch_with_progress(input$reconstructiondata$datapath,n_rows,10)
+             return(df_out)
+           })
+  
+  if(exists("wb2")) rm(wb2) # Delete any existing workbook in preparation for new results
+  wb2 <- createWorkbook("reconstruction output") # Prepare a workbook for reconstruction outputs
+  
+  observe({
+    output$contents2 <- renderTable({
+      recsummary <- reconstructionData() %>%
+        summarize(
+          "Unique samples" = length(unique(reconstructionData()$Sample.Name)),
+          "Total replicates" = sum(reconstructionData()$N),
+          "Mineralogies" = length(unique(reconstructionData()$Mineralogy)),
+          "Materials" = length(unique(reconstructionData()$Material))
+        )
+      return(recsummary)
+    }, 
+    rownames=FALSE, options = list(pageLength = 1, info = FALSE)
+    )
   })
-  output$table1 <- renderDataTable({
-    as.data.frame(data2) %>% 
-      mutate_if(is.numeric, round, digits = 3)
-},
 
-  rownames=FALSE, options = list(paging=FALSE, scrollX = TRUE)
-)
+  recresult <- eventReactive(input$runrec, {
+    hasMaterial <- ifelse( is.na(reconstructionData()$Material), FALSE, TRUE )
+    
+    # Update the number of bootstrap replicates to run based on user selection
+  #  replicates <- ifelse(input$replication == "50", 50,
+  #                       ifelse(input$replication == "100", 100,
+   #                             ifelse(input$replication == "500", 500,
+    #                                   ifelse(input$replication == "1000", 1000, NA))))
+    
+    # Remove existing worksheets from wb on 'run' click, if any
+#    if("Linear regression" %in% names(wb) == TRUE) 
+ #   {removeWorksheet(wb, "Linear regression") & removeWorksheet(wb, "Linear regression CI")}
+  #  if("Inverse linear regression" %in% names(wb) == TRUE) 
+#    {removeWorksheet(wb, "Inverse linear regression") & removeWorksheet(wb, "Inverse linear regression CI")}
+ #   if("York regression" %in% names(wb) == TRUE) 
+  #  {removeWorksheet(wb, "York regression") & removeWorksheet(wb, "York regression CI")}
+#    if("Deming regression" %in% names(wb) == TRUE) 
+#    {removeWorksheet(wb, "Deming regression") & removeWorksheet(wb, "Deming regression CI")}
+#    if("Bayesian model no errors" %in% names(wb) == TRUE) 
+#    {removeWorksheet(wb, "Bayesian model no errors") & removeWorksheet(wb, "Bayesian model no errors CI")}
+#    if("Bayesian model with errors" %in% names(wb) == TRUE) 
+#    {removeWorksheet(wb, "Bayesian model with errors") & removeWorksheet(wb, "Bayesian model with errors CI")}
+    
+    recData <- NULL
+    recData <- reconstructionData()
+
+    withProgress(message = 'Running selected reconstructions, please wait', {
+      # if(is.null(output$contents)) {
+      #   print("Please upload calibration data")
+      # }
+      
+      # Run prediction function
+      if( !is.null(lmcals) ) {
+        
+        #output$linready <- renderPrint(noquote("Linear calibration model complete"))
+        
+        reg<-summary(lm(calData$D47 ~ calData$T2))
+
+        lmrec <- predictTcNonBayes(data=cbind(recData$D47, recData$D47error), 
+                          slope=reg$coefficients[2,1], 
+                          slpcnf=reg$coefficients[2,2], 
+                          intercept=reg$coefficients[1,1], 
+                          intcnf=reg$coefficients[1,2])
+        
+        print(noquote("Linear reconstruction complete"))
+        
+        output$lmrecs <- renderPrint(
+          return(as.data.frame(lmrec))
+        )
+      }
+
+})
+    
+  })
   
   
-# Petersen et al tab
-  
-  output$Petersendat <- renderDataTable({
-    Petersen2 <- as.data.frame(Petersen) %>% 
-      mutate_if(is.numeric, round, digits = 3)
-    return(Petersen2)
-  },
-  
-  rownames=FALSE, options = list(paging=FALSE, scrollX = TRUE))
-  
+  output$recresults <- renderPrint({
+    recresult()
+  })
+
 }
-
   
