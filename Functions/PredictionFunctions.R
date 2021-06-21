@@ -85,15 +85,21 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
   
   predsComplete<-if(hasMaterial){
     
-    fullProp<-  rbind(
-      cbind(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
-      cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))  ) 
-    
-    fullProp<-rbind(
+    fullProp<- if(nrow(errors)==1 ){
+      
+    rbind(
       cbind.data.frame(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
       cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
       cbind.data.frame(model='BLM3_fit',errors,t(matrix(predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))
     )
+    }else{
+      rbind(
+        cbind.data.frame(model='BLM1_fit', errors, predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
+        cbind.data.frame(model='BLM1_fit_NoErrors',errors,predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
+        cbind.data.frame(model='BLM3_fit',errors,predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])
+      ) 
+      }
+      
     fullProp$type<-"Parameter Uncertainty"
     fullProp$BayesianPredictions<-'Yes'
     
@@ -110,9 +116,18 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
     
   }else{
     
-      fullProp<-  rbind(
+      fullProp<- 
+        if(nrow(errors)==1 ){
+        rbind(
         cbind(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
-        cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))  ) 
+        cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))  )
+        }else{
+          rbind(
+            cbind(model='BLM1_fit', errors, predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
+            cbind.data.frame(model='BLM1_fit_NoErrors',errors,predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))
+        }
+      
+      
       fullProp$type<-"Parameter Uncertainty"
       fullProp$BayesianPredictions<-'Yes'
       if(isFALSE(onlyWithinBayesian)){
