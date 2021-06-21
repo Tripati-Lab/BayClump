@@ -88,10 +88,6 @@ body <- dashboardBody(
                           checkboxInput("simulateYork_measured", "York regression", FALSE),
                           checkboxInput("simulateDeming", "Deming regression", FALSE),
                           checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear model", FALSE),
-                        #  checkboxInput("simulateBLMM_measuredMaterial", "Bayesian simple and mixed linear models", FALSE),
-                         
-                        #  checkboxInput("fitBayesianMainANCOVASimple", "Bayesian main effects ANCOVA", FALSE),
-                        #  checkboxInput("fitBayesianInteractionANCOVASimple", "Bayesian interaction effects ANCOVA", FALSE),
 
                     bsTooltip('simulateBLM_measuredMaterial', "Running the Bayesian model can take a few minutes. Please be patient.",
                                    placement = "bottom", trigger = "hover",
@@ -190,29 +186,34 @@ body <- dashboardBody(
                  box(width = 6, 
                      title = "Step 1: Reconstruction setup", solidHeader = TRUE,
                      column(12,
-                            radioButtons("calset2", "Pick your calibration",
-                                         choices = c("Use calibration data and options from Calibration tab" = 'usecaltab',
-                                                     'Use Román-Palacios et al. defaults (Petersen et al., 2019)' = 'petersen2')
-                            ),
                             
                             # Download templates
                             downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
                             
                             # Upload data
-                            textInput("path2", "File:"),
-                            actionButton("browse2", "Browse", 
-                                         icon = icon("search", lib = "font-awesome")
+                            fileInput("reconstructiondata", "Select reconstruction data file", accept = ".csv" 
                             ),
                             
-                            actionButton("upload3", "Upload data for reconstructions", 
-                                         icon = icon("upload", lib = "font-awesome")
-                            ),
-                            
+                            # Summary stats panel
+                            tableOutput("contents2"),
+
                             checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame")
                      )
                  ),
                  box(width = 6,
-                     "More reconstruction options here!!!")
+                     "Step 2: Reconstruction options", solidHeader = TRUE,
+                     column(12,
+
+                                                        div(style="display:inline-block; vertical-align:top;", 
+                                actionButton('runrec', "Run reconstruction", 
+                                             icon = icon("cogs", lib = "font-awesome")
+                                )
+                            ),
+                            verbatimTextOutput("recresults")
+                     ),
+                     column(12,
+                            tableOutput("lmrecs")),
+                     verbatimTextOutput("linready")
                ),  
               fluidRow(
                box(width = 12,
@@ -227,7 +228,7 @@ body <- dashboardBody(
                            title = "More dummy data", solidHeader = TRUE,
                            dataTableOutput("table1")
                            ))
-              )),
+              ))),
 
       #User manual
       tabItem(tabName = "usermanual",
@@ -262,6 +263,7 @@ body <- dashboardBody(
                      "Package BayClump as an Electron app for desktop and put download links here!")))
       )
 )
+
 
 
 
