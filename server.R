@@ -696,13 +696,12 @@ server <- function(input, output, session) {
         
         #output$linready <- renderPrint(noquote("Linear calibration model complete"))
         
-        reg<-summary(lm(calData$D47 ~ calData$T2))
 
-        lmrec <- predictTcNonBayes(data=cbind(recData$D47, recData$D47error), 
-                          slope=reg$coefficients[2,1], 
-                          slpcnf=reg$coefficients[2,2], 
-                          intercept=reg$coefficients[1,1], 
-                          intcnf=reg$coefficients[1,2])
+        lmrec <- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                          slope=median(lmcals$slope), 
+                          slpcnf=CItoSE(quantile(lmcals$slope, 0.975), quantile(lmcals$slope, 0.025)), 
+                          intercept=median(lmcals$intercept), 
+                          intcnf=CItoSE(quantile(lmcals$intercept, 0.975), quantile(lmcals$intercept, 0.025)))
         
         print(noquote("Linear reconstruction complete"))
         
