@@ -3,7 +3,7 @@ CItoSE<-function(upper, lower){
 }
 predictTcNonBayes<-function(data, slope, slpcnf, intercept, intcnf ){
   
-  errors<-data
+  errors<-as.data.frame(data)
   ##Ignore uncertainty in slope and intercept (the usual)
   
   resnoParUn<-do.call(rbind,lapply(1:nrow(errors), function(x){
@@ -33,7 +33,7 @@ predictTcNonBayes<-function(data, slope, slpcnf, intercept, intcnf ){
 }
 predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyWithinBayesian=F){
   
-  errors<-data
+  errors<-as.data.frame(data)
   
   if(isFALSE(onlyWithinBayesian)){
   
@@ -84,10 +84,15 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
   
   
   predsComplete<-if(hasMaterial){
+    
+    fullProp<-  rbind(
+      cbind(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
+      cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))  ) 
+    
     fullProp<-rbind(
-      cbind.data.frame(model='BLM1_fit', errors, predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
-      cbind.data.frame(model='BLM1_fit_NoErrors',errors,predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
-      cbind.data.frame(model='BLM3_fit',errors,predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])
+      cbind.data.frame(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
+      cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
+      cbind.data.frame(model='BLM3_fit',errors,t(matrix(predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))
     )
     fullProp$type<-"Parameter Uncertainty"
     fullProp$BayesianPredictions<-'Yes'
@@ -105,10 +110,9 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
     
   }else{
     
-      
       fullProp<-  rbind(
-        cbind.data.frame(model='BLM1_fit', errors, predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
-        cbind.data.frame(model='BLM1_fit_NoErrors',errors,predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])  ) 
+        cbind(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
+        cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))  ) 
       fullProp$type<-"Parameter Uncertainty"
       fullProp$BayesianPredictions<-'Yes'
       if(isFALSE(onlyWithinBayesian)){
