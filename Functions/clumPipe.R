@@ -46,26 +46,12 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
     totalRep<-pbmclapply(1:nrep,singleRep, mc.cores = 4)
     uncertaintyPredictionWithinBayesianModels<-do.call(rbind,totalRep)
     uncertaintyPredictionWithinBayesianModels<-uncertaintyPredictionWithinBayesianModels[uncertaintyPredictionWithinBayesianModels$model== 'BLM1_fit',]
+    uncertaintyPredictionWithinBayesianModels<-summaryBy(Tc ~ model+D47+D47error, data = uncertaintyPredictionWithinBayesianModels, 
+                                                         FUN = list(median,lw,up))
+    colnames(uncertaintyPredictionWithinBayesianModels)<-c("model","D47","D47error","Tc", "lwr","upr")
     
-    uncertaintyPredictionWithinBayesianModels<- lapply(1:(nrow(uncertaintyPredictionWithinBayesianModels)/nrep), function(x){
-     targetRows<- uncertaintyPredictionWithinBayesianModels[x,c('D47','D47error')]
-     
-     subData<-uncertaintyPredictionWithinBayesianModels[which(uncertaintyPredictionWithinBayesianModels$D47 == targetRows$D47 &
-             uncertaintyPredictionWithinBayesianModels$D47error ==targetRows$D47error ) ,]
-     
-     cbind.data.frame(model=uncertaintyPredictionWithinBayesianModels$model[1],
-                      D47=targetRows$D47,
-                      D47error=targetRows$D47error,
-                      Tc=median(subData$Tc),
-                      lwr=lw(subData$Tc),
-                      upr=up(subData$Tc) )
-
-    })
-    uncertaintyPredictionWithinBayesianModels<-do.call(rbind,uncertaintyPredictionWithinBayesianModels)
-    
-
     colnames(compilationModels)[c(1,2)]<-c('D47','D47error')
-    completeDf<-cbind.data.frame(compilationModels,uncertaintyPredictionWithinBayesianModels)
+    completeDf<-merge(compilationModels, uncertaintyPredictionWithinBayesianModels, by=c('D47','D47error'))
     
     return(completeDf)
 

@@ -27,8 +27,8 @@ predictTcNonBayes<-function(data, slope, slpcnf, intercept, intcnf ){
   }))
   
   
-  rbind(cbind.data.frame(type='No parameter Uncertainty',resnoParUn),
-        cbind.data.frame(type='Parameter Uncertainty', resParUn))
+  rbind(cbind.data.frame(type='No parameter uncertainty',resnoParUn),
+        cbind.data.frame(type='Parameter uncertainty', resParUn))
   
 }
 predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyWithinBayesian=F){
@@ -100,7 +100,7 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
       ) 
       }
       
-    fullProp$type<-"Parameter Uncertainty"
+    fullProp$type<-"Parameter uncertainty"
     fullProp$BayesianPredictions<-'Yes'
     
     if(isFALSE(onlyWithinBayesian)){
@@ -128,7 +128,7 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
         }
       
       
-      fullProp$type<-"Parameter Uncertainty"
+      fullProp$type<-"Parameter uncertainty"
       fullProp$BayesianPredictions<-'Yes'
       if(isFALSE(onlyWithinBayesian)){
       a$model<-'BLM1_fit'

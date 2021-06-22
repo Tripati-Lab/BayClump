@@ -183,7 +183,7 @@ body <- dashboardBody(
        #Reconstruction tab
        tabItem(tabName = "reconstruction",
                fluidRow(
-                 box(width = 6, 
+                 box(width = 5, 
                      title = "Step 1: Reconstruction setup", solidHeader = TRUE,
                      column(12,
                             
@@ -197,23 +197,36 @@ body <- dashboardBody(
                             # Summary stats panel
                             tableOutput("contents2"),
 
-                            checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame")
-                     )
-                 ),
-                 box(width = 6,
-                     "Step 2: Reconstruction options", solidHeader = TRUE,
-                     column(12,
-
-                                                        div(style="display:inline-block; vertical-align:top;", 
-                                actionButton('runrec', "Run reconstruction", 
+                            checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame"),
+                            
+                            div(style="display:inline-block; vertical-align:top;", 
+                                actionButton('runrec', "Run reconstructions", 
                                              icon = icon("cogs", lib = "font-awesome")
                                 )
                             ),
-                            verbatimTextOutput("recresults")
-                     ),
-                     column(12,
-                            tableOutput("lmrecs")),
-                     verbatimTextOutput("linready")
+                            verbatimTextOutput("recresults"),
+                            # Download all reconstruction data
+                            downloadButton("downloadreconstructions", label = "Download full reconstruction output with confidence intervals")
+                     )
+                 ),
+                 box(width = 7,
+                     title = "Step 2: Temperature reconstructions", solidHeader = TRUE,
+                     column(12, "Truncated output from each selected model",
+                            tableOutput("lmrecswun"),
+                            tableOutput("lmrecswoun"),
+                            tableOutput("lminverserecswun"),
+                            tableOutput("lminverserecswoun"),
+                            tableOutput("yorkrecswun"),
+                            tableOutput("yorkrecswoun"),
+                            tableOutput("demingrecswun"),
+                            tableOutput("demingrecswoun"),
+                            tableOutput("bayesrecswunerr"),
+                            tableOutput("bayesrecswunnoerr"),
+                            tableOutput("bayesrecswounerr"),
+                            tableOutput("bayesrecswounnoerr")
+                     
+                     )
+               )
                ),  
               fluidRow(
                box(width = 12,
@@ -228,7 +241,7 @@ body <- dashboardBody(
                            title = "More dummy data", solidHeader = TRUE,
                            dataTableOutput("table1")
                            ))
-              ))),
+              )),
 
       #User manual
       tabItem(tabName = "usermanual",
@@ -263,6 +276,7 @@ body <- dashboardBody(
                      "Package BayClump as an Electron app for desktop and put download links here!")))
       )
 )
+
 
 
 

@@ -116,6 +116,12 @@ server <- function(input, output, session) {
 #         calData$D47 <- scale(calData$D47)
 #         calData$D47error <- scale(calData$D47error)
 #       }
+       
+       lmcals <<- NULL
+       lminversecals <<- NULL
+       yorkcals <<- NULL
+       demingcals <<- NULL
+       bayeslincals <<- NULL
 
        withProgress(message = 'Running selected models, please wait', {
         # if(is.null(output$contents)) {
@@ -210,7 +216,7 @@ server <- function(input, output, session) {
          
          if(input$simulateLM_inverseweights != FALSE) {
            sink(file = "inverselinmodtext.txt", type = "output")
-           lminversecals <- simulateLM_inverseweights(calData, replicates = replicates)
+           lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates)
            sink()
            
            lminverseci <- RegressionSingleCI(data = lminversecals, from = min(calData$T2), to = max(calData$T2))
@@ -283,7 +289,7 @@ server <- function(input, output, session) {
          
          if(input$simulateYork_measured != FALSE) {
            sink(file = "yorkmodtext.txt", type = "output")
-          yorkcals <- simulateYork_measured(calData, replicates = replicates)
+          yorkcals <<- simulateYork_measured(calData, replicates = replicates)
           sink()
           
           yorkci <- RegressionSingleCI(data = yorkcals, from = min(calData$T2), to = max(calData$T2))
@@ -356,7 +362,7 @@ server <- function(input, output, session) {
 
          if(input$simulateDeming != FALSE) {
            sink(file = "demingmodtext.txt", type = "output")
-           demingcals <- simulateDeming(calData, replicates = replicates)
+           demingcals <<- simulateDeming(calData, replicates = replicates)
             sink()
             
             demingci <- RegressionSingleCI(data = demingcals, from = min(calData$T2), to = max(calData$T2))
@@ -430,7 +436,7 @@ server <- function(input, output, session) {
     #     checkboxInput("linear", "Linear model", FALSE),
          if(input$simulateBLM_measuredMaterial != FALSE) {
            sink(file = "Bayeslinmodtext.txt", type = "output")
-           bayeslincals <- simulateBLM_measuredMaterial(calData, generations=1000, replicates = replicates, isMixed=F)
+           bayeslincals <<- simulateBLM_measuredMaterial(calData, generations=1000, replicates = replicates, isMixed=F)
            sink()
            
            bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$T2), to = max(calData$T2))
@@ -663,26 +669,19 @@ server <- function(input, output, session) {
   recresult <- eventReactive(input$runrec, {
     hasMaterial <- ifelse( is.na(reconstructionData()$Material), FALSE, TRUE )
     
-    # Update the number of bootstrap replicates to run based on user selection
-  #  replicates <- ifelse(input$replication == "50", 50,
-  #                       ifelse(input$replication == "100", 100,
-   #                             ifelse(input$replication == "500", 500,
-    #                                   ifelse(input$replication == "1000", 1000, NA))))
-    
-    # Remove existing worksheets from wb on 'run' click, if any
-#    if("Linear regression" %in% names(wb) == TRUE) 
- #   {removeWorksheet(wb, "Linear regression") & removeWorksheet(wb, "Linear regression CI")}
-  #  if("Inverse linear regression" %in% names(wb) == TRUE) 
-#    {removeWorksheet(wb, "Inverse linear regression") & removeWorksheet(wb, "Inverse linear regression CI")}
- #   if("York regression" %in% names(wb) == TRUE) 
-  #  {removeWorksheet(wb, "York regression") & removeWorksheet(wb, "York regression CI")}
-#    if("Deming regression" %in% names(wb) == TRUE) 
-#    {removeWorksheet(wb, "Deming regression") & removeWorksheet(wb, "Deming regression CI")}
-#    if("Bayesian model no errors" %in% names(wb) == TRUE) 
-#    {removeWorksheet(wb, "Bayesian model no errors") & removeWorksheet(wb, "Bayesian model no errors CI")}
-#    if("Bayesian model with errors" %in% names(wb) == TRUE) 
-#    {removeWorksheet(wb, "Bayesian model with errors") & removeWorksheet(wb, "Bayesian model with errors CI")}
-    
+    # Remove existing worksheets from wb2 on 'run' click, if any
+    if("Linear w uncertainty" %in% names(wb2) == TRUE) 
+    {removeWorksheet(wb2, "Linear w uncertainty") & removeWorksheet(wb2, "Linear w no uncertainty")}
+    if("Inverse linear w uncertainty" %in% names(wb2) == TRUE) 
+    {removeWorksheet(wb2, "Inverse linear w uncertainty") & removeWorksheet(wb2, "Inverse linear w no uncertainty")}
+    if("York w uncertainty" %in% names(wb2) == TRUE) 
+    {removeWorksheet(wb2, "York w uncertainty") & removeWorksheet(wb2, "York w no uncertainty")}
+    if("Deming w uncertainty" %in% names(wb2) == TRUE) 
+    {removeWorksheet(wb2, "Deming w uncertainty") & removeWorksheet(wb2, "Deming w no uncertainty")}
+    if("Bayes w uncertainty and error" %in% names(wb2) == TRUE) 
+    {removeWorksheet(wb2, "Bayes w uncertainty and error") & removeWorksheet(wb2, "Bayes w uncertainty no error") &
+    removeWorksheet(wb2, "Bayes w error no uncertainty") & removeWorksheet(wb2, "Bayes no error no uncertainty")}
+
     recData <- NULL
     recData <- reconstructionData()
 
@@ -693,23 +692,397 @@ server <- function(input, output, session) {
       
       # Run prediction function
       if( !is.null(lmcals) ) {
-        
-        #output$linready <- renderPrint(noquote("Linear calibration model complete"))
-        
 
-        lmrec <- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+        lmrec <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
                           slope=median(lmcals$slope), 
                           slpcnf=CItoSE(quantile(lmcals$slope, 0.975), quantile(lmcals$slope, 0.025)), 
                           intercept=median(lmcals$intercept), 
                           intcnf=CItoSE(quantile(lmcals$intercept, 0.975), quantile(lmcals$intercept, 0.025)))
         
-        print(noquote("Linear reconstruction complete"))
-        
-        output$lmrecs <- renderPrint(
-          return(as.data.frame(lmrec))
+        lmrecwun <- lmrec[lmrec$type == "Parameter uncertainty", -1]
+       
+        df1 <-  transpose( do.call(rbind.data.frame,apply(lmrecwun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
         )
+        
+        names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df1) <- "Median"
+        
+        lmrecwoun <- lmrec[lmrec$type == "No parameter uncertainty", -1]
+        
+        df2 <- transpose( do.call(rbind.data.frame,apply(lmrecwoun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df2) <- "Median"
+        
+        output$lmrecswun <- renderTable(
+
+          df1,
+          caption = "Linear model with parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+        
+        )
+        
+        output$lmrecswoun <- renderTable(
+          
+          df2,
+          caption = "Linear model without parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+
+        )
+        
+        addWorksheet(wb2, "Linear w uncertainty") # Add a blank sheet
+        addWorksheet(wb2, "Linear w no uncertainty") # Add a blank sheet
+        
+        lmrecwun2 <- lmrec[lmrec$type == "Parameter uncertainty", -1]
+        names(lmrecwun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        lmrecwoun2 <- lmrec[lmrec$type == "No parameter uncertainty", -1]
+        names(lmrecwoun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        writeData(wb2, sheet = "Linear w uncertainty", lmrecwun2) # Write reconstruction data
+        writeData(wb2, sheet = "Linear w no uncertainty", lmrecwoun2) # Write reconstruction data
+        
+        print(noquote("Linear reconstruction complete"))
+      }
+      
+      #Inverse weighted linear model 
+      if( !is.null(lminversecals) ) {
+        
+        lminverserec <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                                    slope=median(lminversecals$slope), 
+                                    slpcnf=CItoSE(quantile(lminversecals$slope, 0.975), quantile(lminversecals$slope, 0.025)), 
+                                    intercept=median(lminversecals$intercept), 
+                                    intcnf=CItoSE(quantile(lminversecals$intercept, 0.975), quantile(lminversecals$intercept, 0.025)))
+        
+        lminverserecwun <- lminverserec[lminverserec$type == "Parameter uncertainty", -1]
+        
+        df3 <-  transpose( do.call(rbind.data.frame,apply(lminverserecwun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df3) <- "Median"
+        
+        lminverserecwoun <- lminverserec[lminverserec$type == "No parameter uncertainty", -1]
+        
+        df4 <- transpose( do.call(rbind.data.frame,apply(lminverserecwoun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df4) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df4) <- "Median"
+        
+        output$lminverserecswun <- renderTable(
+          
+          df3,
+          caption = "Inverse weighted linear model with parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        output$lminverserecswoun <- renderTable(
+          
+          df4,
+          caption = "Inverse weighted linear model without parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        addWorksheet(wb2, "Inverse linear w uncertainty") # Add a blank sheet
+        addWorksheet(wb2, "Inverse linear w no uncertainty") # Add a blank sheet
+        
+        lminverserecwun <- lminverserec[lminverserec$type == "Parameter uncertainty", -1]
+        names(lminverserecwun) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        lminverserecwoun2 <- lminverserec[lminverserec$type == "No parameter uncertainty", -1]
+        names(lminverserecwoun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        writeData(wb2, sheet = "Inverse linear w uncertainty", lminverserecwun) # Write reconstruction data
+        writeData(wb2, sheet = "Inverse linear w no uncertainty", lminverserecwoun2) # Write reconstruction data
+        
+        print(noquote("Inverse weighted linear reconstruction complete"))
+        
+      }
+      
+      # York regression
+      if( !is.null(yorkcals) ) {
+        
+        yorkrec <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                                           slope=median(yorkcals$slope), 
+                                           slpcnf=CItoSE(quantile(yorkcals$slope, 0.975), quantile(yorkcals$slope, 0.025)), 
+                                           intercept=median(yorkcals$intercept), 
+                                           intcnf=CItoSE(quantile(yorkcals$intercept, 0.975), quantile(yorkcals$intercept, 0.025)))
+        
+        yorkrecwun <- yorkrec[yorkrec$type == "Parameter uncertainty", -1]
+        
+        df5 <-  transpose( do.call(rbind.data.frame,apply(yorkrecwun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df5) <- "Median"
+        
+        yorkrecwoun <- yorkrec[yorkrec$type == "No parameter uncertainty", -1]
+        
+        df6 <- transpose( do.call(rbind.data.frame,apply(yorkrecwoun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df6) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df6) <- "Median"
+        
+        output$yorkrecswun <- renderTable(
+          
+          df5,
+          caption = "York regression with parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        output$yorkrecswoun <- renderTable(
+          
+          df6,
+          caption = "York regression without parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        addWorksheet(wb2, "York w uncertainty") # Add a blank sheet
+        addWorksheet(wb2, "York w no uncertainty") # Add a blank sheet
+        
+        yorkrecwun2 <- yorkrec[yorkrec$type == "Parameter uncertainty", -1]
+        names(yorkrecwun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        yorkrecwoun2 <- yorkrec[yorkrec$type == "No parameter uncertainty", -1]
+        names(yorkrecwoun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        writeData(wb2, sheet = "York w uncertainty", yorkrecwun2) # Write reconstruction data
+        writeData(wb2, sheet = "York w no uncertainty", yorkrecwoun2) # Write reconstruction data
+
+        print(noquote("York reconstruction complete"))
+        
       }
 
+      # Deming regression
+      if( !is.null(demingcals) ) {
+        
+        demingrec <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                                      slope=median(demingcals$slope), 
+                                      slpcnf=CItoSE(quantile(demingcals$slope, 0.975), quantile(demingcals$slope, 0.025)), 
+                                      intercept=median(demingcals$intercept), 
+                                      intcnf=CItoSE(quantile(demingcals$intercept, 0.975), quantile(demingcals$intercept, 0.025)))
+        
+        demingrecwun <- demingrec[demingrec$type == "Parameter uncertainty", -1]
+        
+        df7 <-  transpose( do.call(rbind.data.frame,apply(demingrecwun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df7) <- "Median"
+        
+        demingrecwoun <- demingrec[demingrec$type == "No parameter uncertainty", -1]
+        
+        df8 <- transpose( do.call(rbind.data.frame,apply(demingrecwoun, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df8) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df8) <- "Median"
+        
+        output$demingrecswun <- renderTable(
+          
+          df7,
+          caption = "Deming regression with parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        output$demingrecswoun <- renderTable(
+          
+          df8,
+          caption = "Deming regression without parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        addWorksheet(wb2, "Deming w uncertainty") # Add a blank sheet
+        addWorksheet(wb2, "Deming w no uncertainty") # Add a blank sheet
+        
+        demingrecwun2 <- demingrec[demingrec$type == "Parameter uncertainty", -1]
+        names(demingrecwun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        demingrecwoun2 <- demingrec[demingrec$type == "No parameter uncertainty", -1]
+        names(demingrecwoun2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        writeData(wb2, sheet = "Deming w uncertainty", demingrecwun2) # Write reconstruction data
+        writeData(wb2, sheet = "Deming w no uncertainty", demingrecwoun2) # Write reconstruction data
+        
+        print(noquote("Deming reconstruction complete"))
+        
+      }
+      
+      if( !is.null(bayeslincals) ) {
+        
+        sink(file = "Bayesrectext.txt", type = "output")
+        bayesrec <<- predictTcBayes(calibrationData = calData, 
+                                    data = cbind(recData$D47,recData$D47error), 
+                                    generations = 5000)
+        sink()
+        
+        # With parameter uncertainty and errors
+        bayesrecwunerr <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+       
+        df9 <- transpose( do.call(rbind.data.frame,apply(bayesrecwunerr, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df9) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df9) <- "Median"
+        
+        # With parameter uncertainty and no errors
+        bayesrecwunnoerr <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        
+        df10 <-  transpose( do.call(rbind.data.frame,apply(bayesrecwunnoerr, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df10) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df10) <- "Median"
+        
+        # With errors and no parameter uncertainty
+        bayesrecwounerr <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+          
+        df11 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounerr, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df11) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df11) <- "Median"
+        
+        # With no errors and no parameter uncertainty
+        bayesrecwounnoerr <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        
+        df12 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounnoerr, 2, function(x){
+          cbind.data.frame(Median= round(median(x), 4))
+        }))
+        )
+        
+        names(df12) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        rownames(df12) <- "Median"
+        
+        
+        output$bayesrecswunerr <- renderTable(
+          
+          df9,
+          caption = "Bayesian regression with parameter uncertainty and errors",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        output$bayesrecswunnoerr <- renderTable(
+          
+          df10,
+          caption = "Bayesian regression with parameter uncertainty and no errors",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        output$bayesrecswounerr <- renderTable(
+          
+          df11,
+          caption = "Bayesian regression with errors and no parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        output$bayesrecswounnoerr <- renderTable(
+          
+          df12,
+          caption = "Bayesian regression without errors or parameter uncertainty",
+          caption.placement = getOption("xtable.caption.placement", "top"),
+          rownames = TRUE,
+          digits = 3,
+          align = "c"
+          
+        )
+        
+        addWorksheet(wb2, "Bayes w uncertainty and error") # Add a blank sheet
+        addWorksheet(wb2, "Bayes w uncertainty no error") # Add a blank sheet 
+        addWorksheet(wb2, "Bayes w error no uncertainty") # Add a blank sheet
+        addWorksheet(wb2, "Bayes no error no uncertainty") # Add a blank sheet
+        
+        # With parameter uncertainty and errors
+        bayesrecwunerr2 <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+        names(bayesrecwunerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        # With parameter uncertainty and no errors
+        bayesrecwunnoerr2 <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        names(bayesrecwunnoerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        # With error and no parameter uncertainty
+        bayesrecwounerr2 <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+        names(bayesrecwounerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        # No errors no parameter uncertainty
+        bayesrecwounnoerr2 <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        names(bayesrecwounnoerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+        
+        writeData(wb2, sheet = "Bayes w uncertainty and error", bayesrecwunerr2) # Write reconstruction data
+        writeData(wb2, sheet = "Bayes w uncertainty no error", bayesrecwunnoerr2) # Write reconstruction data
+        writeData(wb2, sheet = "Bayes w error no uncertainty", bayesrecwounerr2) # Write reconstruction data
+        writeData(wb2, sheet = "Bayes no error no uncertainty", bayesrecwounnoerr2) # Write reconstruction data
+
+        print(noquote("Bayesian reconstruction complete"))
+        
+      }
 })
     
   })
@@ -718,6 +1091,16 @@ server <- function(input, output, session) {
   output$recresults <- renderPrint({
     recresult()
   })
+  
+  output$downloadreconstructions <- downloadHandler(
+    filename = function() { 
+      paste("Reconstruction_output_", Sys.time(), ".xlsx", sep="")
+    },
+    
+    content = function(file) {
+      saveWorkbook(wb2, file, overwrite = TRUE)
+    }
+  )
 
 }
   
