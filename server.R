@@ -1096,6 +1096,38 @@ server <- function(input, output, session) {
         print(noquote("Bayesian reconstruction complete"))
         
       }
+      
+      if(!is.null(bayesianPredictions) ){
+        
+        ##This function runs only Bayesian predictions
+        ##(Only Bayesian simple linear with error for now)
+        
+      nreplicates=2
+      infTempBayesian<- clumpipe(calData=calData,
+                 PipCriteria=PipCriteria, 
+                 targetD47=recData$D47, 
+                 error_targetD47=recData$D47error, 
+                 nrep=nreplicates,
+                 BayesianOnly=T)[,c(19:23)]
+        
+      }
+      
+      if(!is.null(clumPipe) ){
+        ##This function tries to find the best regression model to predict
+        ##temperature at for each D47
+        
+        nreplicates=2
+        clumpipeResults<- clumpipe(calData=calData,
+                                   PipCriteria=PipCriteria, 
+                                   targetD47=recData$D47, 
+                                   error_targetD47=recData$D47error, 
+                                   nrep=nreplicates,
+                                   BayesianOnly=F)[,c(16,18:23)]
+        
+      }
+      
+      
+      
 })
     
   })
