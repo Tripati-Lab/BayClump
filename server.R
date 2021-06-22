@@ -701,27 +701,27 @@ server <- function(input, output, session) {
         
         lmrecwun <- lmrec[lmrec$type == "Parameter uncertainty", -1]
        
-        df1 <-  transpose( do.call(rbind.data.frame,apply(lmrecwun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df1 <-  transpose( do.call(rbind.data.frame,apply(lmrecwun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df1<-lmrecwun
         names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df1) <- "Median"
+        rownames(df1) <- NULL
         
         lmrecwoun <- lmrec[lmrec$type == "No parameter uncertainty", -1]
         
-        df2 <- transpose( do.call(rbind.data.frame,apply(lmrecwoun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df2 <- transpose( do.call(rbind.data.frame,apply(lmrecwoun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df2<-lmrecwoun
         names(df2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df2) <- "Median"
+        rownames(df2) <- NULL
         
         output$lmrecswun <- renderTable(
 
-          df1,
+          head(df1),
           caption = "Linear model with parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -732,7 +732,7 @@ server <- function(input, output, session) {
         
         output$lmrecswoun <- renderTable(
           
-          df2,
+          head(df2),
           caption = "Linear model without parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -767,27 +767,28 @@ server <- function(input, output, session) {
         
         lminverserecwun <- lminverserec[lminverserec$type == "Parameter uncertainty", -1]
         
-        df3 <-  transpose( do.call(rbind.data.frame,apply(lminverserecwun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df3 <-  transpose( do.call(rbind.data.frame,apply(lminverserecwun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        # 
+        df3<-lminverserecwun
         names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df3) <- "Median"
+        rownames(df3) <- NULL
         
         lminverserecwoun <- lminverserec[lminverserec$type == "No parameter uncertainty", -1]
         
-        df4 <- transpose( do.call(rbind.data.frame,apply(lminverserecwoun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df4 <- transpose( do.call(rbind.data.frame,apply(lminverserecwoun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df4<-lminverserecwoun
         names(df4) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df4) <- "Median"
+        rownames(df4) <- NULL
         
         output$lminverserecswun <- renderTable(
           
-          df3,
+          head(df3),
           caption = "Inverse weighted linear model with parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -798,7 +799,7 @@ server <- function(input, output, session) {
         
         output$lminverserecswoun <- renderTable(
           
-          df4,
+          head(df4),
           caption = "Inverse weighted linear model without parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -834,27 +835,27 @@ server <- function(input, output, session) {
         
         yorkrecwun <- yorkrec[yorkrec$type == "Parameter uncertainty", -1]
         
-        df5 <-  transpose( do.call(rbind.data.frame,apply(yorkrecwun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df5 <-  transpose( do.call(rbind.data.frame,apply(yorkrecwun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df5<-yorkrecwun
         names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df5) <- "Median"
+        rownames(df5) <- NULL
         
         yorkrecwoun <- yorkrec[yorkrec$type == "No parameter uncertainty", -1]
         
-        df6 <- transpose( do.call(rbind.data.frame,apply(yorkrecwoun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df6 <- transpose( do.call(rbind.data.frame,apply(yorkrecwoun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df6<-yorkrecwoun
         names(df6) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df6) <- "Median"
+        rownames(df6) <- NULL
         
         output$yorkrecswun <- renderTable(
           
-          df5,
+          head(df5),
           caption = "York regression with parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -865,7 +866,7 @@ server <- function(input, output, session) {
         
         output$yorkrecswoun <- renderTable(
           
-          df6,
+          head(df6),
           caption = "York regression without parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -901,27 +902,27 @@ server <- function(input, output, session) {
         
         demingrecwun <- demingrec[demingrec$type == "Parameter uncertainty", -1]
         
-        df7 <-  transpose( do.call(rbind.data.frame,apply(demingrecwun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df7 <-  transpose( do.call(rbind.data.frame,apply(demingrecwun, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df7<-demingrecwun
         names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df7) <- "Median"
+        rownames(df7) <- NULL
         
         demingrecwoun <- demingrec[demingrec$type == "No parameter uncertainty", -1]
         
-        df8 <- transpose( do.call(rbind.data.frame,apply(demingrecwoun, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+       # df8 <- transpose( do.call(rbind.data.frame,apply(demingrecwoun, 2, function(x){
+       #   cbind.data.frame(Median= round(median(x), 4))
+       # }))
+       #)
+        df8<-demingrecwoun
         names(df8) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df8) <- "Median"
+        rownames(df8) <- NULL
         
         output$demingrecswun <- renderTable(
           
-          df7,
+          head(df7),
           caption = "Deming regression with parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -932,7 +933,7 @@ server <- function(input, output, session) {
         
         output$demingrecswoun <- renderTable(
           
-          df8,
+          head(df8),
           caption = "Deming regression without parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -960,59 +961,71 @@ server <- function(input, output, session) {
       if( !is.null(bayeslincals) ) {
         
         sink(file = "Bayesrectext.txt", type = "output")
-        bayesrec <<- predictTcBayes(calibrationData = calData, 
-                                    data = cbind(recData$D47,recData$D47error), 
-                                    generations = 5000)
+        
+        bayesrec <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                                        slope=median(bayeslincals[[1]]$slope), 
+                                        slpcnf=CItoSE(quantile(bayeslincals[[1]]$slope, 0.975), quantile(bayeslincals[[1]]$slope, 0.025)), 
+                                        intercept=median(bayeslincals[[1]]$intercept), 
+                                        intcnf=CItoSE(quantile(bayeslincals[[1]]$intercept, 0.975), quantile(bayeslincals[[1]]$intercept, 0.025)))
+        
+        bayesrecNE <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                                       slope=median(bayeslincals[[1]]$slope), 
+                                       slpcnf=CItoSE(quantile(bayeslincals[[2]]$slope, 0.975), quantile(bayeslincals[[2]]$slope, 0.025)), 
+                                       intercept=median(bayeslincals[[2]]$intercept), 
+                                       intcnf=CItoSE(quantile(bayeslincals[[2]]$intercept, 0.975), quantile(bayeslincals[[2]]$intercept, 0.025)))
         sink()
         
         # With parameter uncertainty and errors
-        bayesrecwunerr <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+        bayesrecwunerr <- bayesrec[bayesrec$type == "Parameter uncertainty" , -c(1, 7, 8)]
        
-        df9 <- transpose( do.call(rbind.data.frame,apply(bayesrecwunerr, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
-        
+        # df9 <- transpose( do.call(rbind.data.frame,apply(bayesrecwunerr, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
+        df9<-bayesrecwunerr
         names(df9) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df9) <- "Median"
+        rownames(df9) <- NULL
         
         # With parameter uncertainty and no errors
-        bayesrecwunnoerr <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        bayesrecwunnoerr <- bayesrecNE[bayesrecNE$type == "Parameter uncertainty" , -c(1, 7, 8)]
         
-        df10 <-  transpose( do.call(rbind.data.frame,apply(bayesrecwunnoerr, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
+        # df10 <-  transpose( do.call(rbind.data.frame,apply(bayesrecwunnoerr, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
         
+        df10<-bayesrecwunnoerr
         names(df10) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df10) <- "Median"
+        rownames(df10) <- NULL
         
         # With errors and no parameter uncertainty
-        bayesrecwounerr <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+        bayesrecwounerr <- bayesrec[bayesrec$type == "No parameter uncertainty" , -c(1, 7, 8)]
           
-        df11 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounerr, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
+        # df11 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounerr, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
         
+        df11<-bayesrecwounerr
         names(df11) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df11) <- "Median"
+        rownames(df11) <- NULL
         
         # With no errors and no parameter uncertainty
-        bayesrecwounnoerr <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        bayesrecwounnoerr <- bayesrecNE[bayesrec$type == "No parameter uncertainty" , -c(1, 7, 8)]
         
-        df12 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounnoerr, 2, function(x){
-          cbind.data.frame(Median= round(median(x), 4))
-        }))
-        )
+        # df12 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounnoerr, 2, function(x){
+        #   cbind.data.frame(Median= round(median(x), 4))
+        # }))
+        # )
         
+        df12<-bayesrecwounnoerr
         names(df12) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-        rownames(df12) <- "Median"
+        rownames(df12) <- NULL
         
         
         output$bayesrecswunerr <- renderTable(
           
-          df9,
+          head(df9),
           caption = "Bayesian regression with parameter uncertainty and errors",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -1023,7 +1036,7 @@ server <- function(input, output, session) {
         
         output$bayesrecswunnoerr <- renderTable(
           
-          df10,
+          head(df10),
           caption = "Bayesian regression with parameter uncertainty and no errors",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -1034,7 +1047,7 @@ server <- function(input, output, session) {
         
         output$bayesrecswounerr <- renderTable(
           
-          df11,
+          head(df11),
           caption = "Bayesian regression with errors and no parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -1045,7 +1058,7 @@ server <- function(input, output, session) {
         
         output$bayesrecswounnoerr <- renderTable(
           
-          df12,
+          head(df12),
           caption = "Bayesian regression without errors or parameter uncertainty",
           caption.placement = getOption("xtable.caption.placement", "top"),
           rownames = TRUE,
@@ -1060,19 +1073,19 @@ server <- function(input, output, session) {
         addWorksheet(wb2, "Bayes no error no uncertainty") # Add a blank sheet
         
         # With parameter uncertainty and errors
-        bayesrecwunerr2 <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+        bayesrecwunerr2 <- bayesrec[bayesrec$type == "Parameter uncertainty" , -c(1, 7, 8)]
         names(bayesrecwunerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
         
         # With parameter uncertainty and no errors
-        bayesrecwunnoerr2 <- bayesrec[bayesrec$type == "Parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        bayesrecwunnoerr2 <- bayesrecNE[bayesrecNE$type == "Parameter uncertainty" , -c(1, 7, 8)]
         names(bayesrecwunnoerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
         
         # With error and no parameter uncertainty
-        bayesrecwounerr2 <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit", -c(1, 7, 8)]
+        bayesrecwounerr2 <- bayesrec[bayesrec$type == "No parameter uncertainty" , -c(1, 7, 8)]
         names(bayesrecwounerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
         
         # No errors no parameter uncertainty
-        bayesrecwounnoerr2 <- bayesrec[bayesrec$type == "No parameter uncertainty" & bayesrec$model == "BLM1_fit_NoErrors", -c(1, 7, 8)]
+        bayesrecwounnoerr2 <- bayesrecNE[bayesrecNE$type == "No parameter uncertainty" , -c(1, 7, 8)]
         names(bayesrecwounnoerr2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
         
         writeData(wb2, sheet = "Bayes w uncertainty and error", bayesrecwunerr2) # Write reconstruction data
