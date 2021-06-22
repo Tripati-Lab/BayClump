@@ -1101,7 +1101,7 @@ server <- function(input, output, session) {
         
         ##This function runs only Bayesian predictions
         ##(Only Bayesian simple linear with error for now)
-        
+      PipCriteria<-read.csv('Data/PipCriteria.csv')
       nreplicates=2
       infTempBayesian<- clumpipe(calData=calData,
                  PipCriteria=PipCriteria, 
@@ -1115,6 +1115,8 @@ server <- function(input, output, session) {
       if(!is.null(clumPipe) ){
         ##This function tries to find the best regression model to predict
         ##temperature at for each D47
+        
+        PipCriteria<-read.csv('Data/PipCriteria.csv')
         
         nreplicates=2
         clumpipeResults<- clumpipe(calData=calData,
