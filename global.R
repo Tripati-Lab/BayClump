@@ -27,10 +27,11 @@ library(ggpubr)
 library(pbmcapply)
 library(openxlsx)
 library(clumpedr)
+library(bib2df)
 
 packages <- c("shiny", "shinydashboard", "dplyr", "xtable", "viridis", "data.table", "shinyBS", "plotly", "bibtex",
               "readxl", "lme4", "ggplot2", "rjags", "R2jags", "IsoplotR", "chemCal", "investr", "MCMCvis",
-              "ggridges", "ggpubr", "DT", "knitcitations", "openxlsx", "pbapply", "deming", "pbmcapply", "clumpedr")
+              "ggridges", "ggpubr", "DT", "knitcitations", "openxlsx", "pbapply", "deming", "pbmcapply", "clumpedr", "bib2df")
 
 
 #new.packages <- packages[!(packages %in% installed.packages()[,"Package"])]
