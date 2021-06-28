@@ -56,8 +56,8 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
                        D47=targetRows$D47,
                        D47error=targetRows$D47error,
                        Tc=median(subData$Tc),
-                       lwr=lw(subData$Tc),
-                       upr=up(subData$Tc) )
+                       lwr=max(subData$lwr),
+                       upr=min(subData$upr) )
     }))
     
     colnames(uncertaintyPredictionWithinBayesianModels)<-c("model","D47","D47error","Tc", "lwr","upr")
@@ -141,8 +141,8 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
                          D47=targetRows$D47,
                          D47error=targetRows$D47error,
                          Tc=median(subData$Tc),
-                         lwr=lw(subData$Tc),
-                         upr=up(subData$Tc) )
+                         lwr=max(subData$lwr),
+                         upr=min(subData$upr) )
       }))
       
       colnames(uncertaintyPredictionWithinBayesianModels)<-c("model","D47","D47error","Tc", "lwr","upr")

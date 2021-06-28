@@ -54,17 +54,17 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
       dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
       
     }else{
-      material1<-data_BR_Measured[data_BR_Measured$Material ==1,]
-      dataSub1<-material1[sample(seq_along(material1[,1]), round(if(is.null(samples)){nrow(data)}else{nrow(data)*samples}/2), replace = T),]
+      dataSub<- do.call(rbind,lapply(unique(data_BR_Measured$Material), function(x){
+        material1<-data_BR_Measured[data_BR_Measured$Material ==x,]
+        dataSub1<-material1[sample(seq_along(material1[,1]), round(if(is.null(samples)){nrow(data)}else{nrow(data)*samples}/length(unique(data_BR_Measured$Material))), replace = T),]
+        dataSub1
+      } ))
       
-      material2<-data_BR_Measured[data_BR_Measured$Material ==2,]
-      dataSub2<-material2[sample(seq_along(material2[,1]), round(if(is.null(samples)){nrow(data)}else{nrow(data)*samples}/2), replace = T),]
-      
-      dataSub<-rbind.data.frame(dataSub1,dataSub2)
     }
     
     Reg<-fitClumpedRegressions(calibrationData=dataSub,
                                hasMaterial = isMixed, n.iter = generations)
+    
     
     
     if(isMixed==F ){
@@ -74,10 +74,12 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
       
     }else{
       
+      nmaterials<-length(unique(data_BR_Measured$Material))
+      
       list(
         cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]),
-        cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1,2),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c(3,4),1], 
+        cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1:nmaterials),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c((nmaterials+1):c(nmaterials+nmaterials)),1], 
                          'material'=unique(dataSub$Material )))
       
     }
@@ -88,9 +90,9 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
   ncores = parallel::detectCores()
   
   # Use all available cores
-  tot = mclapply(1:replicates, mc.cores = ncores, single_rep)
+  tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
   
-
+  
   if(isMixed == F){
     
     list('BLM_Measured_errors'=
@@ -102,7 +104,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     
     targetlist<-lapply(tot, function(x) x[[3]])
     if(any(sapply(targetlist, is.null))){targetlist<-targetlist[-which(sapply(targetlist, is.null))]}
-    BLMMFin<-do.call(rbind,targetlist[unlist(lapply(targetlist, function(x) nrow(x)))==2 ])
+    BLMMFin<-do.call(rbind,targetlist)
     #BLMMFin<-BLMMFin[grep("[",row.names(BLMMFin), fixed = T),]
     
     list('BLM_Measured_errors'=
