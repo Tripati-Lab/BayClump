@@ -26,7 +26,7 @@ C. Román-Palacios, H. M. Carroll, A. J. Arnold, R. Ulrich, R. J. Flores, D. Bro
 **Developers**
 
 Hannah M. Carroll [hcarroll@epss.ucla.edu](mailto:hcarroll@epss.ucla.edu)  
-Cristian Román-Palacios [cromanpa94@gmail.com](mailto:cromanpa94@gmail.com)  
+Cristian Román-Palacios [cromanpa@g.ucla.edu](mailto:cromanpa@g.ucla.edu)  
 
 **Senior author**
 
