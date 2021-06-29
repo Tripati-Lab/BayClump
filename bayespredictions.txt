@@ -1,4 +1,4 @@
-  |                                                                                                                                 |   0%, ETA NACompiling model graph
+  |                                                                       |   0%, ETA NACompiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
@@ -38,4 +38,4 @@ Graph information:
 
 Initializing model
 
-  |===============================================================                                                               |  50%, ETA 00:18  |==========================================================================================================================| 100%, Elapsed 00:19
+  |==================================                                  |  50%, ETA 00:22  |================================================================| 100%, Elapsed 00:22

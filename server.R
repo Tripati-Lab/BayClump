@@ -749,7 +749,23 @@ server <- function(input, output, session) {
                                        BayesianOnly=T)[,c(19:23)]
             sink()
             
+            df0<-infTempBayesian
+            names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+            rownames(df0) <- NULL
+            
+            output$Bpredictions <- renderTable(
+              head(df0),
+              caption = "Bayesian predictions under a Bayesian Linear model with errors",
+              caption.placement = getOption("xtable.caption.placement", "top"),
+              rownames = TRUE,
+              digits = 3,
+              align = "c"
+              
+            )
           }
+          
+          addWorksheet(wb2, "Bayesian predictions") # Add a blank sheet
+          writeData(wb2, sheet = "Bayesian predictions", df0)
           
           # Run prediction function
           if( !is.null(lmcals) ) {
