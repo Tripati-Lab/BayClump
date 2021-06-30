@@ -103,3 +103,6 @@ TempReconstructionBayesian<-function(dataCalibration,
 }
 
 
+temp106t2_c<-function(value){
+  sqrt(10^6/value)- 273.15
+}

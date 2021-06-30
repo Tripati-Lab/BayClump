@@ -39,7 +39,7 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
     
     singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
                                            data=cbind(targetD47,error_targetD47),
-                                           generations=10000, 
+                                           generations=20000, 
                                            hasMaterial=F, onlyWithinBayesian=T)
     }
     
@@ -126,7 +126,7 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
       
       singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
                                              data=cbind(BP$targetD47,BP$error_targetD47),
-                                             generations=10000, 
+                                             generations=20000, 
                                              hasMaterial=F, onlyWithinBayesian=T)
       }
       

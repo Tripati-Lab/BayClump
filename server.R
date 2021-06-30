@@ -191,7 +191,7 @@ server <- function(input, output, session) {
         
         if(input$simulateLM_measured != FALSE) {
           sink(file = "linmodtext.txt", type = "output")
-          lmcals <<- simulateLM_measured(calData, replicates = replicates)
+          lmcals <<- simulateLM_measured(calData, replicates = replicates, generations=1000)
           sink()
           
           lmci <- RegressionSingleCI(data = lmcals, from = min(calData$T2), to = max(calData$T2))
@@ -762,12 +762,11 @@ server <- function(input, output, session) {
             ##(Only Bayesian simple linear with error for now)
             sink("bayespredictions.txt", type = "output")
             PipCriteria<-read.csv('Data/PipCriteria.csv')
-            nreplicates=2
             infTempBayesian <<- clumpipe(calData=calData,
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
-                                       nrep=nreplicates,
+                                       nrep=100,
                                        BayesianOnly=T)[,c(19:23)]
             sink()
           

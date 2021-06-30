@@ -40,7 +40,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   
 	   for ( i in 1:NPred) {
 	   D47Pred[i]~dnorm(D47[i],pow(D47Prederror[i],-2))
-	   tw[i]<- sqrt((beta* 10^6) / (D47[i] - alpha))- 273.15
+	   tw[i]<- (D47[i]-alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
 	   }
   	 
@@ -74,7 +74,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   
 	   for ( i in 1:NPred) {
 	   D47Pred[i]~dnorm(D47[i],pow(D47Prederror[i],-2))
-	   tw[i]<- sqrt((beta* 10^6) / (D47[i] - alpha))- 273.15
+	   tw[i]<- (D47[i]-alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
 	   }
   
@@ -123,7 +123,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   
 	   for ( i in 1:NPred) {
 	   D47Pred[i]~dnorm(D47[i],pow(D47Prederror[i],-2))
-	   tw[i]<- sqrt((beta* 10^6) / (D47[i] - alpha))- 273.15
+	   tw[i]<- (D47[i]-alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
 	   }
 	
