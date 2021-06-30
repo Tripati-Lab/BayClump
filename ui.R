@@ -54,10 +54,10 @@ body <- dashboardBody(
                          ),
                          
                          # Uncertainties
-                         radioButtons("uncertainties", " ",
-                                      c("My data contain uncertainties" = "myuncertainties",
-                                        "Use uncertainties from Daëron et al., 2020" = "usedaeron")
-                         ),
+                      #   radioButtons("uncertainties", " ",
+                      #                c("My data contain uncertainties" = "myuncertainties",
+                      #                  "Use uncertainties from Daëron et al., 2020" = "usedaeron")
+                      #   ),
                          
                          # Reference frame
                          div(style="display:inline-block; vertical-align:top;", 
@@ -69,8 +69,11 @@ body <- dashboardBody(
                                        placement = "bottom", trigger = "hover",
                                        options = NULL)
                          ),
-                         
-                         
+                      
+  #                       radioButtons("tempformat", "Temperature format",
+  #                                    c("My temperatures are in °C" = "celsius",
+  #                                      "My temperatures are in 10^6/T^2" = "tentothesixth")),
+                      
                          # Misc options
                          tags$b("Miscellaneous options"),
                          checkboxInput("scale" ,'Scale data')
@@ -89,8 +92,12 @@ body <- dashboardBody(
                          checkboxInput("simulateYork_measured", "York regression", FALSE),
                          checkboxInput("simulateDeming", "Deming regression", FALSE),
                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear model", FALSE),
+                         checkboxInput("simulateBLMM_measuredMaterial", "Bayesian linear mixed model", FALSE),
                          
-                         bsTooltip('simulateBLM_measuredMaterial', "Running the Bayesian model can take a few minutes. Please be patient.",
+                         bsTooltip('simulateBLM_measuredMaterial', "Running Bayesian models can take a few minutes. Please be patient.",
+                                   placement = "bottom", trigger = "hover",
+                                   options = NULL),
+                         bsTooltip('simulateBLMM_measuredMaterial', "Running Bayesian models can take a few minutes. Please be patient.",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
                          
@@ -127,7 +134,11 @@ body <- dashboardBody(
                          tags$h4("Bayesian simple linear model - no errors"),
                          verbatimTextOutput("blinnoerr", placeholder = TRUE),
                          tags$h4("Bayesian simple linear model - with errors"),
-                         verbatimTextOutput("blinwerr", placeholder = TRUE)
+                         verbatimTextOutput("blinwerr", placeholder = TRUE),
+                         tags$h4("Bayesian linear mixed model - no errors"),
+                         verbatimTextOutput("blinmnoerr", placeholder = TRUE),
+                         tags$h4("Bayesian linear mixed model - with errors"),
+                         verbatimTextOutput("blinmwerr", placeholder = TRUE)
                   ),
                   
                   # Download all calibration data
@@ -144,10 +155,6 @@ body <- dashboardBody(
                          title = "Calibration plots", solidHeader = TRUE,
                          plotlyOutput("rawcaldata")
                          
-                  ))),
-            fluidRow(
-              box(width = 12, 
-                  column(12, "Placeholder for text about the models here!"
                   ))),
             fluidRow(
               box(width = 12,
@@ -186,8 +193,8 @@ body <- dashboardBody(
             fluidRow(
               box(width = 5, 
                   title = "Step 1: Reconstruction setup", solidHeader = TRUE,
-                  column(12,
-                         
+                  column(12, tags$b("Calibration models are automatically transferred to this tab. If you have not yet run calibration models, please do so before proceeding."),
+                         tags$br(),
                          # Download templates
                          downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
                          
@@ -231,7 +238,7 @@ body <- dashboardBody(
                          tableOutput("bayesrecswounerr"),
                          tableOutput("bayesrecswounnoerr"),
                          tableOutput("Bpredictions")
-
+                         
                   )
               )
             ),  

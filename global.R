@@ -3,6 +3,7 @@ if("tidyverse" %in% installed.packages() == TRUE) {remove.packages("tidyverse")}
 # To work in shinyapps.io, each package has be loaded individually instead of with lapply
 library(shiny)
 library(shinydashboard)
+library(isoreader)
 library(dplyr)
 library(xtable)
 library(viridis)
@@ -29,16 +30,8 @@ library(openxlsx)
 library(clumpedr)
 library(bib2df)
 
-packages <- c("shiny", "shinydashboard", "dplyr", "xtable", "viridis", "data.table", "shinyBS", "plotly", "bibtex",
-              "readxl", "lme4", "ggplot2", "rjags", "R2jags", "IsoplotR", "chemCal", "investr", "MCMCvis",
-              "ggridges", "ggpubr", "DT", "knitcitations", "openxlsx", "pbapply", "deming", "pbmcapply", "clumpedr", "bib2df")
-
-
-#new.packages <- packages[!(packages %in% installed.packages()[,"Package"])]
-#if(length(new.packages)) install.packages(new.packages)
-#lapply(packages, library, character.only = TRUE)
-
-bibtex::write.bib(packages, file = "Rpackages.bib", append = FALSE, verbose = TRUE)
+# Create automatic bibliography containing loaded packages and their dependencies
+bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, verbose = TRUE)
 
 ######################################################################################################
 
@@ -49,8 +42,15 @@ BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.c
 Petersen <- read.csv("Data/SampleData.csv") # PETERSEN PLACEHOLDER
 Anderson <- read.csv("Data/SampleData2.csv") # ANDERSON PLACEHOLDER
 PetersenAnderson <- rbind(Petersen, Anderson)
+
+# Create empty objects to receive data
 Material <- NULL
 Complete_Calibration_List <- NULL
-# Load necessary scripts
+
+# Improve reproducibility
+set.seed(4)
+
+# Load necessary functions
 sapply(list.files('Functions', full.names = T), source)
+
 

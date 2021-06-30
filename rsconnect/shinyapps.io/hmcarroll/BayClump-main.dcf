@@ -1,0 +1,14 @@
+name: BayClump-main
+title: BayClump-main
+username:
+account: hmcarroll
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4117037
+bundleId: 4774294
+url: https://hmcarroll.shinyapps.io/bayclump-main/
+when: 1625079901.70354
+lastSyncTime: 1625079901.70357
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|Alex_calibration_template_testMat1.csv|Alex_calibration_template.csv|BayClump_template.csv|sampleScript_May24.R|sampleScriptPipelinePredictionsJune21.R|sampleScriptPredictionsJune16.R

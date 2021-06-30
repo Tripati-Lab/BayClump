@@ -23,7 +23,7 @@ server <- function(input, output, session) {
     bib <- get_bib()
     bib
     
-  }, caption = "R packages used to render this dashboard", options = list(pageLength = 30, info = FALSE))
+  }, caption = "This is an automatically generated list of R packages used to render and run BayClump. Citation information is provided by package authors.", options = list(pageLength = 20, info = FALSE))
   
   # Calibration tab
   
@@ -128,13 +128,23 @@ server <- function(input, output, session) {
     calData <<- NULL
     calData <<- calibrationData()
     
-    ##If temperature is in degree celsius
+    ## Deal with temperature formats
+    calData$T2 <<- calData$Temperature
     
-    calData$T2 <<- (10^6)/(calData$Temperature + 273.15)^2 
+#    if("celsius" %in% names(input$tempformat)) {
+#      calData$T2 <<- (10^6)/(calData$Temperature + 273.15)^2 
+#    }
+#    if("tentothesixth" %in% names(input$tempformat)) {
+#      calData$T2 <<- calData$Temperature
+#      calData$Temperature <<- (1000/sqrt(calData$Temperature)) - 273.15
+#    }
+
     
-    if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
-      calData$TempError <<- 1
-    }
+    
+    # For future implementation:
+   # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
+  #    calData$TempError <<- 1
+  #  }
     
     if(input$scale == TRUE) {
       calData$Temperature <- scale(calData$Temperature)
@@ -154,13 +164,15 @@ server <- function(input, output, session) {
        input$simulateLM_inverseweights == FALSE &
        input$simulateYork_measured == FALSE &
        input$simulateDeming == FALSE &
-       input$simulateBLM_measuredMaterial == FALSE) {print(noquote("Please select at least one model"))}
+       input$simulateBLM_measuredMaterial == FALSE &
+       input$simulateBLMM_measuredMaterial == FALSE) {print(noquote("Please select at least one model"))}
     
     if(input$simulateLM_measured != FALSE |
        input$simulateLM_inverseweights != FALSE |
        input$simulateYork_measured != FALSE |
        input$simulateDeming != FALSE |
-       input$simulateBLM_measuredMaterial != FALSE) {
+       input$simulateBLM_measuredMaterial != FALSE |
+       input$simulateBLMM_measuredMaterial != FALSE) {
       
       withProgress(message = 'Running selected models, please wait', {
         
@@ -174,8 +186,8 @@ server <- function(input, output, session) {
         }
         if(input$simulateBLM_measuredMaterial == FALSE) {
         }
-        
-        
+        if(input$simulateBLMM_measuredMaterial == FALSE) {
+        }
         
         if(input$simulateLM_measured != FALSE) {
           sink(file = "linmodtext.txt", type = "output")
@@ -473,7 +485,7 @@ server <- function(input, output, session) {
         #     checkboxInput("linear", "Linear model", FALSE),
         if(input$simulateBLM_measuredMaterial != FALSE) {
           sink(file = "Bayeslinmodtext.txt", type = "output")
-          bayeslincals <<- simulateBLM_measuredMaterial(calData, generations=1000, replicates = replicates, isMixed=F)
+          bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F)
           sink()
           
           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$T2), to = max(calData$T2))
@@ -584,6 +596,14 @@ server <- function(input, output, session) {
           })
           
         }
+        
+     #   if(isMixed == FALSE & input$simulateBLMM_measuredMaterial != FALSE) {
+    #      print(noquote("Bayesian linear mixed models require multiple materials"))
+    #    }
+    #    if(isMixed == TRUE & input$simulateBLMM_measuredMaterial != FALSE) {
+    #      bayeslmminciwitherror <- RegressionSingleCI(data = bayeslincals$BLMM_Measured_errors, from = min(calData$T2), to = max(calData$T2))
+    #      bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
+    #    }
         
       })
       
@@ -726,6 +746,8 @@ server <- function(input, output, session) {
       if("Bayes w uncertainty and error" %in% names(wb2) == TRUE) 
       {removeWorksheet(wb2, "Bayes w uncertainty and error") & removeWorksheet(wb2, "Bayes w uncertainty no error") &
           removeWorksheet(wb2, "Bayes w error no uncertainty") & removeWorksheet(wb2, "Bayes no error no uncertainty")}
+      if("Bayesian predictions" %in% names(wb2) == TRUE) 
+      {removeWorksheet(wb2, "Bayesian predictions")}
       
       if(input$confirm == FALSE) { print(noquote("Please confirm that your reference frames match")) }
       if(input$confirm == TRUE) {
@@ -741,32 +763,33 @@ server <- function(input, output, session) {
             sink("bayespredictions.txt", type = "output")
             PipCriteria<-read.csv('Data/PipCriteria.csv')
             nreplicates=2
-            infTempBayesian<- clumpipe(calData=calData,
+            infTempBayesian <<- clumpipe(calData=calData,
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
                                        nrep=nreplicates,
                                        BayesianOnly=T)[,c(19:23)]
             sink()
+          
+          df0<-infTempBayesian
+          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          rownames(df0) <- NULL
+          
+          output$Bpredictions <- renderTable(
+            head(df0),
+            caption = "Bayesian predictions under a Bayesian linear model with errors",
+            caption.placement = getOption("xtable.caption.placement", "top"),
+            rownames = TRUE,
+            digits = 3,
+            align = "c"
             
-            df0<-infTempBayesian
-            names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
-            rownames(df0) <- NULL
-            
-            output$Bpredictions <- renderTable(
-              head(df0),
-              caption = "Bayesian predictions under a Bayesian Linear model with errors",
-              caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
-              
-            )
-          }
+          )
           
           addWorksheet(wb2, "Bayesian predictions") # Add a blank sheet
           writeData(wb2, sheet = "Bayesian predictions", df0)
           
+        }
+
           # Run prediction function
           if( !is.null(lmcals) ) {
             
@@ -1196,5 +1219,6 @@ server <- function(input, output, session) {
       saveWorkbook(wb2, file, overwrite = TRUE)
     }
   )
+  
 }
   
