@@ -762,16 +762,17 @@ server <- function(input, output, session) {
             ##(Only Bayesian simple linear with error for now)
             sink("bayespredictions.txt", type = "output")
             PipCriteria<-read.csv('Data/PipCriteria.csv')
+            nreplicates=100
             infTempBayesian <<- clumpipe(calData=calData,
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
-                                       nrep=100,
+                                       nrep=replicates,
                                        BayesianOnly=T)[,c(19:23)]
             sink()
           
           df0<-infTempBayesian
-          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (10^6/T^2) [°K]", "Lower 95% CI", "Upper 95% CI")
           rownames(df0) <- NULL
           
           output$Bpredictions <- renderTable(
