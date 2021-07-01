@@ -1,9 +1,9 @@
 fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F, 
-                                           returnModels=T, n.iter= 50000, burninFrac=0.1,
-                                           alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
-                                           useInits=T, 
-                                           D47Prederror,
-                                           D47Pred){
+         returnModels=T, n.iter= 50000, burninFrac=0.1,
+         alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
+         useInits=T, 
+         D47Prederror,
+         D47Pred){
   
   ##Models
   BLM1<-paste(" model{
@@ -43,10 +43,10 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   tw[i]<- (D47[i]-alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
 	   }
-	   
+  	 
 }")
   
-
+ 
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors
                 alpha ~ ", alphaBLM1," \n ",
@@ -88,8 +88,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
         for (i in 1:K) {
             beta[i] ~  ", alphaBLM1," \n ",
               
-              " alpha[i] ~  ", betaBLM1," \n ",
-              " }
+          " alpha[i] ~  ", betaBLM1," \n ",
+       " }
         
 
     # Gamma prior for standard deviation
@@ -166,8 +166,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
       #    beta = rnorm(1,0,.01))
       
       list(alpha = rnorm(1,0.231,0.065),
-           beta = rnorm(1,0.039,0.004),
-           D47=rnorm(1,0.5,0.8))
+           beta = rnorm(1,0.039,0.004))
       
     }}else{NULL}
     
@@ -235,4 +234,4 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
   attr(CompleteModelFit, 'data') <- calibrationData 
   return(CompleteModelFit)
 }
-
+  
