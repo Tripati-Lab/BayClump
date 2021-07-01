@@ -29,24 +29,20 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 
     # Diffuse normal priors for true D47
     for (i in 1:NPred){
-        D47[i] ~ dunif(0.5,0.8)
+        D47[i] ~ dnorm(0.7,0.001)
     }
 
     ##Predictions 
-     for ( i in 1:NPred) {
-     sigmaC[i] ~ dunif(0, 1) # standard deviation
-	   tauC[i] <- 1 / (sigmaC[i] * sigmaC[i]) # convert to precision
-     }
-	   
 	   for ( i in 1:NPred) {
 	   D47Pred[i]~dnorm(D47[i],pow(D47Prederror[i],-2))
-	   tw[i]<- (D47[i]-alpha)/beta
-		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
+	   tw[i]<- (D47Pred[i]-alpha)/beta
+		 Tcpropagated[i] ~ dnorm(tw[i], tauy)
 	   }
-  	 
+	   
 }")
   
- 
+  
+  
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors
                 alpha ~ ", alphaBLM1," \n ",
@@ -67,17 +63,12 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
     }
 
     ##Predictions 
-     for ( i in 1:NPred) {
-     sigmaC[i] ~ dunif(0, 1) # standard deviation
-	   tauC[i] <- 1 / (sigmaC[i] * sigmaC[i]) # convert to precision
-     }
-	   
 	   for ( i in 1:NPred) {
 	   D47Pred[i]~dnorm(D47[i],pow(D47Prederror[i],-2))
-	   tw[i]<- (D47[i]-alpha)/beta
-		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
+	   tw[i]<- (D47Pred[i]-alpha)/beta
+		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
-  
+	   
 }")
   
   
@@ -88,8 +79,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
         for (i in 1:K) {
             beta[i] ~  ", alphaBLM1," \n ",
               
-          " alpha[i] ~  ", betaBLM1," \n ",
-       " }
+              " alpha[i] ~  ", betaBLM1," \n ",
+              " }
         
 
     # Gamma prior for standard deviation
@@ -116,17 +107,12 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
     }
 
     ##Predictions 
-     for ( i in 1:NPred) {
-     sigmaC[i] ~ dunif(0, 1) # standard deviation
-	   tauC[i] <- 1 / (sigmaC[i] * sigmaC[i]) # convert to precision
-     }
-	   
-	   for ( i in 1:NPred) {
+ 	   for ( i in 1:NPred) {
 	   D47Pred[i]~dnorm(D47[i],pow(D47Prederror[i],-2))
-	   tw[i]<- (D47[i]-alpha)/beta
-		 Tcpropagated[i] ~ dnorm(tw[i], tauC[i])
+	   tw[i]<- (D47Pred[i]-alpha)/beta
+		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
-	
+	   
 }")
   
   

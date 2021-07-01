@@ -191,7 +191,7 @@ server <- function(input, output, session) {
         
         if(input$simulateLM_measured != FALSE) {
           sink(file = "linmodtext.txt", type = "output")
-          lmcals <<- simulateLM_measured(calData, replicates = replicates, generations=1000)
+          lmcals <<- simulateLM_measured(calData, replicates = replicates)
           sink()
           
           lmci <- RegressionSingleCI(data = lmcals, from = min(calData$T2), to = max(calData$T2))
@@ -771,7 +771,7 @@ server <- function(input, output, session) {
             sink()
           
           df0<-infTempBayesian
-          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature 10^6/T^2 (°K)", "Lower 95% CI", "Upper 95% CI")
           rownames(df0) <- NULL
           
           output$Bpredictions <- renderTable(
