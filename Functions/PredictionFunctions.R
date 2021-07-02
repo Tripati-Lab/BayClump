@@ -1,6 +1,7 @@
 CItoSE<-function(upper, lower){
   (upper-lower)/3.92
 }
+
 predictTcNonBayes<-function(data, slope, slpcnf, intercept, intcnf ){
   
   errors<-as.data.frame(data)
@@ -31,106 +32,122 @@ predictTcNonBayes<-function(data, slope, slpcnf, intercept, intcnf ){
         cbind.data.frame(type='Parameter uncertainty', resParUn))
   
 }
+
 predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyWithinBayesian=F){
   
-  errors<-as.data.frame(data)
+  errors<-data
   
   if(isFALSE(onlyWithinBayesian)){
-  
-  SingleRep<-fitClumpedRegressions(calibrationData=calibrationData,
-                                   hasMaterial = hasMaterial, n.iter = generations)
-  
-  if(hasMaterial){
     
-    a<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit$BUGSoutput$summary[2,1], 
-                 slpcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[2,7], SingleRep$BLM1_fit$BUGSoutput$summary[2,3]), 
-                 intercept=SingleRep$BLM1_fit$BUGSoutput$summary[1,1], 
-                 intcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[1,7], SingleRep$BLM1_fit$BUGSoutput$summary[1,3]) )
+    SingleRep<-fitClumpedRegressions(calibrationData=calibrationData,
+                                     hasMaterial = hasMaterial, n.iter = generations)
     
-    b<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,1], 
-                 slpcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,3]), 
-                 intercept=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,1], 
-                 intcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,3]) )
+    if(hasMaterial){
+      
+      a<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit$BUGSoutput$summary[2,1], 
+                           slpcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[2,7], SingleRep$BLM1_fit$BUGSoutput$summary[2,3]), 
+                           intercept=SingleRep$BLM1_fit$BUGSoutput$summary[1,1], 
+                           intcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[1,7], SingleRep$BLM1_fit$BUGSoutput$summary[1,3]) )
+      
+      b<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,1], 
+                           slpcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,3]), 
+                           intercept=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,1], 
+                           intcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,3]) )
+      
+      c<-predictTcNonBayes(data=errors, slope=SingleRep$BLM3_fit$BUGSoutput$summary[2,1], 
+                           slpcnf=CItoSE(SingleRep$BLM3_fit$BUGSoutput$summary[2,7], SingleRep$BLM3_fit$BUGSoutput$summary[2,3]), 
+                           intercept=SingleRep$BLM3_fit$BUGSoutput$summary[1,1], 
+                           intcnf=CItoSE(SingleRep$BLM3_fit$BUGSoutput$summary[1,7], SingleRep$BLM3_fit$BUGSoutput$summary[1,3]) )
+    }else{
+      
+      a<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit$BUGSoutput$summary[2,1], 
+                           slpcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[2,7], SingleRep$BLM1_fit$BUGSoutput$summary[2,3]), 
+                           intercept=SingleRep$BLM1_fit$BUGSoutput$summary[1,1], 
+                           intcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[1,7], SingleRep$BLM1_fit$BUGSoutput$summary[1,3]) )
+      
+      b<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,1], 
+                           slpcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,3]), 
+                           intercept=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,1], 
+                           intcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,3]) )
+      
+    }
     
-    c<-predictTcNonBayes(data=errors, slope=SingleRep$BLM3_fit$BUGSoutput$summary[2,1], 
-                 slpcnf=CItoSE(SingleRep$BLM3_fit$BUGSoutput$summary[2,7], SingleRep$BLM3_fit$BUGSoutput$summary[2,3]), 
-                 intercept=SingleRep$BLM3_fit$BUGSoutput$summary[1,1], 
-                 intcnf=CItoSE(SingleRep$BLM3_fit$BUGSoutput$summary[1,7], SingleRep$BLM3_fit$BUGSoutput$summary[1,3]) )
-  }else{
     
-    a<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit$BUGSoutput$summary[2,1], 
-                 slpcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[2,7], SingleRep$BLM1_fit$BUGSoutput$summary[2,3]), 
-                 intercept=SingleRep$BLM1_fit$BUGSoutput$summary[1,1], 
-                 intcnf=CItoSE(SingleRep$BLM1_fit$BUGSoutput$summary[1,7], SingleRep$BLM1_fit$BUGSoutput$summary[1,3]) )
-    
-    b<-predictTcNonBayes(data=errors, slope=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,1], 
-                 slpcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[2,3]), 
-                 intercept=SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,1], 
-                 intcnf=CItoSE(SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,7], SingleRep$BLM1_fit_NoErrors$BUGSoutput$summary[1,3]) )
-    
-  }
-  
-  
   }
   
   # Bayesian predictions inside the Bayesian framework (full propagation)
   
   predictionsWithinBayesian<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
-                                                              useInits=F, 
+                                                              useInits=T, 
                                                               hasMaterial = hasMaterial,
-                                                              D47Prederror=errors[,2],
                                                               D47Pred=errors[,1],
                                                               n.iter= generations)
   
+  predictionsWithinBayesian_up<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
+                                                                 useInits=T, 
+                                                                 hasMaterial = hasMaterial,
+                                                                 D47Pred=errors[,1]+1.96*errors[,2],
+                                                                 n.iter= generations)
+  
+  predictionsWithinBayesian_low<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
+                                                                  useInits=T, 
+                                                                  hasMaterial = hasMaterial,
+                                                                  D47Pred=errors[,1]-1.96*errors[,2],
+                                                                  n.iter= generations)
+  
   
   predsComplete<-if(hasMaterial){
-    
-    fullProp<- if(nrow(errors)==1 ){
-      
-    rbind(
-      cbind.data.frame(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
-      cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
-      cbind.data.frame(model='BLM3_fit',errors,t(matrix(predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))
+    fullProp<-rbind(
+      cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
+                       lwr=predictionsWithinBayesian_low$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian_up$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
+      ),
+      cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
+                       lwr=predictionsWithinBayesian_low$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian_up$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)]),
+      cbind.data.frame(model='BLM3_fit',errors,predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])
     )
-    }else{
-      rbind(
-        cbind.data.frame(model='BLM1_fit', errors, predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
-        cbind.data.frame(model='BLM1_fit_NoErrors',errors,predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
-        cbind.data.frame(model='BLM3_fit',errors,predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])
-      ) 
-      }
-      
-    fullProp$type<-"Parameter uncertainty"
+    
+    corMax<-apply(fullProp[,c('lwr', 'upr')], 1, max)
+    corMin<-apply(fullProp[,c('lwr', 'upr')], 1, min)
+    
+    fullProp$lwr<-corMin
+    fullProp$upr<-corMax
+    fullProp$type<-"Parameter Uncertainty"
     fullProp$BayesianPredictions<-'Yes'
     
     if(isFALSE(onlyWithinBayesian)){
-    a$model<-'BLM1_fit'
-    b$model<-'BLM1_fit_NoErrors'
-    c$model<-'BLM3_fit'
-    colnames(fullProp)<-c('model', 'D47', 'D47error', 'Tc', 'lwr', 'upr', 'type', 'BayesianPredictions')
-    rbindlist(list(fullProp,a,b,c),fill=TRUE)
+      a$model<-'BLM1_fit'
+      b$model<-'BLM1_fit_NoErrors'
+      c$model<-'BLM3_fit'
+      colnames(fullProp)<-c('model', 'D47', 'D47error', 'Tc', 'lwr', 'upr', 'type', 'BayesianPredictions')
+      rbindlist(list(fullProp,a,b,c),fill=TRUE)
     }else{
       colnames(fullProp)<-c('model', 'D47', 'D47error', 'Tc', 'lwr', 'upr', 'type', 'BayesianPredictions')
       fullProp
-      }
+    }
     
   }else{
     
-      fullProp<- 
-        if(nrow(errors)==1 ){
-        rbind(
-        cbind(model='BLM1_fit', errors, t(matrix(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))),
-        cbind.data.frame(model='BLM1_fit_NoErrors',errors,t(matrix(predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])))  )
-        }else{
-          rbind(
-            cbind(model='BLM1_fit', errors, predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]),
-            cbind.data.frame(model='BLM1_fit_NoErrors',errors,predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)]))
-        }
-      
-      
-      fullProp$type<-"Parameter uncertainty"
-      fullProp$BayesianPredictions<-'Yes'
-      if(isFALSE(onlyWithinBayesian)){
+    
+    fullProp<-  rbind(
+      cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
+                       lwr=predictionsWithinBayesian_low$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian_up$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
+      ),
+      cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
+                       lwr=predictionsWithinBayesian_low$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian_up$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)])  ) 
+    
+    corMax<-apply(fullProp[,c('lwr', 'upr')], 1, max)
+    corMin<-apply(fullProp[,c('lwr', 'upr')], 1, min)
+    
+    fullProp$lwr<-corMin
+    fullProp$upr<-corMax
+    
+    fullProp$type<-"Parameter Uncertainty"
+    fullProp$BayesianPredictions<-'Yes'
+    if(isFALSE(onlyWithinBayesian)){
       a$model<-'BLM1_fit'
       b$model<-'BLM1_fit_NoErrors'
       
@@ -141,7 +158,7 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
       fullProp
     }
     
-
+    
     
     
   }

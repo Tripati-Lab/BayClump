@@ -61,6 +61,13 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
     }))
     
     colnames(uncertaintyPredictionWithinBayesianModels)<-c("model","D47","D47error","Tc", "lwr","upr")
+    
+    corMax<-apply(uncertaintyPredictionWithinBayesianModels[,c('lwr', 'upr')], 1, max)
+    corMin<-apply(uncertaintyPredictionWithinBayesianModels[,c('lwr', 'upr')], 1, min)
+    
+    uncertaintyPredictionWithinBayesianModels$lwr<-corMin
+    uncertaintyPredictionWithinBayesianModels$upr<-corMax
+    
     completeDf<-cbind.data.frame(compilationModels, uncertaintyPredictionWithinBayesianModels)
     
     return(completeDf)

@@ -768,10 +768,15 @@ server <- function(input, output, session) {
                                        error_targetD47=recData$D47error, 
                                        nrep=100,
                                        BayesianOnly=T)[,c(19:23)]
+            infTempBayesian$Tc<-sqrt(10^6/infTempBayesian$Tc)-273.15
+            colnames(infTempBayesian)[c(4:5)]<-c('upr', 'lwr')
+            infTempBayesian$lwr<-sqrt(10^6/infTempBayesian$lwr)-273.15
+            infTempBayesian$upr<-sqrt(10^6/infTempBayesian$upr)-273.15
+            infTempBayesian<-infTempBayesian[,c("D47","D47error", "Tc","lwr","upr")]
             sink()
           
           df0<-infTempBayesian
-          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature 10^6/T^2 (°K)", "Lower 95% CI", "Upper 95% CI")
+          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
           rownames(df0) <- NULL
           
           output$Bpredictions <- renderTable(
