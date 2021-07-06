@@ -1,7 +1,7 @@
 
 simulateYork_measured<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
     Reg<-york(cbind.data.frame(dataSub$Temperature, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
@@ -12,7 +12,7 @@ simulateYork_measured<<-function(data, replicates, samples=NULL, D47error="D47er
 
 simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47error"){
   do.call(rbind,pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
     Reg<-summary(lm(D47 ~ Temperature,  dataSub))
@@ -51,7 +51,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     
     
     if(isMixed == F){
-      dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+      dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
       
     }else{
       dataSub<- do.call(rbind,lapply(unique(data_BR_Measured$Material), function(x){
