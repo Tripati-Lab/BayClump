@@ -70,10 +70,6 @@ body <- dashboardBody(
                                        options = NULL)
                          ),
                       
-  #                       radioButtons("tempformat", "Temperature format",
-  #                                    c("My temperatures are in °C" = "celsius",
-  #                                      "My temperatures are in 10^6/T^2" = "tentothesixth")),
-                      
                          # Misc options
                          tags$b("Miscellaneous options"),
                          checkboxInput("scale" ,'Scale data')

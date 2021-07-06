@@ -39,8 +39,8 @@ bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, ve
 
 BayClump_calibration_template <- read.csv("BayClump_calibration_template.csv")
 BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
-Petersen <- read.csv("Data/SampleData.csv") # PETERSEN PLACEHOLDER
-Anderson <- read.csv("Data/SampleData2.csv") # ANDERSON PLACEHOLDER
+Petersen <- read.csv("Data/SampleData.csv") # PETERSEN IN 10^6/T^2
+Anderson <- read.csv("Data/SampleData2.csv") # ANDERSON IN 10^6/T^2
 PetersenAnderson <- rbind(Petersen, Anderson)
 
 # Create empty objects to receive data

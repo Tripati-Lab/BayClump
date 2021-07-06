@@ -70,25 +70,25 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
 }")
   
   
-  LM_No_error_Data <- list(x = calibrationData$T2 , y = calibrationData$D47,
+  LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
                            N=nrow(calibrationData))
   
   ##Fit linear models
   if(hasMaterial == T){
     
     
-    Y= IsoplotR::york(cbind(calibrationData[,c('T2','TempError','D47', 'D47error')]))
-    M0=lm(D47 ~ T2, calibrationData)
-    M1=lm(D47 ~ T2+Material, calibrationData)
-    M2=lm(D47 ~ T2*Material, calibrationData)
+    Y= IsoplotR::york(cbind(calibrationData[,c('Temperature','TempError','D47', 'D47error')]))
+    M0=lm(D47 ~ Temperature, calibrationData)
+    M1=lm(D47 ~ Temperature+Material, calibrationData)
+    M2=lm(D47 ~ Temperature*Material, calibrationData)
     
     
     ##Create the calibrationDatasets for Bayesian Models
-    LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
+    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
                     errx = calibrationData$TempError, erry = calibrationData[,D47error], 
                     N=nrow(calibrationData))
     
-    ANCOVA2_Data <- list(obsx1 = calibrationData$T2 , obsy = calibrationData$D47 , 
+    ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
                          errx1 = calibrationData$TempError, erry = calibrationData[,D47error], 
                          K=length(unique(calibrationData$Material)),
                          N=nrow(calibrationData),
@@ -139,9 +139,9 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     
     CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
-    Y=IsoplotR::york(calibrationData[,c('T2','TempError','D47','D47error')])
-    M0=lm(D47 ~ T2, calibrationData)
-    LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
+    Y=IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
+    M0=lm(D47 ~ Temperature, calibrationData)
+    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
                     errx = calibrationData$TempError, erry = calibrationData[,D47error], 
                     N=nrow(calibrationData))
     ##Fit the models

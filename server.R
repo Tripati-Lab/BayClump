@@ -127,19 +127,7 @@ server <- function(input, output, session) {
     
     calData <<- NULL
     calData <<- calibrationData()
-    
-    ## Deal with temperature formats
-    calData$T2 <<- calData$Temperature
-    
-#    if("celsius" %in% names(input$tempformat)) {
-    #  calData$T2 <<- (10^6)/(calData$Temperature + 273.15)^2 
-#    }
-#    if("tentothesixth" %in% names(input$tempformat)) {
-#      calData$T2 <<- calData$Temperature
-#      calData$Temperature <<- (1000/sqrt(calData$Temperature)) - 273.15
-#    }
 
-    
     
     # For future implementation:
    # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
@@ -148,7 +136,6 @@ server <- function(input, output, session) {
     
     if(input$scale == TRUE) {
       calData$Temperature <- scale(calData$Temperature)
-      calData$T2 <- scale(calData$T2)
       calData$TempError <- scale(calData$TempError)
       calData$D47 <- scale(calData$D47)
       calData$D47error <- scale(calData$D47error)
@@ -194,14 +181,14 @@ server <- function(input, output, session) {
           lmcals <<- simulateLM_measured(calData, replicates = replicates)
           sink()
           
-          lmci <- RegressionSingleCI(data = lmcals, from = min(calData$T2), to = max(calData$T2))
+          lmci <- RegressionSingleCI(data = lmcals, from = min(calData$Temperature), to = max(calData$Temperature))
           lmcalci <- as.data.frame(lmci)
           
           output$lmcalibration <- renderPlotly({
             lmfig <- plot_ly(calibrationData()
             )
             lmfig <- lmfig %>%
-              add_trace(x = ~(10^6)/(calibrationData()$Temperature + 273.15)^2, 
+              add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
                         type = 'scatter', 
                         mode = 'markers', 
@@ -268,14 +255,14 @@ server <- function(input, output, session) {
           lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates)
           sink()
           
-          lminverseci <- RegressionSingleCI(data = lminversecals, from = min(calData$T2), to = max(calData$T2))
+          lminverseci <- RegressionSingleCI(data = lminversecals, from = min(calData$Temperature), to = max(calData$Temperature))
           lminversecalci <- as.data.frame(lminverseci)
           
           output$lminversecalibration <- renderPlotly({
             lminversefig <- plot_ly(data = calibrationData()
             )
             lminversefig <- lminversefig %>% 
-              add_trace(x = ~(10^6)/(calibrationData()$Temperature + 273.15)^2, 
+              add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
                         type = 'scatter', 
                         mode = 'markers', 
@@ -341,14 +328,14 @@ server <- function(input, output, session) {
           yorkcals <<- simulateYork_measured(calData, replicates = replicates)
           sink()
           
-          yorkci <- RegressionSingleCI(data = yorkcals, from = min(calData$T2), to = max(calData$T2))
+          yorkci <- RegressionSingleCI(data = yorkcals, from = min(calData$Temperature), to = max(calData$Temperature))
           yorkcalci <- as.data.frame(yorkci)
           
           output$yorkcalibration <- renderPlotly({
             yorkfig <- plot_ly(data = calibrationData()
             )
             yorkfig <- yorkfig %>% 
-              add_trace(x = ~(10^6)/(calibrationData()$Temperature + 273.15)^2, 
+              add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
                         type = 'scatter', 
                         mode = 'markers', 
@@ -414,14 +401,14 @@ server <- function(input, output, session) {
           demingcals <<- simulateDeming(calData, replicates = replicates)
           sink()
           
-          demingci <- RegressionSingleCI(data = demingcals, from = min(calData$T2), to = max(calData$T2))
+          demingci <- RegressionSingleCI(data = demingcals, from = min(calData$Temperature), to = max(calData$Temperature))
           demingcalci <- as.data.frame(demingci)
           
           output$demingcalibration <- renderPlotly({
             demingfig <- plot_ly(data = calibrationData()
             )
             demingfig <- demingfig %>% 
-              add_trace(x = ~(10^6)/(calibrationData()$Temperature + 273.15)^2, 
+              add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
                         type = 'scatter', 
                         mode = 'markers', 
@@ -488,16 +475,16 @@ server <- function(input, output, session) {
           bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F)
           sink()
           
-          bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$T2), to = max(calData$T2))
+          bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$Temperature), to = max(calData$Temperature))
           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
-          bayeslinciwitherror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_errors, from = min(calData$T2), to = max(calData$T2))
+          bayeslinciwitherror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
           bayeslincalciwitherror <- as.data.frame(bayeslinciwitherror)
           
           output$bayeslincalibration <- renderPlotly({
             bayeslinfig <- plot_ly(data = calibrationData()
             )
             bayeslinfig <- bayeslinfig %>% 
-              add_trace(x = ~(10^6)/(calibrationData()$Temperature + 273.15)^2, 
+              add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
                         type = 'scatter', 
                         mode = 'markers', 
@@ -601,7 +588,7 @@ server <- function(input, output, session) {
     #      print(noquote("Bayesian linear mixed models require multiple materials"))
     #    }
     #    if(isMixed == TRUE & input$simulateBLMM_measuredMaterial != FALSE) {
-    #      bayeslmminciwitherror <- RegressionSingleCI(data = bayeslincals$BLMM_Measured_errors, from = min(calData$T2), to = max(calData$T2))
+    #      bayeslmminciwitherror <- RegressionSingleCI(data = bayeslincals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
     #      bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
     #    }
         
@@ -637,14 +624,15 @@ server <- function(input, output, session) {
   
   observe({
     minlength <- length(unique(calibrationData()$Mineralogy))
+    if( !all(is.na(calibrationData()$Mineralogy)) == TRUE ){
     output$rawcaldata <- renderPlotly({
       rawcalfig <- plot_ly(calibrationData(), 
                            x = ~Temperature, 
                            y = ~D47, 
                            type = 'scatter', 
                            mode = 'lines+markers', 
-                           linetype = ~Material, 
-                           color = ~Mineralogy,
+                           linetype = ~as.factor(Material), 
+                           color = ~as.factor(Mineralogy),
                            colors = viridis_pal(option = "D", end = 0.9)(minlength),
                            opacity = 0.6,
                            error_y = ~list(array = ~D47error, color = '#000000'),
@@ -652,18 +640,46 @@ server <- function(input, output, session) {
                            text = as.character(calibrationData()$Sample.Name),
                            hovertemplate = paste(
                              "<b>Sample: %{text}</b><br><br>",
-                             "Temperature (°C): %{x}<br>",
+                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                              "Δ<sub>47</sub> (‰): %{y}<br>",
                              "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
                              "Type: ", as.character(calibrationData()$Material),
                              "<extra></extra>"))
       rawcalfig <- rawcalfig %>% layout(title = '<b> Raw calibration data from user input </b>',
                                         legend=list(title=list(text='Material and mineralogy')),
-                                        xaxis = list(title = 'Temperature (°C)'), 
+                                        xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)'), 
                                         yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
       
       return(rawcalfig)
     })
+    }else{
+      output$rawcaldata <- renderPlotly({
+        rawcalfig <- plot_ly(calibrationData(), 
+                             x = ~Temperature, 
+                             y = ~D47, 
+                             type = 'scatter', 
+                             mode = 'lines+markers', 
+                             linetype = ~as.factor(Material), 
+                             color = ~as.factor(Material),
+                             colors = viridis_pal(option = "D", end = 0.9)(length(unique(calibrationData()$Material))),
+                             opacity = 0.6,
+                             error_y = ~list(array = ~D47error, color = '#000000'),
+                             error_x = ~list(array = ~TempError, color = '#000000'),
+                             text = as.character(calibrationData()$Sample.Name),
+                             hovertemplate = paste(
+                               "<b>Sample: %{text}</b><br><br>",
+                               "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
+                               "Δ<sub>47</sub> (‰): %{y}<br>",
+                               "Type: ", as.character(calibrationData()$Material),
+                               "<extra></extra>"))
+        rawcalfig <- rawcalfig %>% layout(title = '<b> Raw calibration data from user input </b>',
+                                          legend=list(title=list(text='Material')),
+                                          xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)'), 
+                                          yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+        
+        return(rawcalfig)
+      })
+    }
   })
   
   # Reconstruction tab
@@ -1200,10 +1216,6 @@ server <- function(input, output, session) {
             print(noquote("Bayesian reconstruction complete"))
             
           }
-          
-          
-          
-          
         })
       } 
     }

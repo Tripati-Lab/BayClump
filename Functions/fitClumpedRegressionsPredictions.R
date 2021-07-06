@@ -94,13 +94,13 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 }")
   
   
-  LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
+  LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
                   errx = calibrationData$TempError, erry = calibrationData$D47error, 
                   N=nrow(calibrationData), 
                   NPred=length(D47Pred), 
                   D47Pred=D47Pred)
   
-  LM_No_error_Data <- list(x = calibrationData$T2 , y = calibrationData$D47,
+  LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
                            N=nrow(calibrationData), 
                            NPred=length(D47Pred),
                            D47Pred=D47Pred)
@@ -110,13 +110,13 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
     
     
     ##Create the calibrationDatasets for Bayesian Models
-    LM_Data <- list(obsx = calibrationData$T2 , obsy = calibrationData$D47 , 
+    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
                     errx = calibrationData$TempError, erry = calibrationData$D47error, 
                     N=nrow(calibrationData), 
                     NPred=length(D47Pred),
                     D47Pred=D47Pred)
     
-    ANCOVA2_Data <- list(obsx1 = calibrationData$T2 , obsy = calibrationData$D47 , 
+    ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
                          errx1 = calibrationData$TempError, erry = calibrationData$D47error, 
                          K=length(unique(calibrationData$Material)),
                          N=nrow(calibrationData),

@@ -4,7 +4,7 @@ simulateYork_measured<<-function(data, replicates, samples=NULL, D47error="D47er
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
-    Reg<-york(cbind.data.frame(dataSub$T2, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
+    Reg<-york(cbind.data.frame(dataSub$Temperature, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
     cbind.data.frame('intercept'=Reg$a[1],'slope'=Reg$b[1])
   }))
 }
@@ -15,7 +15,7 @@ simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47erro
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
-    Reg<-summary(lm(D47 ~ T2,  dataSub))
+    Reg<-summary(lm(D47 ~ Temperature,  dataSub))
     cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
   }))
 }
@@ -26,7 +26,7 @@ simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
-    Reg<-summary(lm(D47 ~ T2,  dataSub, weights = y_SE))
+    Reg<-summary(lm(D47 ~ Temperature,  dataSub, weights = y_SE))
     cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
   }))
 }
@@ -37,13 +37,13 @@ simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
-    Reg<-deming(D47 ~ T2, dataSub, xstd= 1/dataSub$x_SE, ystd= 1/dataSub$y_SE)
+    Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/dataSub$x_SE, ystd= 1/dataSub$y_SE)
     cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
   }))
 }
 
 
-simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generations=20000, isMixed=F){
+simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generations=2000, isMixed=F){
   
   data_BR_Measured<-data
   
