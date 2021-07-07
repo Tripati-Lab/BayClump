@@ -4,6 +4,7 @@ if("tidyverse" %in% installed.packages() == TRUE) {remove.packages("tidyverse")}
 library(shiny)
 library(shinydashboard)
 library(isoreader)
+library(plyr)
 library(dplyr)
 library(xtable)
 library(viridis)

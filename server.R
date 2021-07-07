@@ -78,6 +78,7 @@ server <- function(input, output, session) {
            })
     )
   })
+
   
   if(exists("wb")) rm(wb) # Delete any existing workbook in preparation for new results
   wb <- createWorkbook("calibration output") # Prepare a workbook for calibration outputs
@@ -124,10 +125,17 @@ server <- function(input, output, session) {
     {removeWorksheet(wb, "Bayesian model no errors") & removeWorksheet(wb, "Bayesian model no errors CI")}
     if("Bayesian model with errors" %in% names(wb) == TRUE) 
     {removeWorksheet(wb, "Bayesian model with errors") & removeWorksheet(wb, "Bayesian model with errors CI")}
+    if("Bayesian mixed w errors" %in% names(wb) == TRUE)
+    {removeWorksheet(wb, "Bayesian mixed w errors") & removeWorksheet(wb, "Bayesian mixed w errors CI")}
     
     calData <<- NULL
     calData <<- calibrationData()
 
+    # Recode NA or 0 error values to dummy value
+    calData$D47error[calData$D47error == 0] <<- 0.000001
+    calData$TempError[calData$TempError == 0] <<- 0.000001
+    calData$D47error[is.na(calData$D47error)] <<- 0.000001
+    calData$TempError[is.na(calData$TempError)] <<- 0.000001
     
     # For future implementation:
    # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
@@ -135,10 +143,10 @@ server <- function(input, output, session) {
   #  }
     
     if(input$scale == TRUE) {
-      calData$Temperature <- scale(calData$Temperature)
-      calData$TempError <- scale(calData$TempError)
-      calData$D47 <- scale(calData$D47)
-      calData$D47error <- scale(calData$D47error)
+      calData$Temperature <<- scale(calData$Temperature)
+      calData$TempError <<- scale(calData$TempError)
+      calData$D47 <<- scale(calData$D47)
+      calData$D47error <<- scale(calData$D47error)
     }
     
     lmcals <<- NULL
@@ -146,6 +154,7 @@ server <- function(input, output, session) {
     yorkcals <<- NULL
     demingcals <<- NULL
     bayeslincals <<- NULL
+    bayesmixedcals <<- NULL
     
     if(input$simulateLM_measured == FALSE &
        input$simulateLM_inverseweights == FALSE &
@@ -584,13 +593,92 @@ server <- function(input, output, session) {
           
         }
         
-     #   if(isMixed == FALSE & input$simulateBLMM_measuredMaterial != FALSE) {
-    #      print(noquote("Bayesian linear mixed models require multiple materials"))
-    #    }
-    #    if(isMixed == TRUE & input$simulateBLMM_measuredMaterial != FALSE) {
-    #      bayeslmminciwitherror <- RegressionSingleCI(data = bayeslincals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
-    #      bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
-    #    }
+        if(length(unique(calData$Material)) < 2 & input$simulateBLMM_measuredMaterial != FALSE) {
+          print(noquote("Bayesian linear mixed models require multiple materials"))
+        }
+        
+        if(length(unique(calData$Material)) >= 2 & input$simulateBLMM_measuredMaterial != FALSE) {
+          calData$MaterialName <<- calData$Material
+          calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
+          
+          sink(file = "Bayesmixmodtext.txt", type = "output")
+          bayesmixedcals <- simulateBLM_measuredMaterial(calData, replicates = 50, isMixed = T)
+          sink()
+          
+          bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
+          bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
+
+          addWorksheet(wb, "Bayesian mixed w errors") # Add a blank sheet
+          addWorksheet(wb, "Bayesian mixed w errors CI") # Add a blank sheet 
+          
+          bayeslmmincalciwitherror2 <- bayeslmmincalciwitherror
+          names(bayeslmmincalciwitherror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          
+          writeData(wb, sheet = "Bayesian mixed w errors", bayesmixedcals$BLMM_Measured_errors) # Write regression data
+          writeData(wb, sheet = "Bayesian mixed w errors CI", bayeslmmincalciwitherror2)
+          
+          output$bayesmixedcalibration <- renderPlotly({
+            bayesmixedfig <- plot_ly(data = calibrationData()
+            )
+            bayesmixedfig <- bayesmixedfig %>% 
+              add_trace(x = ~calibrationData()$Temperature, 
+                        y = ~D47,
+                        type = 'scatter', 
+                        mode = 'markers', 
+                        marker = list(color = 'black'),
+                        opacity = 0.5,
+                        name = 'Raw data',
+                        text = as.character(calibrationData()$Sample.Name),
+                        hovertemplate = paste(
+                          "<b>Sample: %{text}</b><br><br>",
+                          "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
+                          "Δ<sub>47</sub> (‰): %{y}<br>",
+                          "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
+                          "Type: ", as.character(calibrationData()$Material),
+                          "<extra></extra>")) %>%
+              add_ribbons(data = bayeslmmincalciwitherror,
+                          x = ~x,
+                          y = ~median_est,
+                          ymin = ~ci_lower_est,
+                          ymax = ~ci_upper_est,
+                          line = list(color = '#446455'),
+                          fillcolor = '#446455',
+                          opacity = 0.5,
+                          name = '95% CI - with error',
+                          hovertemplate = paste(
+                            "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
+                            "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
+              add_lines(data = bayeslmmincalciwitherror,
+                        x = ~x,
+                        y = ~median_est,
+                        name = 'Median estimate - with error',
+                        line = list(color = "#446455", dash = 'dash'),
+                        hovertemplate = paste(
+                          "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
+                          "Δ<sub>47</sub> (‰): %{y}<br>"))
+            bayesmixedfig <- bayesmixedfig %>% layout(title = '<b> Bayesian mixed model </b>',
+                                                  legend=list(title=list(text='Legend')),
+                                                  xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
+                                                  yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            
+            return(bayesmixedfig)
+          })
+          
+          print(noquote("Bayesian mixed model complete"))
+          
+          output$blinmwerr <- renderPrint(
+            ddply(bayesmixedcals$BLMM_Measured_errors, .( material), 
+                  function(x) cbind.data.frame('Median'=round(median(x$intercept),4),
+                            'Lower 95% CI'=round(quantile(x$intercept, c(0.025)),4),
+                            'Upper 95% CI'=round(quantile(x$intercept, c(0.975)),4),
+                            'medianSlope'=round(median(x$slope),4),
+                            'lwrSlope'=round(quantile(x$slope, c(0.025)),4),
+                            'uprSlope'=round(quantile(x$slope, c(0.975)),4)
+            ))
+        ) 
+
+      
+        }
         
       })
       
@@ -764,6 +852,8 @@ server <- function(input, output, session) {
           removeWorksheet(wb2, "Bayes w error no uncertainty") & removeWorksheet(wb2, "Bayes no error no uncertainty")}
       if("Bayesian predictions" %in% names(wb2) == TRUE) 
       {removeWorksheet(wb2, "Bayesian predictions")}
+      if("Bayesian mixed model" %in% names(wb2) == TRUE)
+      {removeWorksheet(wb2, "Bayesian mixed model")}
       
       if(input$confirm == FALSE) { print(noquote("Please confirm that your reference frames match")) }
       if(input$confirm == TRUE) {
@@ -1215,6 +1305,38 @@ server <- function(input, output, session) {
             
             print(noquote("Bayesian reconstruction complete"))
             
+          }
+          
+          if( !is.null(bayesmixedcals) ) {
+
+              sink(file = "Bayesmixedrectext.txt", type = "output")
+              
+              bayesmixedrec <<- predictTcNonBayes(data=cbind(recData$D47,recData$D47error), 
+                                             slope=median(bayesmixedcals[[1]]$slope), 
+                                             slpcnf=CItoSE(quantile(bayesmixedcals[[1]]$slope, 0.975), quantile(bayesmixedcals[[1]]$slope, 0.025)), 
+                                             intercept=median(bayesmixedcals[[1]]$intercept), 
+                                             intcnf=CItoSE(quantile(bayesmixedcals[[1]]$intercept, 0.975), quantile(bayesmixedcals[[1]]$intercept, 0.025)))
+
+              sink()
+              
+              addWorksheet(wb2, "Bayesian mixed model") # Add a blank sheet
+              
+              df13<-bayesmixedrec
+              names(df13) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+              rownames(df13) <- NULL
+              
+              writeData(wb2, "Bayesian mixed model", bayesmixedrec)
+              
+              output$bayesrecsmixed <- renderTable(
+                
+                head(df13),
+                caption = "Bayesian mixed model with parameter uncertainty and errors",
+                caption.placement = getOption("xtable.caption.placement", "top"),
+                rownames = TRUE,
+                digits = 3,
+                align = "c"
+                
+              )
           }
         })
       } 
