@@ -239,9 +239,9 @@ body <- dashboardBody(
                          tableOutput("bayesrecswunnoerr"),
                          tableOutput("bayesrecswounerr"),
                          tableOutput("bayesrecswounnoerr"),
+                         tableOutput("BpredictionsErrors"),
                          tableOutput("Bpredictions"),
-                         tableOutput("bayesrecsmixed")
-                         
+                         tableOutput("BpredictionsBLMM")
                   )
               )
             ),  

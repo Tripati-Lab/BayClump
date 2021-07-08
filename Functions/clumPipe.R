@@ -13,7 +13,7 @@ distD47 <- function(df2, TargetD47error, Target_D47, bestCase=T){
 }
 
 
-clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, BayesianOnly=F){
+clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, BayesianOnly=F, hasMaterial=F){
   
   ##Find overall error scenario for the dataset
   
@@ -39,14 +39,16 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
     
     singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
                                            data=cbind(targetD47,error_targetD47),
-                                           generations=20000, 
-                                           hasMaterial=F, onlyWithinBayesian=T)
+                                           generations=1000, 
+                                           hasMaterial=hasMaterial, onlyWithinBayesian=T)
     }
     
     totalRep<-pbmclapply(1:nrep,singleRep, mc.cores = 4)
     
     uncertaintyPredictionWithinBayesianModels<-do.call(rbind,totalRep)
-    uncertaintyPredictionWithinBayesianModels<-uncertaintyPredictionWithinBayesianModels[uncertaintyPredictionWithinBayesianModels$model== 'BLM1_fit',]
+    
+    uncertaintyPredictionWithinBayesianModelsComplete<- lapply(unique(uncertaintyPredictionWithinBayesianModels$model), function(y){
+    uncertaintyPredictionWithinBayesianModels<-uncertaintyPredictionWithinBayesianModels[uncertaintyPredictionWithinBayesianModels$model== y,]
     
     uncertaintyPredictionWithinBayesianModels<- do.call(rbind,lapply(1:(nrow(uncertaintyPredictionWithinBayesianModels)/nrep), function(x){
       targetRows<- uncertaintyPredictionWithinBayesianModels[x,c('D47','D47error')]
@@ -68,9 +70,10 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
     uncertaintyPredictionWithinBayesianModels$lwr<-corMin
     uncertaintyPredictionWithinBayesianModels$upr<-corMax
     
-    completeDf<-cbind.data.frame(compilationModels, uncertaintyPredictionWithinBayesianModels)
+    uncertaintyPredictionWithinBayesianModels
+    })
     
-    return(completeDf)
+    return(uncertaintyPredictionWithinBayesianModelsComplete)
     
   }else{
     

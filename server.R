@@ -481,7 +481,7 @@ server <- function(input, output, session) {
         #     checkboxInput("linear", "Linear model", FALSE),
         if(input$simulateBLM_measuredMaterial != FALSE) {
           sink(file = "Bayeslinmodtext.txt", type = "output")
-          bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F)
+          bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F, generations=20000)
           sink()
           
           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$Temperature), to = max(calData$Temperature))
@@ -602,7 +602,7 @@ server <- function(input, output, session) {
           calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
           
           sink(file = "Bayesmixmodtext.txt", type = "output")
-          bayesmixedcals <- simulateBLM_measuredMaterial(calData, replicates = 50, isMixed = T)
+          bayesmixedcals <- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed = T, generations=20000)
           sink()
           
           bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
@@ -854,6 +854,12 @@ server <- function(input, output, session) {
       {removeWorksheet(wb2, "Bayesian predictions")}
       if("Bayesian mixed model" %in% names(wb2) == TRUE)
       {removeWorksheet(wb2, "Bayesian mixed model")}
+      if("Bayesian linear model, errors" %in% names(wb2) == TRUE)
+      {removeWorksheet(wb2, "Bayesian linear model, errors")}
+      if("Bayesian linear model" %in% names(wb2) == TRUE)
+      {removeWorksheet(wb2, "Bayesian linear model")}
+      if("Bayesian linear mixed model" %in% names(wb2) == TRUE)
+      {removeWorksheet(wb2, "Bayesian linear mixed model")}
       
       if(input$confirm == FALSE) { print(noquote("Please confirm that your reference frames match")) }
       if(input$confirm == TRUE) {
@@ -868,26 +874,29 @@ server <- function(input, output, session) {
             ##(Only Bayesian simple linear with error for now)
             sink("bayespredictions.txt", type = "output")
             PipCriteria<-read.csv('Data/PipCriteria.csv')
-            infTempBayesian <<- clumpipe(calData=calData,
+            infTempBayesianC <<- clumpipe(calData=calData,
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
-                                       nrep=100,
-                                       BayesianOnly=T)[,c(19:23)]
-            infTempBayesian$Tc<-sqrt(10^6/infTempBayesian$Tc)-273.15
-            colnames(infTempBayesian)[c(4:5)]<-c('upr', 'lwr')
-            infTempBayesian$lwr<-sqrt(10^6/infTempBayesian$lwr)-273.15
-            infTempBayesian$upr<-sqrt(10^6/infTempBayesian$upr)-273.15
-            infTempBayesian<-infTempBayesian[,c("D47","D47error", "Tc","lwr","upr")]
+                                       nrep=2,
+                                       hasMaterial = T,
+                                       BayesianOnly=T)
             sink()
+            infTempBayesian_werrors<-infTempBayesianC[[1]][,-1]
+            infTempBayesian_werrors$Tc<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
+            colnames(infTempBayesian_werrors)[c(4:5)]<-c('upr', 'lwr')
+            infTempBayesian_werrors$lwr<-sqrt(10^6/infTempBayesian_werrors$lwr)-273.15
+            infTempBayesian_werrors$upr<-sqrt(10^6/infTempBayesian_werrors$upr)-273.15
+            infTempBayesian_werrors<-infTempBayesian_werrors[,c("D47","D47error", "Tc","lwr","upr")]
+
           
-          df0<-infTempBayesian
+          df0<-infTempBayesian_werrors
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
           rownames(df0) <- NULL
           
-          output$Bpredictions <- renderTable(
+          output$BpredictionsErrors <- renderTable(
             head(df0),
-            caption = "Bayesian predictions under a Bayesian linear model with errors",
+            caption = "Bayesian predictions (BLM_errors)",
             caption.placement = getOption("xtable.caption.placement", "top"),
             rownames = TRUE,
             digits = 3,
@@ -895,8 +904,60 @@ server <- function(input, output, session) {
             
           )
           
-          addWorksheet(wb2, "Bayesian predictions") # Add a blank sheet
-          writeData(wb2, sheet = "Bayesian predictions", df0)
+          addWorksheet(wb2, "Bayesian linear model, errors") # Add a blank sheet
+          writeData(wb2, sheet = "Bayesian linear model, errors", df0)
+          
+          ##Without errors
+          infTempBayesian<-infTempBayesianC[[2]][,-1]
+          infTempBayesian$Tc<-sqrt(10^6/infTempBayesian$Tc)-273.15
+          colnames(infTempBayesian)[c(4:5)]<-c('upr', 'lwr')
+          infTempBayesian$lwr<-sqrt(10^6/infTempBayesian$lwr)-273.15
+          infTempBayesian$upr<-sqrt(10^6/infTempBayesian$upr)-273.15
+          infTempBayesian<-infTempBayesian[,c("D47","D47error", "Tc","lwr","upr")]
+
+          
+          df0.1<-infTempBayesian
+          names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          rownames(df0.1) <- NULL
+          
+          output$Bpredictions <- renderTable(
+            head(df0.1),
+            caption = "Bayesian predictions (BLM without errors)",
+            caption.placement = getOption("xtable.caption.placement", "top"),
+            rownames = TRUE,
+            digits = 3,
+            align = "c"
+            
+          )
+          
+          addWorksheet(wb2, "Bayesian linear model") # Add a blank sheet
+          writeData(wb2, sheet = "Bayesian linear model", df0.1)
+          
+          ##BLMM
+          infTempBayesianBLMM<-infTempBayesianC[[3]][,-1]
+          infTempBayesianBLMM$Tc<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
+          colnames(infTempBayesianBLMM)[c(4:5)]<-c('upr', 'lwr')
+          infTempBayesianBLMM$lwr<-sqrt(10^6/infTempBayesianBLMM$lwr)-273.15
+          infTempBayesianBLMM$upr<-sqrt(10^6/infTempBayesianBLMM$upr)-273.15
+          infTempBayesianBLMM<-infTempBayesianBLMM[,c("D47","D47error", "Tc","lwr","upr")]
+
+          
+          df0.2<-infTempBayesianBLMM
+          names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          rownames(df0.2) <- NULL
+          
+          output$BpredictionsBLMM <- renderTable(
+            head(df0.2),
+            caption = "Bayesian predictions under a Bayesian linear mixed model",
+            caption.placement = getOption("xtable.caption.placement", "top"),
+            rownames = TRUE,
+            digits = 3,
+            align = "c"
+            
+          )
+          
+          addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
+          writeData(wb2, sheet = "Bayesian linear mixed model", df0.2)
           
         }
 

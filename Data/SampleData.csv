@@ -40,8 +40,8 @@ NA6-50C-Salt,Vaterite,Synthetic,2,0.545,0.012765,9.48,0.03
 R5125C,Calcite,Synthetic,5,0.432,0.014372145,6.25,0.06
 10-90C-NoSalt,Aragonite,Synthetic,2,0.452,0.0256,7.46,0.02
 R10250C,Calcite,Synthetic,3,0.337,0.022017346,3.63,0.03
-3-37C-NoSalt,Calcite,Synthetic,1,0.546,,10.23,0.03
-Na4-37C-Salt,Vaterite,Synthetic,1,0.546,,10.23,0.03
+3-37C-NoSalt,Calcite,Synthetic,1,0.546,NA,10.23,0.03
+Na4-37C-Salt,Vaterite,Synthetic,1,0.546,NA,10.23,0.03
 R9225C,Calcite,Synthetic,5,0.346,0.010880296,4,0.03
 R7175C,Calcite,Synthetic,5,0.39,0.009120618,4.93,0.04
 Mg-1,Magnesite,Synthetic,2,0.488,0.003515,7.93,0
@@ -125,9 +125,9 @@ C7,Calcite,Synthetic,2,0.608,0.057065,10.07,0.03
 C15,Calcite,Synthetic,2,0.533,0.03027,10.07,0.03
 C24,Calcite,Synthetic,2,0.664,0.00067,12.74,0.05
 C45,Calcite,Synthetic,2,0.559,0.060515,10.07,0.03
-C44,Calcite,Synthetic,1,0.606,,10.07,0.03
+C44,Calcite,Synthetic,1,0.606,NA,10.07,0.03
 C12,Calcite,Synthetic,3,0.544,0.013911569,10.07,0.03
-C9,Calcite,Synthetic,1,0.538,,10.07,0.03
+C9,Calcite,Synthetic,1,0.538,NA,10.07,0.03
 SID3,Siderite,Synthetic,4,0.571,0.015238045,10.13,0.07
 SID4,Siderite,Synthetic,5,0.547,0.016725146,9.4,0.06
 SID5,Siderite,Synthetic,3,0.618,0.012756786,11.4,0.08

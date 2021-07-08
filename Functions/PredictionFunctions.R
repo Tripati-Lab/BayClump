@@ -105,7 +105,9 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
       cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
                        lwr=predictionsWithinBayesian_low$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
                        upr=predictionsWithinBayesian_up$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)]),
-      cbind.data.frame(model='BLM3_fit',errors,predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5,3,7)])
+      cbind.data.frame(model='BLM3_fit',errors,median=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
+                       lwr=predictionsWithinBayesian_low$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian_up$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)])
     )
     
     corMax<-apply(fullProp[,c('lwr', 'upr')], 1, max)
