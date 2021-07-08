@@ -13,7 +13,7 @@ distD47 <- function(df2, TargetD47error, Target_D47, bestCase=T){
 }
 
 
-clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, BayesianOnly=F, hasMaterial=F){
+clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, nrep=1000, BayesianOnly=F, hasMaterial=F){
   
   ##Find overall error scenario for the dataset
   
@@ -38,12 +38,14 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, nrep=1000, 
     
     
     singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
-                                           data=cbind(targetD47,error_targetD47),
-                                           generations=1000, 
+                                           data=cbind(targetD47,error_targetD47, materials),
+                                           generations=20000, 
                                            hasMaterial=hasMaterial, onlyWithinBayesian=T)
     }
     
-    totalRep<-pbmclapply(1:nrep,singleRep, mc.cores = 4)
+    ncores = parallel::detectCores()
+    
+    totalRep<-pbmclapply(1:nrep,singleRep, mc.cores = ncores)
     
     uncertaintyPredictionWithinBayesianModels<-do.call(rbind,totalRep)
     

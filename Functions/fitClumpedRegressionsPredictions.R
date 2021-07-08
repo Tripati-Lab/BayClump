@@ -2,7 +2,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                                            returnModels=T, n.iter= 50000, burninFrac=0.1,
                                            alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
                                            useInits=T, 
-                                           D47Pred){
+                                           D47Pred,
+                                           materialsPred){
   
   ##Models
   BLM1<-paste(" model{
@@ -88,7 +89,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
     
 
 	   for ( i in 1:NPred) {
-	   tw[i] <- (D47Pred[i]-alpha[type[i]])/beta[type[i]]
+	   tw[i] <- (D47Pred[i]-alpha[typePred[i]])/beta[typePred[i]]
 		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
 }")
@@ -122,7 +123,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                          N=nrow(calibrationData),
                          type= as.numeric(factor(calibrationData$Material)), 
                          NPred=length(D47Pred),
-                         D47Pred=D47Pred)
+                         D47Pred=D47Pred,
+                         typePred= as.numeric(factor(materialsPred)))
     
     ##Fit the models
     inits <- if(useInits==T){ function () {

@@ -1,66 +1,68 @@
-  |                                                                |   0%, ETA NACompiling model graph
+  |                                                                      |   0%, ETA NACompiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 242
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 727
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 241
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 717
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 242
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 728
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
 
 Initializing model
 
@@ -76,15 +78,13 @@ Initializing model
 
 Initializing model
 
-Initializing model
-
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 86
 
 Initializing model
 
@@ -92,18 +92,418 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 94
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 268
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 269
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 269
+
+Initializing model
+
+  |=                                                                  |   1%, ETA 33:34Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |=                                                                  |   2%, ETA 16:56Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+  |==                                                                 |   3%, ETA 11:27Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |===                                                                |   4%, ETA 10:08Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+  |===                                                                |   5%, ETA 08:03Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+  |====                                                               |   6%, ETA 06:40Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+  |=====                                                              |   7%, ETA 05:40Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 241
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |=====                                                              |   8%, ETA 05:46Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 268
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+  |======                                                             |   9%, ETA 07:28Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+  |=======                                                            |  10%, ETA 06:42Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 234
 
 Initializing model
 
-Compiling model graph
+  |=======                                                            |  11%, ETA 06:03Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 242
+
+Initializing model
+
+  |========                                                           |  12%, ETA 05:34Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 240
 
 Initializing model
@@ -112,9 +512,49 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 234
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+  |=========                                                          |  13%, ETA 05:32Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 242
+
+Initializing model
+
+  |=========                                                          |  14%, ETA 05:26Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+  |==========                                                         |  15%, ETA 05:11Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+  |===========                                                        |  16%, ETA 05:07Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
 
 Initializing model
 
@@ -122,8 +562,158 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 269
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 269
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+  |===========                                                        |  17%, ETA 05:39Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+  |============                                                       |  18%, ETA 05:19Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |=============                                                      |  19%, ETA 05:00Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 240
 
 Initializing model
@@ -132,9 +722,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
 
 Initializing model
 
@@ -142,9 +732,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
 
 Initializing model
 
@@ -152,688 +742,58 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
 
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 813
-
-Initializing model
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 814
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 234
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 234
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 224
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 803
-
-Initializing model
-
-  |=                                                            |   2%, ETA 38:56  |==                                                           |   4%, ETA 19:06Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 726
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |====                                                         |   6%, ETA 12:34Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-  |=====                                                        |   8%, ETA 09:15Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 721
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
-
-  |======                                                       |  10%, ETA 07:22Initializing model
-
-  |=======                                                      |  12%, ETA 07:14Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 726
-
-Initializing model
-
-  |=========                                                    |  14%, ETA 06:13Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 718
-
-Initializing model
-
-  |==========                                                   |  16%, ETA 05:19Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 232
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 234
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 238
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 234
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 230
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 807
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 812
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 238
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 226
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 238
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 812
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 804
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-  |===========                                                  |  18%, ETA 07:13  |============                                                 |  20%, ETA 06:20Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 721
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |=============                                                |  22%, ETA 05:40Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |===============                                              |  24%, ETA 05:05Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
-
-Initializing model
-
-  |================                                             |  26%, ETA 04:36Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 716
-
-Initializing model
-
-  |=================                                            |  28%, ETA 04:31Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |==================                                           |  30%, ETA 04:09Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-  |====================                                         |  32%, ETA 03:49Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 230
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 232
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 230
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 232
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 228
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 807
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 802
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 232
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 236
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 236
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-  |=====================                                        |  34%, ETA 04:35Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-  |======================                                       |  36%, ETA 04:13Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-  |=======================                                      |  38%, ETA 03:53Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |========================                                     |  40%, ETA 03:37Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 728
-
-Initializing model
-
-  |==========================                                   |  42%, ETA 03:20Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |===========================                                  |  44%, ETA 03:13Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
-
-Initializing model
-
-  |============================                                 |  46%, ETA 02:59Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
 Initializing model
 
-  |=============================                                |  48%, ETA 02:46Compiling model graph
+  |=============                                                      |  20%, ETA 04:50Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
 
 Initializing model
 
-Compiling model graph
+  |==============                                                     |  21%, ETA 04:38Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 236
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
 
 Initializing model
 
-Compiling model graph
+  |===============                                                    |  22%, ETA 04:37Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 234
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
 
 Initializing model
 
-Compiling model graph
+  |===============                                                    |  23%, ETA 04:25Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
 
 Initializing model
 
-Compiling model graph
+  |================                                                   |  24%, ETA 04:28Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 240
 
 Initializing model
@@ -842,9 +802,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 234
+   Total graph size: 92
 
 Initializing model
 
@@ -852,59 +812,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 814
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 238
+   Total graph size: 86
 
 Initializing model
 
@@ -912,9 +822,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 230
+   Total graph size: 90
 
 Initializing model
 
@@ -922,9 +832,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 88
 
 Initializing model
 
@@ -932,9 +842,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
 
 Initializing model
 
@@ -942,9 +852,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
 
 Initializing model
 
@@ -952,89 +862,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-  |==============================                               |  50%, ETA 03:06Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
-
-Initializing model
-
-  |================================                             |  52%, ETA 02:52Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 727
-
-Initializing model
-
-  |=================================                            |  54%, ETA 02:41Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 721
-
-Initializing model
-
-  |==================================                           |  56%, ETA 02:29Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
-
-Initializing model
-
-  |===================================                          |  58%, ETA 02:18Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 719
-
-Initializing model
-
-  |=====================================                        |  60%, ETA 02:11Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-  |======================================                       |  62%, ETA 02:01Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 727
-
-Initializing model
-
-  |=======================================                      |  64%, ETA 01:52Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
 
 Initializing model
 
@@ -1042,8 +872,68 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+  |=================                                                  |  25%, ETA 04:47Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 236
 
 Initializing model
@@ -1052,8 +942,108 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+  |=================                                                  |  26%, ETA 04:42Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+  |==================                                                 |  27%, ETA 04:29Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 232
+
+Initializing model
+
+  |===================                                                |  28%, ETA 04:17Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+  |===================                                                |  29%, ETA 04:11Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 241
+
+Initializing model
+
+  |====================                                               |  30%, ETA 04:00Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+  |=====================                                              |  31%, ETA 04:01Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+  |=====================                                              |  32%, ETA 03:53Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 240
 
 Initializing model
@@ -1062,9 +1052,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 90
 
 Initializing model
 
@@ -1072,9 +1062,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 259
 
 Initializing model
 
@@ -1082,9 +1072,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 813
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
 
 Initializing model
 
@@ -1092,19 +1082,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 236
+   Total graph size: 90
 
 Initializing model
 
@@ -1112,9 +1092,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 234
+   Total graph size: 86
 
 Initializing model
 
@@ -1122,8 +1102,88 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 82
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 268
+
+Initializing model
+
+  |======================                                             |  33%, ETA 04:06Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |=======================                                            |  34%, ETA 04:01Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 238
 
 Initializing model
@@ -1132,9 +1192,19 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 88
+
+Initializing model
+
+  |=======================                                            |  35%, ETA 03:51Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
 
 Initializing model
 
@@ -1142,9 +1212,79 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+  |========================                                           |  36%, ETA 03:49Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+  |=========================                                          |  37%, ETA 03:45Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |=========================                                          |  38%, ETA 03:36Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+  |==========================                                         |  39%, ETA 03:29Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 241
+
+Initializing model
+
+  |===========================                                        |  40%, ETA 03:22Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 226
+   Total graph size: 88
 
 Initializing model
 
@@ -1152,139 +1292,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 813
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 807
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 805
-
-Initializing model
-
-  |========================================                     |  66%, ETA 02:00Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-  |=========================================                    |  68%, ETA 01:50Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
-
-Initializing model
-
-  |===========================================                  |  70%, ETA 01:41Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
-
-Initializing model
-
-  |============================================                 |  72%, ETA 01:35Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 720
-
-Initializing model
-
-  |=============================================                |  74%, ETA 01:26  |==============================================               |  76%, ETA 01:18Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 722
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 723
-
-Initializing model
-
-Initializing model
-
-  |================================================             |  78%, ETA 01:10Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 725
-
-Initializing model
-
-  |=================================================            |  80%, ETA 01:02Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 236
+   Total graph size: 88
 
 Initializing model
 
@@ -1292,8 +1302,58 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+  |===========================                                        |  41%, ETA 03:30Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 234
 
 Initializing model
@@ -1302,29 +1362,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 88
 
 Initializing model
 
@@ -1332,8 +1372,58 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+  |============================                                       |  42%, ETA 03:26Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |=============================                                      |  43%, ETA 03:19Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 236
 
 Initializing model
@@ -1342,9 +1432,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
 
 Initializing model
 
@@ -1352,9 +1442,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
-   Unobserved stochastic nodes: 3
-   Total graph size: 230
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
 
 Initializing model
 
@@ -1362,8 +1452,318 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 268
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |=============================                                      |  44%, ETA 03:21Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+  |==============================                                     |  45%, ETA 03:14Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+  |===============================                                    |  46%, ETA 03:06Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |===============================                                    |  47%, ETA 02:59Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+  |================================                                   |  48%, ETA 02:57Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+  |=================================                                  |  49%, ETA 02:54Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+  |==================================                                 |  50%, ETA 02:56Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 242
+
+Initializing model
+
+  |==================================                                 |  51%, ETA 02:49Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 243
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |===================================                                |  52%, ETA 02:46Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 241
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+  |====================================                               |  53%, ETA 02:43Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+  |====================================                               |  54%, ETA 02:39  |=====================================                              |  55%, ETA 02:33Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 241
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
    Total graph size: 234
 
 Initializing model
@@ -1372,9 +1772,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 94
 
 Initializing model
 
@@ -1382,89 +1782,29 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 809
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 806
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 808
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 811
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
-
-Initializing model
-
-  |==================================================           |  82%, ETA 01:01  |===================================================          |  84%, ETA 00:53Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 715
-
-Initializing model
-
-  |====================================================         |  86%, ETA 00:47Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 167
-   Total graph size: 724
-
-Initializing model
-
-  |======================================================       |  88%, ETA 00:40  |=======================================================      |  90%, ETA 00:32  |========================================================     |  92%, ETA 00:25  |=========================================================    |  94%, ETA 00:19  |===========================================================  |  96%, ETA 00:12Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 224
+   Total graph size: 94
+
+Initializing model
+
+  |======================================                             |  56%, ETA 02:31Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |======================================                             |  57%, ETA 02:25Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
 
 Initializing model
 
@@ -1472,9 +1812,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 801
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 269
 
 Initializing model
 
@@ -1482,9 +1822,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 82
+   Observed stochastic nodes: 25
    Unobserved stochastic nodes: 3
-   Total graph size: 232
+   Total graph size: 92
 
 Initializing model
 
@@ -1492,10 +1832,1170 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 164
-   Unobserved stochastic nodes: 169
-   Total graph size: 810
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 270
 
 Initializing model
 
-  |============================================================ |  98%, ETA 00:06  |=========================================================| 100%, Elapsed 05:13
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 268
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 268
+
+Initializing model
+
+  |=======================================                            |  58%, ETA 02:25Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 234
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+  |========================================                           |  59%, ETA 02:19Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |========================================                           |  60%, ETA 02:15Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+  |=========================================                          |  61%, ETA 02:15Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+  |==========================================                         |  62%, ETA 02:09Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 82
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+  |==========================================                         |  63%, ETA 02:06Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 82
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+  |===========================================                        |  64%, ETA 02:03Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 234
+
+Initializing model
+
+  |============================================                       |  65%, ETA 01:59Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+  |============================================                       |  66%, ETA 01:56Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 234
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |=============================================                      |  67%, ETA 01:52Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 234
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+  |==============================================                     |  68%, ETA 01:47Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |==============================================                     |  69%, ETA 01:46Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+  |===============================================                    |  70%, ETA 01:43Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+  |================================================                   |  71%, ETA 01:38Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+  |================================================                   |  72%, ETA 01:35Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+  |=================================================                  |  73%, ETA 01:30Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+  |==================================================                 |  74%, ETA 01:27Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |==================================================                 |  75%, ETA 01:23Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 240
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+  |===================================================                |  76%, ETA 01:21Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 267
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+  |====================================================               |  77%, ETA 01:19Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |====================================================               |  78%, ETA 01:15Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+  |=====================================================              |  79%, ETA 01:10Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+  |======================================================             |  80%, ETA 01:07Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+  |======================================================             |  81%, ETA 01:03Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+  |=======================================================            |  82%, ETA 00:59Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+  |========================================================           |  83%, ETA 00:56Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+  |========================================================           |  84%, ETA 00:54Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 238
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+  |=========================================================          |  85%, ETA 00:51  |==========================================================         |  86%, ETA 00:47Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |==========================================================         |  87%, ETA 00:43  |===========================================================        |  88%, ETA 00:40Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 234
+
+Initializing model
+
+  |============================================================       |  89%, ETA 00:36Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 236
+
+Initializing model
+
+  |============================================================       |  90%, ETA 00:33  |=============================================================      |  91%, ETA 00:29Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 239
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 88
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 265
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 90
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 261
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 266
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 84
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+  |==============================================================     |  92%, ETA 00:26Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 263
+
+Initializing model
+
+  |==============================================================     |  93%, ETA 00:23Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |===============================================================    |  94%, ETA 00:20Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 235
+
+Initializing model
+
+  |================================================================   |  95%, ETA 00:16Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 237
+
+Initializing model
+
+  |================================================================   |  96%, ETA 00:13Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 242
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 262
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 86
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 25
+   Unobserved stochastic nodes: 3
+   Total graph size: 92
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 264
+
+Initializing model
+
+  |=================================================================  |  97%, ETA 00:10Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 50
+   Unobserved stochastic nodes: 53
+   Total graph size: 269
+
+Initializing model
+
+  |================================================================== |  98%, ETA 00:07  |================================================================== |  99%, ETA 00:03  |===============================================================| 100%, Elapsed 05:26

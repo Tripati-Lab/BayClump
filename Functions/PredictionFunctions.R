@@ -81,22 +81,26 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
                                                               useInits=T, 
                                                               hasMaterial = hasMaterial,
                                                               D47Pred=errors[,1],
+                                                              materialsPred=errors[,3],
                                                               n.iter= generations)
   
   predictionsWithinBayesian_up<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
                                                                  useInits=T, 
                                                                  hasMaterial = hasMaterial,
                                                                  D47Pred=errors[,1]+1.96*errors[,2],
+                                                                 materialsPred=errors[,3],
                                                                  n.iter= generations)
   
   predictionsWithinBayesian_low<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
                                                                   useInits=T, 
                                                                   hasMaterial = hasMaterial,
                                                                   D47Pred=errors[,1]-1.96*errors[,2],
+                                                                  materialsPred=errors[,3],
                                                                   n.iter= generations)
   
-  
+  errors<-errors[,-3]
   predsComplete<-if(hasMaterial){
+    
     fullProp<-rbind(
       cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
                        lwr=predictionsWithinBayesian_low$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],

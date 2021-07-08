@@ -597,12 +597,12 @@ server <- function(input, output, session) {
           print(noquote("Bayesian linear mixed models require multiple materials"))
         }
         
-        if(length(unique(calData$Material)) >= 2 & input$simulateBLMM_measuredMaterial != FALSE) {
+        if(input$simulateBLMM_measuredMaterial != FALSE) { #length(unique(calData$Material)) >= 2 &
           calData$MaterialName <<- calData$Material
           calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
           
           sink(file = "Bayesmixmodtext.txt", type = "output")
-          bayesmixedcals <- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed = T, generations=20000)
+          bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, replicates = replicates, isMixed = T, generations=20000)
           sink()
           
           bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
@@ -806,7 +806,8 @@ server <- function(input, output, session) {
   reconstructionData = reactive({
     req(input$reconstructiondata)
     n_rows = length(count.fields(input$reconstructiondata$datapath))
-    df_out = read_batch_with_progress2(input$reconstructiondata$datapath,n_rows,10)
+    #df_out = read_batch_with_progress2(input$reconstructiondata$datapath,n_rows,10)
+    df_out = read.csv(input$reconstructiondata$datapath)
     return(df_out)
   })
   
@@ -878,7 +879,8 @@ server <- function(input, output, session) {
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
-                                       nrep=2,
+                                       materials = as.numeric(as.factor(recData$Material)),
+                                       nrep=100,
                                        hasMaterial = T,
                                        BayesianOnly=T)
             sink()

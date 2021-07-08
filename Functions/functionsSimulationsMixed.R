@@ -43,7 +43,7 @@ simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
 }
 
 
-simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generations=2000, isMixed=F){
+simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generations=20000, isMixed=F){
   
   data_BR_Measured<-data
   

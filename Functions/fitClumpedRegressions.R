@@ -77,10 +77,10 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
   if(hasMaterial == T){
     
     
-    Y= IsoplotR::york(cbind(calibrationData[,c('Temperature','TempError','D47', 'D47error')]))
-    M0=lm(D47 ~ Temperature, calibrationData)
-    M1=lm(D47 ~ Temperature+Material, calibrationData)
-    M2=lm(D47 ~ Temperature*Material, calibrationData)
+    Y= NULL#IsoplotR::york(cbind(calibrationData[,c('Temperature','TempError','D47', 'D47error')]))
+    M0=NULL#lm(D47 ~ Temperature, calibrationData)
+    M1=NULL#lm(D47 ~ Temperature+Material, calibrationData)
+    M2=NULL#lm(D47 ~ Temperature*Material, calibrationData)
     
     
     ##Create the calibrationDatasets for Bayesian Models
@@ -130,7 +130,7 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     }}else{NULL}
     
     BLM3_fit <- jags(data = ANCOVA2_Data,inits = inits,
-                     parameters = c("alpha","beta", "tau0"), 
+                     parameters = c("alpha","beta"), 
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
     #BLM3_fit <- update(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
@@ -139,8 +139,8 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     
     CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
-    Y=IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
-    M0=lm(D47 ~ Temperature, calibrationData)
+    Y=NULL#IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
+    M0=NULL#lm(D47 ~ Temperature, calibrationData)
     LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
                     errx = calibrationData$TempError, erry = calibrationData[,D47error], 
                     N=nrow(calibrationData))
