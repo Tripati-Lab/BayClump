@@ -136,6 +136,7 @@ server <- function(input, output, session) {
     calData$TempError[calData$TempError == 0] <<- 0.000001
     calData$D47error[is.na(calData$D47error)] <<- 0.000001
     calData$TempError[is.na(calData$TempError)] <<- 0.000001
+    calData$Material[is.na(calData$Material)] <<- 1
     
     # For future implementation:
    # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
@@ -879,7 +880,7 @@ server <- function(input, output, session) {
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
-                                       materials = as.numeric(as.factor(recData$Material)),
+                                       materials = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
                                        nrep=100,
                                        hasMaterial = T,
                                        BayesianOnly=T)
