@@ -66,11 +66,15 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, 
     
     colnames(uncertaintyPredictionWithinBayesianModels)<-c("model","D47","D47error","Tc", "lwr","upr")
     
-    corMax<-apply(uncertaintyPredictionWithinBayesianModels[,c('lwr', 'upr')], 1, max)
-    corMin<-apply(uncertaintyPredictionWithinBayesianModels[,c('lwr', 'upr')], 1, min)
     
-    uncertaintyPredictionWithinBayesianModels$lwr<-corMin
-    uncertaintyPredictionWithinBayesianModels$upr<-corMax
+    '%nin%'<-Negate('%in%')
+    for(x in 1:nrow(uncertaintyPredictionWithinBayesianModels)){
+      ds<-uncertaintyPredictionWithinBayesianModels[x,c("Tc","lwr",'upr')]
+      up<-ds[which.max(ds)]
+      lw<-ds[which.min(ds)]
+      Tc<-ds[which(ds %nin% c(up,lw))]
+      uncertaintyPredictionWithinBayesianModels[x,c("Tc","lwr",'upr')]<-c(Tc, lw,up)
+    }
     
     uncertaintyPredictionWithinBayesianModels
     })
