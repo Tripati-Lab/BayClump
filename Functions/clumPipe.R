@@ -13,7 +13,7 @@ distD47 <- function(df2, TargetD47error, Target_D47, bestCase=T){
 }
 
 
-clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, nrep=1000, BayesianOnly=F, hasMaterial=F){
+clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, nrep=1000, BayesianOnly=F, hasMaterial=F,generations=20000){
   
   ##Find overall error scenario for the dataset
   
@@ -39,7 +39,7 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, 
     
     singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
                                            data=cbind(targetD47,error_targetD47, materials),
-                                           generations=20000, 
+                                           generations=generations, 
                                            hasMaterial=hasMaterial, onlyWithinBayesian=T)
     }
     
@@ -142,7 +142,7 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, 
       
       singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
                                              data=cbind(BP$targetD47,BP$error_targetD47),
-                                             generations=20000, 
+                                             generations=generations, 
                                              hasMaterial=F, onlyWithinBayesian=T)
       }
       

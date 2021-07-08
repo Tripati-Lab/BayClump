@@ -2,6 +2,9 @@
 server <- function(input, output, session) { 
   options(shiny.maxRequestSize=800*1024^2) 
   
+  #Number of generations for Bayesian predictions
+  ngenerationsBayesianPredictions = 20000
+  
   # Show package citations
   get_path <- reactive({
     path <- file.path(paste0(getwd()), paste("Rpackages", ".bib", sep=""))
@@ -105,6 +108,17 @@ server <- function(input, output, session) {
     } 
     
     hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
+    
+    # Update the number of bootstrap replicates to run based on user selection
+    replicates <- ifelse(input$replication == "50", 50,
+                         ifelse(input$replication == "100", 100,
+                                ifelse(input$replication == "500", 500,
+                                       ifelse(input$replication == "1000", 1000, NA))))
+    # Bayesian n generations
+    ngenerationsBayes <- ifelse(input$ngenerationsBayesian == "1000", 1000,
+                         ifelse(input$ngenerationsBayesian == "5000", 5000,
+                                ifelse(input$ngenerationsBayesian == "10000", 10000,
+                                       ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
     
     # Update the number of bootstrap replicates to run based on user selection
     replicates <- ifelse(input$replication == "50", 50,
@@ -482,7 +496,7 @@ server <- function(input, output, session) {
         #     checkboxInput("linear", "Linear model", FALSE),
         if(input$simulateBLM_measuredMaterial != FALSE) {
           sink(file = "Bayeslinmodtext.txt", type = "output")
-          bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F, generations=20000)
+          bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F, generations=ngenerationsBayes)
           sink()
           
           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$Temperature), to = max(calData$Temperature))
@@ -603,7 +617,7 @@ server <- function(input, output, session) {
           calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
           
           sink(file = "Bayesmixmodtext.txt", type = "output")
-          bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, replicates = replicates, isMixed = T, generations=20000)
+          bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, replicates = replicates, isMixed = T, generations=ngenerationsBayes)
           sink()
           
           bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
@@ -883,7 +897,8 @@ server <- function(input, output, session) {
                                        materials = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
                                        nrep=100,
                                        hasMaterial = T,
-                                       BayesianOnly=T)
+                                       BayesianOnly=T,
+                                       generations=ngenerationsBayesianPredictions)
             sink()
             infTempBayesian_werrors<-infTempBayesianC[[1]][,-1]
             infTempBayesian_werrors$Tc<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
