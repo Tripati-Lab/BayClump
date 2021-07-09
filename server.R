@@ -120,11 +120,6 @@ server <- function(input, output, session) {
                                 ifelse(input$ngenerationsBayesian == "10000", 10000,
                                        ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
     
-    # Update the number of bootstrap replicates to run based on user selection
-    replicates <- ifelse(input$replication == "50", 50,
-                         ifelse(input$replication == "100", 100,
-                                ifelse(input$replication == "500", 500,
-                                       ifelse(input$replication == "1000", 1000, NA))))
     
     # Remove existing worksheets from wb on 'run' click, if any
     if("Linear regression" %in% names(wb) == TRUE) 
@@ -895,7 +890,7 @@ server <- function(input, output, session) {
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
                                        materials = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
-                                       nrep=100,
+                                       nrep=2,
                                        hasMaterial = T,
                                        BayesianOnly=T,
                                        generations=ngenerationsBayesianPredictions)
