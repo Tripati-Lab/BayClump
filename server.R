@@ -890,7 +890,7 @@ server <- function(input, output, session) {
                                        targetD47=recData$D47, 
                                        error_targetD47=recData$D47error, 
                                        materials = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
-                                       nrep=2,
+                                       nrep=100,
                                        hasMaterial = T,
                                        BayesianOnly=T,
                                        generations=ngenerationsBayesianPredictions)
