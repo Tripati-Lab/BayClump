@@ -115,7 +115,7 @@ server <- function(input, output, session) {
     #                            ifelse(input$replication == "500", 500,
     #                                   ifelse(input$replication == "1000", 1000, NA))))
     
-    replicates <-input$replication
+    replicates <-ifelse( input$replication > nrow(calData)^2, nrow(calData)^2, input$replication)
     
     # Bayesian n generations
     ngenerationsBayes <- ifelse(input$ngenerationsBayesian == "1000", 1000,
