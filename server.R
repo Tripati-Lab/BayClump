@@ -110,10 +110,13 @@ server <- function(input, output, session) {
     hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
     
     # Update the number of bootstrap replicates to run based on user selection
-    replicates <- ifelse(input$replication == "50", 50,
-                         ifelse(input$replication == "100", 100,
-                                ifelse(input$replication == "500", 500,
-                                       ifelse(input$replication == "1000", 1000, NA))))
+    #replicates <- ifelse(input$replication == "50", 50,
+    #                     ifelse(input$replication == "100", 100,
+    #                            ifelse(input$replication == "500", 500,
+    #                                   ifelse(input$replication == "1000", 1000, NA))))
+    
+    replicates <-input$replication
+    
     # Bayesian n generations
     ngenerationsBayes <- ifelse(input$ngenerationsBayesian == "1000", 1000,
                          ifelse(input$ngenerationsBayesian == "5000", 5000,
