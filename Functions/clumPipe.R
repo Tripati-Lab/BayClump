@@ -38,7 +38,7 @@ clumpipe<-function(calData, PipCriteria, targetD47, error_targetD47, materials, 
     
     
     singleRep<-function(i) {predictTcBayes(calibrationData=calData, 
-                                           data=cbind(targetD47,error_targetD47, materials),
+                                           data=cbind.data.frame(targetD47,error_targetD47, materials),
                                            generations=generations, 
                                            hasMaterial=hasMaterial, onlyWithinBayesian=T)
     }

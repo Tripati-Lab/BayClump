@@ -3,7 +3,7 @@ server <- function(input, output, session) {
   options(shiny.maxRequestSize=800*1024^2) 
   
   #Number of generations for Bayesian predictions
-  ngenerationsBayesianPredictions = 20000
+  ngenerationsBayesianPredictions = 1000
   
   # Show package citations
   get_path <- reactive({
