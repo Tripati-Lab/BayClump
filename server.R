@@ -37,30 +37,6 @@ server <- function(input, output, session) {
     }
   )
   
-  read_batch_with_progress = function(file_path,nrows,no_batches){
-    progress = Progress$new(session, min = 1,max = no_batches)
-    progress$set(message = "Reading calibration data")
-    seq_length = ceiling(seq.int(from = 2, to = nrows-2,length.out = no_batches+1))
-    seq_length = seq_length[-length(seq_length)]
-    
-    #read the first line
-    df = read.csv(file_path,skip = 0,nrows = 1)
-    col_names = colnames(df)
-    
-    for(i in seq_along(seq_length)){
-      progress$set(value = i)
-      if(i == no_batches) chunk_size = -1 else chunk_size = seq_length[i+1] - seq_length[i]
-      
-      df_temp = read.csv(file_path, skip = seq_length[i], nrows = chunk_size,header = FALSE,stringsAsFactors = FALSE)
-      colnames(df_temp) = col_names
-      df = rbind(df,df_temp)
-    }
-    
-    progress$close()
-    return(df)
-  }
-  
-  
   calibrationData = reactive({
     switch(input$calset,
            'model1' = return(Petersen),
@@ -69,13 +45,13 @@ server <- function(input, output, session) {
            'mycal' = reactiveValues({
              req(input$calibrationdata)
              n_rows = length(count.fields(input$calibrationdata$datapath))
-             df_out = read_batch_with_progress(input$calibrationdata$datapath,n_rows,10)
+             df_out = read.csv(input$calibrationdata$datapath)
              return(df_out)
            }),
            'all' = reactiveValues({
              req(input$calibrationdata)
              n_rows = length(count.fields(input$calibrationdata$datapath))
-             df_out = read_batch_with_progress(input$calibrationdata$datapath,n_rows,10)
+             df_out = read.csv(input$calibrationdata$datapath)
              alldat <- rbind(df_out, PetersenAnderson)
              return(alldat)
            })
@@ -110,18 +86,15 @@ server <- function(input, output, session) {
     hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
     
     # Update the number of bootstrap replicates to run based on user selection
-    #replicates <- ifelse(input$replication == "50", 50,
-    #                     ifelse(input$replication == "100", 100,
-    #                            ifelse(input$replication == "500", 500,
-    #                                   ifelse(input$replication == "1000", 1000, NA))))
-    
-    replicates <-ifelse( input$replication > nrow(calData)^2, nrow(calData)^2, input$replication)
-    
+    replicates <- ifelse(input$replication == "50", 50,
+                         ifelse(input$replication == "100", 100,
+                                ifelse(input$replication == "500", 500,
+                                       ifelse(input$replication == "1000", 1000, NA))))
     # Bayesian n generations
-    ngenerationsBayes <- ifelse(input$ngenerationsBayesian == "1000", 1000,
-                         ifelse(input$ngenerationsBayesian == "5000", 5000,
-                                ifelse(input$ngenerationsBayesian == "10000", 10000,
-                                       ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
+    ngenerationsBayes <- 2000#ifelse(input$ngenerationsBayesian == "1000", 1000,
+                         #ifelse(input$ngenerationsBayesian == "5000", 5000,
+                        #        ifelse(input$ngenerationsBayesian == "10000", 10000,
+                         #              ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
     
     
     # Remove existing worksheets from wb on 'run' click, if any
@@ -791,35 +764,10 @@ server <- function(input, output, session) {
       write.csv(BayClump_reconstruction_template, file, row.names = FALSE)
     }
   )
-  
-  read_batch_with_progress2 = function(file_path,nrows,no_batches){
-    progress = Progress$new(session, min = 1,max = no_batches)
-    progress$set(message = "Reading reconstruction data")
-    seq_length = ceiling(seq.int(from = 2, to = nrows-2,length.out = no_batches+1))
-    seq_length = seq_length[-length(seq_length)]
-    
-    #read the first line
-    df = read.csv(file_path,skip = 0,nrows = 1)
-    col_names = colnames(df)
-    
-    for(i in seq_along(seq_length)){
-      progress$set(value = i)
-      if(i == no_batches) chunk_size = -1 else chunk_size = seq_length[i+1] - seq_length[i]
-      
-      df_temp = read.csv(file_path, skip = seq_length[i], nrows = chunk_size,header = FALSE,stringsAsFactors = FALSE)
-      colnames(df_temp) = col_names
-      df = rbind(df,df_temp)
-    }
-    
-    progress$close()
-    return(df)
-  }
-  
-  
+
   reconstructionData = reactive({
     req(input$reconstructiondata)
     n_rows = length(count.fields(input$reconstructiondata$datapath))
-    #df_out = read_batch_with_progress2(input$reconstructiondata$datapath,n_rows,10)
     df_out = read.csv(input$reconstructiondata$datapath)
     return(df_out)
   })
@@ -910,13 +858,20 @@ server <- function(input, output, session) {
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
           rownames(df0) <- NULL
           
-          output$BpredictionsErrors <- renderTable(
-            head(df0),
+          output$BpredictionsErrors <- renderTable({
+            
+            df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
+            df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 3, format = "f")
+            df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
+            df0$`Lower 95% CI` <- formatC(df0$`Lower 95% CI`, digits = 1, format = "f")
+            df0$`Upper 95% CI` <- formatC(df0$`Upper 95% CI`, digits = 1, format = "f")
+            head(df0)
+          },
             caption = "Bayesian predictions (BLM_errors)",
             caption.placement = getOption("xtable.caption.placement", "top"),
-            rownames = TRUE,
-            digits = 3,
-            align = "c"
+          rownames = FALSE,
+          spacing = "m",
+          align = "c"
             
           )
           
@@ -936,13 +891,20 @@ server <- function(input, output, session) {
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
           rownames(df0.1) <- NULL
           
-          output$Bpredictions <- renderTable(
-            head(df0.1),
+          output$Bpredictions <- renderTable({
+            
+            df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
+            df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 3, format = "f")
+            df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
+            df0.1$`Lower 95% CI` <- formatC(df0.1$`Lower 95% CI`, digits = 1, format = "f")
+            df0.1$`Upper 95% CI` <- formatC(df0.1$`Upper 95% CI`, digits = 1, format = "f")
+            head(df0.1)
+          },
             caption = "Bayesian predictions (BLM without errors)",
             caption.placement = getOption("xtable.caption.placement", "top"),
-            rownames = TRUE,
-            digits = 3,
-            align = "c"
+          rownames = FALSE,
+          spacing = "m",
+          align = "c"
             
           )
           
@@ -962,13 +924,20 @@ server <- function(input, output, session) {
           names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
           rownames(df0.2) <- NULL
           
-          output$BpredictionsBLMM <- renderTable(
-            head(df0.2),
+          output$BpredictionsBLMM <- renderTable({
+            
+            df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
+            df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 3, format = "f")
+            df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
+            df0.2$`Lower 95% CI` <- formatC(df0.2$`Lower 95% CI`, digits = 1, format = "f")
+            df0.2$`Upper 95% CI` <- formatC(df0.2$`Upper 95% CI`, digits = 1, format = "f")
+            head(df0.2)
+          },
             caption = "Bayesian predictions under a Bayesian linear mixed model",
             caption.placement = getOption("xtable.caption.placement", "top"),
-            rownames = TRUE,
-            digits = 3,
-            align = "c"
+          rownames = FALSE,
+          spacing = "m",
+          align = "c"
             
           )
           
@@ -987,43 +956,46 @@ server <- function(input, output, session) {
                                         intcnf=CItoSE(quantile(lmcals$intercept, 0.975), quantile(lmcals$intercept, 0.025)))
             
             lmrecwun <- lmrec[lmrec$type == "Parameter uncertainty", -1]
+            df1 <- lmrecwun
             
-            # df1 <-  transpose( do.call(rbind.data.frame,apply(lmrecwun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
-            df1<-lmrecwun
             names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df1) <- NULL
             
             lmrecwoun <- lmrec[lmrec$type == "No parameter uncertainty", -1]
-            
-            # df2 <- transpose( do.call(rbind.data.frame,apply(lmrecwoun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
+
             df2<-lmrecwoun
             names(df2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df2) <- NULL
             
-            output$lmrecswun <- renderTable(
+            output$lmrecswun <- renderTable({
               
-              head(df1),
+              df1$`Δ47 (‰)` <- formatC(df1$`Δ47 (‰)`, digits = 3, format = "f")
+              df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 3, format = "f")
+              df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 1, format = "f")
+              df1$`Lower 95% CI` <- formatC(df1$`Lower 95% CI`, digits = 1, format = "f")
+              df1$`Upper 95% CI` <- formatC(df1$`Upper 95% CI`, digits = 1, format = "f")
+              head(df1)
+            },
               caption = "Linear model with parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
+              rownames = FALSE,
+              spacing = "m",
               align = "c"
-              
             )
             
-            output$lmrecswoun <- renderTable(
+            output$lmrecswoun <- renderTable({
               
-              head(df2),
+              df2$`Δ47 (‰)` <- formatC(df2$`Δ47 (‰)`, digits = 3, format = "f")
+              df2$`Δ47 (‰) error` <- formatC(df2$`Δ47 (‰) error`, digits = 3, format = "f")
+              df2$`Temperature (°C)` <- formatC(df2$`Temperature (°C)`, digits = 1, format = "f")
+              df2$`Lower 95% CI` <- formatC(df2$`Lower 95% CI`, digits = 1, format = "f")
+              df2$`Upper 95% CI` <- formatC(df2$`Upper 95% CI`, digits = 1, format = "f")
+              head(df2)
+              },
               caption = "Linear model without parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
+              rownames = FALSE,
+              spacing = "m",
               align = "c"
               
             )
@@ -1053,45 +1025,48 @@ server <- function(input, output, session) {
                                                intcnf=CItoSE(quantile(lminversecals$intercept, 0.975), quantile(lminversecals$intercept, 0.025)))
             
             lminverserecwun <- lminverserec[lminverserec$type == "Parameter uncertainty", -1]
-            
-            # df3 <-  transpose( do.call(rbind.data.frame,apply(lminverserecwun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
-            # 
+
             df3<-lminverserecwun
             names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df3) <- NULL
             
             lminverserecwoun <- lminverserec[lminverserec$type == "No parameter uncertainty", -1]
-            
-            # df4 <- transpose( do.call(rbind.data.frame,apply(lminverserecwoun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
+
             df4<-lminverserecwoun
             names(df4) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df4) <- NULL
             
-            output$lminverserecswun <- renderTable(
+            output$lminverserecswun <- renderTable({
               
-              head(df3),
+              df3$`Δ47 (‰)` <- formatC(df3$`Δ47 (‰)`, digits = 3, format = "f")
+              df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 3, format = "f")
+              df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 1, format = "f")
+              df3$`Lower 95% CI` <- formatC(df3$`Lower 95% CI`, digits = 1, format = "f")
+              df3$`Upper 95% CI` <- formatC(df3$`Upper 95% CI`, digits = 1, format = "f")
+              head(df3)
+            },
               caption = "Inverse weighted linear model with parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
-            output$lminverserecswoun <- renderTable(
+            output$lminverserecswoun <- renderTable({
               
-              head(df4),
+              df4$`Δ47 (‰)` <- formatC(df4$`Δ47 (‰)`, digits = 3, format = "f")
+              df4$`Δ47 (‰) error` <- formatC(df4$`Δ47 (‰) error`, digits = 3, format = "f")
+              df4$`Temperature (°C)` <- formatC(df4$`Temperature (°C)`, digits = 1, format = "f")
+              df4$`Lower 95% CI` <- formatC(df4$`Lower 95% CI`, digits = 1, format = "f")
+              df4$`Upper 95% CI` <- formatC(df4$`Upper 95% CI`, digits = 1, format = "f")
+              head(df4)
+            },
               caption = "Inverse weighted linear model without parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
@@ -1122,43 +1097,47 @@ server <- function(input, output, session) {
             
             yorkrecwun <- yorkrec[yorkrec$type == "Parameter uncertainty", -1]
             
-            # df5 <-  transpose( do.call(rbind.data.frame,apply(yorkrecwun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
             df5<-yorkrecwun
             names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df5) <- NULL
             
             yorkrecwoun <- yorkrec[yorkrec$type == "No parameter uncertainty", -1]
-            
-            # df6 <- transpose( do.call(rbind.data.frame,apply(yorkrecwoun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
+
             df6<-yorkrecwoun
             names(df6) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df6) <- NULL
             
-            output$yorkrecswun <- renderTable(
+            output$yorkrecswun <- renderTable({
               
-              head(df5),
+              df5$`Δ47 (‰)` <- formatC(df5$`Δ47 (‰)`, digits = 3, format = "f")
+              df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 3, format = "f")
+              df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 1, format = "f")
+              df5$`Lower 95% CI` <- formatC(df5$`Lower 95% CI`, digits = 1, format = "f")
+              df5$`Upper 95% CI` <- formatC(df5$`Upper 95% CI`, digits = 1, format = "f")
+              head(df5)
+            },
               caption = "York regression with parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
-            output$yorkrecswoun <- renderTable(
+            output$yorkrecswoun <- renderTable({
               
-              head(df6),
+              df6$`Δ47 (‰)` <- formatC(df6$`Δ47 (‰)`, digits = 3, format = "f")
+              df6$`Δ47 (‰) error` <- formatC(df6$`Δ47 (‰) error`, digits = 3, format = "f")
+              df6$`Temperature (°C)` <- formatC(df6$`Temperature (°C)`, digits = 1, format = "f")
+              df6$`Lower 95% CI` <- formatC(df6$`Lower 95% CI`, digits = 1, format = "f")
+              df6$`Upper 95% CI` <- formatC(df6$`Upper 95% CI`, digits = 1, format = "f")
+              head(df6)
+            },
               caption = "York regression without parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
@@ -1188,44 +1167,48 @@ server <- function(input, output, session) {
                                             intcnf=CItoSE(quantile(demingcals$intercept, 0.975), quantile(demingcals$intercept, 0.025)))
             
             demingrecwun <- demingrec[demingrec$type == "Parameter uncertainty", -1]
-            
-            # df7 <-  transpose( do.call(rbind.data.frame,apply(demingrecwun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
+
             df7<-demingrecwun
             names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df7) <- NULL
             
             demingrecwoun <- demingrec[demingrec$type == "No parameter uncertainty", -1]
-            
-            # df8 <- transpose( do.call(rbind.data.frame,apply(demingrecwoun, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            #)
+
             df8<-demingrecwoun
             names(df8) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df8) <- NULL
             
-            output$demingrecswun <- renderTable(
+            output$demingrecswun <- renderTable({
               
-              head(df7),
+              df7$`Δ47 (‰)` <- formatC(df7$`Δ47 (‰)`, digits = 3, format = "f")
+              df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 3, format = "f")
+              df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 1, format = "f")
+              df7$`Lower 95% CI` <- formatC(df7$`Lower 95% CI`, digits = 1, format = "f")
+              df7$`Upper 95% CI` <- formatC(df7$`Upper 95% CI`, digits = 1, format = "f")
+              head(df7)
+            },
               caption = "Deming regression with parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
-            output$demingrecswoun <- renderTable(
+            output$demingrecswoun <- renderTable({
               
-              head(df8),
+              df8$`Δ47 (‰)` <- formatC(df8$`Δ47 (‰)`, digits = 3, format = "f")
+              df8$`Δ47 (‰) error` <- formatC(df8$`Δ47 (‰) error`, digits = 3, format = "f")
+              df8$`Temperature (°C)` <- formatC(df8$`Temperature (°C)`, digits = 1, format = "f")
+              df8$`Lower 95% CI` <- formatC(df8$`Lower 95% CI`, digits = 1, format = "f")
+              df8$`Upper 95% CI` <- formatC(df8$`Upper 95% CI`, digits = 1, format = "f")
+              head(df8)
+            },
               caption = "Deming regression without parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
@@ -1264,93 +1247,98 @@ server <- function(input, output, session) {
             
             # With parameter uncertainty and errors
             bayesrecwunerr <- bayesrec[bayesrec$type == "Parameter uncertainty" , -c(1, 7, 8)]
-            
-            # df9 <- transpose( do.call(rbind.data.frame,apply(bayesrecwunerr, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
+
             df9<-bayesrecwunerr
             names(df9) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df9) <- NULL
             
             # With parameter uncertainty and no errors
             bayesrecwunnoerr <- bayesrecNE[bayesrecNE$type == "Parameter uncertainty" , -c(1, 7, 8)]
-            
-            # df10 <-  transpose( do.call(rbind.data.frame,apply(bayesrecwunnoerr, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
-            
+
             df10<-bayesrecwunnoerr
             names(df10) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df10) <- NULL
             
             # With errors and no parameter uncertainty
             bayesrecwounerr <- bayesrec[bayesrec$type == "No parameter uncertainty" , -c(1, 7, 8)]
-            
-            # df11 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounerr, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
-            
+
             df11<-bayesrecwounerr
             names(df11) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df11) <- NULL
             
             # With no errors and no parameter uncertainty
             bayesrecwounnoerr <- bayesrecNE[bayesrec$type == "No parameter uncertainty" , -c(1, 7, 8)]
-            
-            # df12 <- transpose( do.call(rbind.data.frame,apply(bayesrecwounnoerr, 2, function(x){
-            #   cbind.data.frame(Median= round(median(x), 4))
-            # }))
-            # )
-            
+
             df12<-bayesrecwounnoerr
             names(df12) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df12) <- NULL
             
             
-            output$bayesrecswunerr <- renderTable(
+            output$bayesrecswunerr <- renderTable({
               
-              head(df9),
+              df9$`Δ47 (‰)` <- formatC(df9$`Δ47 (‰)`, digits = 3, format = "f")
+              df9$`Δ47 (‰) error` <- formatC(df9$`Δ47 (‰) error`, digits = 3, format = "f")
+              df9$`Temperature (°C)` <- formatC(df9$`Temperature (°C)`, digits = 1, format = "f")
+              df9$`Lower 95% CI` <- formatC(df9$`Lower 95% CI`, digits = 1, format = "f")
+              df9$`Upper 95% CI` <- formatC(df9$`Upper 95% CI`, digits = 1, format = "f")
+              head(df9)
+            },
               caption = "Bayesian regression with parameter uncertainty and errors",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
-            output$bayesrecswunnoerr <- renderTable(
+            output$bayesrecswunnoerr <- renderTable({
               
-              head(df10),
+              df10$`Δ47 (‰)` <- formatC(df10$`Δ47 (‰)`, digits = 3, format = "f")
+              df10$`Δ47 (‰) error` <- formatC(df10$`Δ47 (‰) error`, digits = 3, format = "f")
+              df10$`Temperature (°C)` <- formatC(df10$`Temperature (°C)`, digits = 1, format = "f")
+              df10$`Lower 95% CI` <- formatC(df10$`Lower 95% CI`, digits = 1, format = "f")
+              df10$`Upper 95% CI` <- formatC(df10$`Upper 95% CI`, digits = 1, format = "f")
+              head(df10)
+            },
               caption = "Bayesian regression with parameter uncertainty and no errors",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
-            output$bayesrecswounerr <- renderTable(
+            output$bayesrecswounerr <- renderTable({
               
-              head(df11),
+              df11$`Δ47 (‰)` <- formatC(df11$`Δ47 (‰)`, digits = 3, format = "f")
+              df11$`Δ47 (‰) error` <- formatC(df11$`Δ47 (‰) error`, digits = 3, format = "f")
+              df11$`Temperature (°C)` <- formatC(df11$`Temperature (°C)`, digits = 1, format = "f")
+              df11$`Lower 95% CI` <- formatC(df11$`Lower 95% CI`, digits = 1, format = "f")
+              df11$`Upper 95% CI` <- formatC(df11$`Upper 95% CI`, digits = 1, format = "f")
+              head(df11)
+            },
               caption = "Bayesian regression with errors and no parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
-            output$bayesrecswounnoerr <- renderTable(
+            output$bayesrecswounnoerr <- renderTable({
               
-              head(df12),
+              df12$`Δ47 (‰)` <- formatC(df12$`Δ47 (‰)`, digits = 3, format = "f")
+              df12$`Δ47 (‰) error` <- formatC(df12$`Δ47 (‰) error`, digits = 3, format = "f")
+              df12$`Temperature (°C)` <- formatC(df12$`Temperature (°C)`, digits = 1, format = "f")
+              df12$`Lower 95% CI` <- formatC(df12$`Lower 95% CI`, digits = 1, format = "f")
+              df12$`Upper 95% CI` <- formatC(df12$`Upper 95% CI`, digits = 1, format = "f")
+              head(df12)
+            },
               caption = "Bayesian regression without errors or parameter uncertainty",
               caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = TRUE,
-              digits = 3,
-              align = "c"
+            rownames = FALSE,
+            spacing = "m",
+            align = "c"
               
             )
             
@@ -1404,14 +1392,20 @@ server <- function(input, output, session) {
               
               writeData(wb2, "Bayesian mixed model", bayesmixedrec)
               
-              output$bayesrecsmixed <- renderTable(
+              output$bayesrecsmixed <- renderTable({
                 
-                head(df13),
+                df13$`Δ47 (‰)` <- formatC(df13$`Δ47 (‰)`, digits = 3, format = "f")
+                df13$`Δ47 (‰) error` <- formatC(df13$`Δ47 (‰) error`, digits = 3, format = "f")
+                df13$`Temperature (°C)` <- formatC(df13$`Temperature (°C)`, digits = 1, format = "f")
+                df13$`Lower 95% CI` <- formatC(df13$`Lower 95% CI`, digits = 1, format = "f")
+                df13$`Upper 95% CI` <- formatC(df13$`Upper 95% CI`, digits = 1, format = "f")
+                head(df13)
+              },
                 caption = "Bayesian mixed model with parameter uncertainty and errors",
                 caption.placement = getOption("xtable.caption.placement", "top"),
-                rownames = TRUE,
-                digits = 3,
-                align = "c"
+              rownames = FALSE,
+              spacing = "m",
+              align = "c"
                 
               )
           }
