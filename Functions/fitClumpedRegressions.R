@@ -44,9 +44,9 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
   
     # Diffuse normal priors for predictors
         for (i in 1:K) {
-            beta[i] ~  ", alphaBLM1," \n ",
+            beta[i] ~  ", betaBLM1 ," \n ",
               
-              " alpha[i] ~  ", betaBLM1," \n ",
+              " alpha[i] ~  ",alphaBLM1 ," \n ",
               " }
 
 

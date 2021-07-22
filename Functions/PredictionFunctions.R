@@ -99,6 +99,7 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
                                                                   n.iter= generations)
   
   errors<-errors[,-3]
+  #errors<-as.data.frame(errors)
   predsComplete<-if(hasMaterial){
     
     fullProp<-rbind(
