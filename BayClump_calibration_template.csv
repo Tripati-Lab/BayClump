@@ -1,11 +1,11 @@
 Sample Name,Mineralogy,Material,N,D47,D47error,Temperature,TempError
-Leeds 85,Dolomite,Synthetic,16,0.316,0.04981,4.1,0.2
-Leeds 86,Dolomite,Synthetic,11,0.32,0.030052,4.1,0.2
-Ab-1,Aragonite,Natural,3,0.7679185,0.011887,13.5,0.2
-Ab-2,Aragonite,Natural,3,0.76607542,0.00754,13.5,0.2
-Ab-3,Aragonite,Natural,3,0.74889223,0.023343,13.5,0.2
-Ac-1_B-12,Aragonite,Natural,6,0.77348394,0.003167,13.5,0.2
-Ac-1_B-14,Aragonite,Natural,3,0.77808716,0.006075,13.2,0.2
-Ac-2,Aragonite,Natural,3,0.74983746,0.012918,13.2,0.2
-Brach-m1,Calcite,Natural,3,0.75385961,0.002867,12.9,0.1
-Brach-m2,Calcite,Natural,3,0.76021853,0.017078,12.9,0.1
+Leeds 85,Dolomite,2,16,0.316,0.04981,4.1,0.2
+Leeds 86,Dolomite,2,11,0.32,0.030052,4.1,0.2
+Ab-1,Aragonite,1,3,0.7679185,0.011887,13.5,0.2
+Ab-2,Aragonite,1,3,0.76607542,0.00754,13.5,0.2
+Ab-3,Aragonite,1,3,0.74889223,0.023343,13.5,0.2
+Ac-1_B-12,Aragonite,1,6,0.77348394,0.003167,13.5,0.2
+Ac-1_B-14,Aragonite,1,3,0.77808716,0.006075,13.2,0.2
+Ac-2,Aragonite,1,3,0.74983746,0.012918,13.2,0.2
+Brach-m1,Calcite,1,3,0.75385961,0.002867,12.9,0.1
+Brach-m2,Calcite,1,3,0.76021853,0.017078,12.9,0.1

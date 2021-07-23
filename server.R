@@ -3,10 +3,7 @@ server <- function(input, output, session) {
   options(shiny.maxRequestSize=800*1024^2) 
   
   #Number of generations for Bayesian predictions
-  ngenerationsBayesianPredictions <- 20000
-  
-  #Number of generations for Bayesian calibrations
-  ngenerationsBayes <- 20000
+  ngenerationsBayesianPredictions = 20000
   
   # Show package citations
   get_path <- reactive({
@@ -89,14 +86,12 @@ server <- function(input, output, session) {
     hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
     
     # Update the number of bootstrap replicates to run based on user selection
-    #replicates <- ifelse(input$replication == "50", 50,
-    #                     ifelse(input$replication == "100", 100,
-    #                            ifelse(input$replication == "500", 500,
-    #                                   ifelse(input$replication == "1000", 1000, NA))))
-    
-    replicates <- input$replication
+    replicates <- ifelse(input$replication == "50", 50,
+                         ifelse(input$replication == "100", 100,
+                                ifelse(input$replication == "500", 500,
+                                       ifelse(input$replication == "1000", 1000, NA))))
     # Bayesian n generations
-    #ifelse(input$ngenerationsBayesian == "1000", 1000,
+    ngenerationsBayes <- 2000#ifelse(input$ngenerationsBayesian == "1000", 1000,
                          #ifelse(input$ngenerationsBayesian == "5000", 5000,
                         #        ifelse(input$ngenerationsBayesian == "10000", 10000,
                          #              ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
