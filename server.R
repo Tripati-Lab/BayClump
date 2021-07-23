@@ -3,7 +3,10 @@ server <- function(input, output, session) {
   options(shiny.maxRequestSize=800*1024^2) 
   
   #Number of generations for Bayesian predictions
-  ngenerationsBayesianPredictions = 20000
+  ngenerationsBayesianPredictions <- 20000
+  
+  #Number of generations for Bayesian calibrations
+  ngenerationsBayes <- 20000
   
   # Show package citations
   get_path <- reactive({
@@ -93,7 +96,7 @@ server <- function(input, output, session) {
     
     replicates <- input$replication
     # Bayesian n generations
-    ngenerationsBayes <- 20000#ifelse(input$ngenerationsBayesian == "1000", 1000,
+    #ifelse(input$ngenerationsBayesian == "1000", 1000,
                          #ifelse(input$ngenerationsBayesian == "5000", 5000,
                         #        ifelse(input$ngenerationsBayesian == "10000", 10000,
                          #              ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
