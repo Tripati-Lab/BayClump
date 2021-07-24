@@ -1,6 +1,6 @@
 ---
 title: "User Manual"
-author: "Updated June 28th, 2021"
+author: "Updated July 23rd, 2021"
 subtitle: "BayClump v. 0.9"
 date: "Table of Contents"
 output:
@@ -18,7 +18,7 @@ urlcolor: blue
 
 ## Publication Information  
 
-C. Román-Palacios, H. M. Carroll, A. J. Arnold, R. Ulrich, R. J. Flores, D. Brown, K. A. McKinnon, and A. Tripati. Bayclump: Bayesian Calibration Models of the ‘Clumped Isotopes’ Paleothermometer. In preparation for submission to *Paleoceanography and Paleoclimatology*.  
+C. Román-Palacios, H. M. Carroll, A. J. Arnold, R. Ulrich, R. J. Flores, D. Brown, K. A. McKinnon, and A. Tripati. BayClump: Bayesian Calibration Models of the ‘Clumped Isotopes’ Paleothermometer. In preparation for submission to *Paleoceanography and Paleoclimatology*.  
 (Hyperlink to the paper here)  
 
 ## Contact Information
@@ -42,15 +42,15 @@ Aradhna Tripati [atripati@g.ucla.edu](mailto:atripati@g.ucla.edu)
 
 ## BayClump Basics
 
-BayClump version 0.9 was developed in R version 4.1.0 and RStudio version 1.4.1106. This app accompanies Román-Palacios et al. (xxxx): BayClump: Bayesian Calibration Models of the 'Clumped Isotope' Paleothermometer.
+BayClump version 0.9 was developed in R version 4.1.0 and RStudio version 1.4.1106. This app accompanies Román-Palacios et al. (xxxx): BayClump: Bayesian Calibration and Temperature Reconstructions for Clumped Isotope Thermometry  
 
 BayClump is separated into calibration and reconstruction workflows. Any calibration models selected on the Calibrations tab are automatically made available for use in the Reconstructions tab. At this time, only $Δ_{47}$-based calibrations and reconstructions are supported.
 
 ### Default calibration data
 
-Two calibration datasets are included in BayClump by default. Model 1 is based on the reprocessed datasets of [Petersen et al. (2019)](http://dx.doi.org/10.1029/2018GC008127). Model 2 is based on the reprocessed and original datasets of [Anderson et al. (2021)](https://doi.org/10.1029/2020GL092069). The datasets from Petersen et al. (2019) have been reprojected into the I-CDES reference frame after [Bernasconi et al. (2021)](https://doi.org/10.1029/2020GC009588) at a growth temperature of 90°C, so as to be compatible with the datasets of Anderson et al. (2021). Throughout, we refer to this as I-CDES 90.
+Two calibration datasets are included in BayClump by default. Model 1 is based on the reprocessed datasets of [Petersen et al. (2019)](http://dx.doi.org/10.1029/2018GC008127). Model 2 is based on the reprocessed and original datasets of [Anderson et al. (2021)](https://doi.org/10.1029/2020GL092069). The datasets from Petersen et al. (2019) have been reprojected into the I-CDES reference frame after [Bernasconi et al. (2021)](https://doi.org/10.1029/2020GC009588) at a growth temperature of 90°C, so as to be compatible with the datasets of Anderson et al. (2021). Throughout, we refer to this as $I-CDES_{90}$.
 
-The default calibration datasets may be used individually or in combination to create calibration models, and may also be combined with the user's own calibration data in the I-CDES 90 reference frame. The user may also choose to work exclusively with their own calibration data in I-CDES 90 or another reference frame if desired. At this time, BayClump does not provide the option to reproject the default calibration datasets into a different reference frame.
+The default calibration datasets may be used individually or in combination to create calibration models, and may also be combined with the user's own calibration data in the I-CDES 90 reference frame. The user may also choose to work exclusively with their own calibration data in $I-CDES_{90}$ or another reference frame if desired. At this time, BayClump does not provide the option to reproject the default calibration datasets into a different reference frame.
 
 ### Uploading calibration data
 
@@ -58,31 +58,33 @@ BayClump provides a template for users to upload calibration data. It can be dow
 
 <center>
 
-![The BayClump calibration data template](Calibration_template.png){ width="500px" }
+![The BayClump calibration data template](Calibration_template.png)
 
 </center>
 
-**Sample Name:** This should be a unique identifier for each sample. Combinations of letters, numbers, spaces, and special characters may be used. It is best to avoid number signs (`#`) as this may cause the code behind BayClump to malfunction.
+**Sample Name:** This should be a unique identifier for each sample. Combinations of letters, numbers, spaces, and special characters may be used. It is best to avoid number signs (`#`) as this may cause the code behind BayClump to malfunction.  
 
-**Mineralogy:** This should be the full, capitalized name, i.e., Aragonite, Calcite, Dolomite, Mixed, Unknown, etc.
+**Mineralogy:** This should be the full, capitalized name, i.e., Aragonite, Calcite, Dolomite, Mixed, Unknown, etc.  
 
-**Material:** Natural or Synthetic
+**Material:** This must be entered as a number, where 1 = Natural, 2 = Synthetic, and 3 = Biogenic. Additional numbers may be used as necessary. All preloaded data in the app follow this convention.  
 
-**N:** The number of replicates measured to produce the final value. This must be numeric - no letters or special characters are accepted.
+**N:** The number of replicates measured to produce the final value. This must be numeric - no letters or special characters are accepted.  
 
-**D47:** The final $Δ_{47}$ value of the sample after completing all appropriate quality assurance steps. This must be numeric - no letters or special characters except for periods are accepted. Provide as many decimal places as possible to improve calculations.
+**D47:** The final $Δ_{47}$ value of the sample after completing all appropriate quality assurance steps. This must be numeric - no letters or special characters except for periods and minus signs are accepted. Provide as many decimal places as possible to improve calculations.  
 
-**D47_SD:** The final standard deviation around the $Δ_{47}$ value after completing all appropriate quality assurance steps. This must be numeric - no letters or special characters except for periods are accepted. Provide as many decimal places as possible to improve calculations.
+**D47error:** The absolute error around $Δ_{47}$ after completing all appropriate quality assurance steps. This should be the combined measurement and correction error. This must be numeric - no letters or special characters except for periods are accepted. Provide as many decimal places as possible to improve calculations.  
 
-**Temperature:** Growth temperature in degrees Celsius (°C). This must be numeric - no letters or special characters except for periods are accepted.
+**Temperature:** Growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods and minus signs are accepted.  
 
-**Temp_Error:** Absolute error of the growth temperature in degrees Celsius (°C). This must be numeric - no letters or special characters except for periods are accepted.
+**TempError:** Absolute error of the growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods are accepted.
+
+**Note: You must provide EITHER the number of replicates OR $Δ_{47}$ error. Providing both will not cause problems. If N is provided instead of error, the error will be calculated by the app.**
 
 ### Selecting calibration options
 
-Scale data  
-Daeron  
-Uncertainties  
+#### Scale data  
+
+If calibration data values are produced from a very wide range of growth temperatures, it may be necessary to scale your data prior to analyses. Select this checkbox to automatically scale your data. We call the generic function 'scale' included in base R. Data are scaled by dividing the raw values by their root mean square.
 
 <hr />  
 
@@ -90,7 +92,9 @@ Uncertainties
 
 BayClump offers five calibration model options. Bootstrapping is used to produce robust estimates of regression coefficients. The user is able to select 50, 100, 500, or 1,000 bootstrap replicates. We recommend that the number of bootstrap replicates chosen be at least 10 times the number of unique samples, with a minimum of 50 and a maximum of 1,000 offered. For example, if you have ten unique samples you wish to use in calibration models, you should choose at least 100 bootstrap replicates (10 x 10). If you have 3 or fewer samples, do not exceed 50 bootstrap replicates.  
 
-Calibration data should be entered in degrees Celsius. BayClump will convert the temperature to Kelvin and perform analyses using $10^6/T^2$.  
+**Warning: Selecting all available calibration models and a large number of bootstraps will require significant processing time. This may exceed 30-40 minutes if server traffic is heavy. The app may appear to hang while calculations are being performed, but should complete normally.**  
+
+**Important: Calibration data should be entered into the template in $10^6/T^2$ format, where temperature, T, is in Kelvin.**
 
 ### Calibration model descriptions  
 
