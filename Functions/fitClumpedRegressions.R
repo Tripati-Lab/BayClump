@@ -1,5 +1,5 @@
 fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial=F, 
-                                returnModels=T, n.iter= 50000, burninFrac=0.1,
+                                n.iter= 20000, burninFrac=0.5,
                                 alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
                                 useInits=T, D47error="D47error"){
   
@@ -96,9 +96,6 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     
     ##Fit the models
     inits <- if(useInits==T){ function () {
-      #list(alpha = rnorm(1,0,.01),
-      #    beta = rnorm(1,0,.01))
-      
       list(alpha = rnorm(1,0.231,0.065),
            beta = rnorm(1,0.039,0.004))
       
@@ -107,23 +104,19 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     BLM1_fit <- jags(data = LM_Data,inits = inits,
                      parameters = c("alpha","beta", "tauy"),
                      model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter, n.burnin = n.iter*burninFrac, n.thin = 10)
-    #BLM1_fit <- update(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
+                     n.iter = n.iter, n.burnin = n.iter*burninFrac)
+    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
     
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
-                              n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
+                              n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4)
+    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2)
     
     
     ##ANCOVA 2
     inits <- if(useInits==T){ function () {
-      #list(alpha = rnorm(ANCOVA2_Data$K,0,0.01),
-      #     beta = rnorm(ANCOVA2_Data$K, 0, 0.01))
-      
       list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
            beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
       
@@ -132,9 +125,8 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     BLM3_fit <- jags(data = ANCOVA2_Data,inits = inits,
                      parameters = c("alpha","beta"), 
                      model = textConnection(BLM3), n.chains = 3,
-                     n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
-    #BLM3_fit <- update(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
+                     n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+    BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
     
     
     CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
@@ -146,8 +138,6 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
                     N=nrow(calibrationData))
     ##Fit the models
     inits <- if(useInits==T){ function () {
-      #list(alpha = rnorm(1,0,.01),
-      #     beta = rnorm(1,0,.01))
       list(alpha = rnorm(1,0.231,0.065),
            beta = rnorm(1,0.039,0.004))
     }}else{NULL}
@@ -155,16 +145,15 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     BLM1_fit <- jags(data = LM_Data,inits = inits,
                      parameters = c("alpha","beta", "tauy"),
                      model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
-    #BLM1_fit <- update(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4) 
+                     n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
     
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
-                              n.iter = n.iter,  n.burnin = n.iter*burninFrac, n.thin = 10)
+                              n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2, n.thin = 4)
+    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2)
     
     CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
   }
