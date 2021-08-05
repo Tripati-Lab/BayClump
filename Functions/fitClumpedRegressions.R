@@ -67,9 +67,31 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
 
         mu[i] <- alpha[type[i]] + beta[type[i]] * x1[i]
     }
+    
+    ##R2s (mod from)
+    #http://samcarcagno.altervista.org/stat_notes/r2_lmm_jags/r_squared_lmm.html
+  for (s in 2:N){
+    subjEff[s] ~ dnorm(0, 1/zSubjEffSigma^2)
+  }
+  subjEff[1] <- -sum(subjEff[2:N]) #sum-to-zero constraint
+  zSubjEffSigma ~ dunif(0.00001, 10)
+  subjEffSigma <- zSubjEffSigma*sd(y)
+
+  for (j in 1:N){
+     yPredFixed[j] <-  sum(alpha[type[j]] + beta[type[j]] * x1[j])
+  }
+
+  varFixed <- (sd(yPredFixed))^2
+  varResidual <- sigma^2 # get the variance of residuals
+  varRandom <- subjEffSigma^2  # get the variance of random plot effect
+  # calculate marginal R^2
+  marginalR2 <- varFixed / (varFixed + varRandom + varResidual)
+  # calculate conditional R^2
+  conditionalR2 <- (varRandom + varFixed) / (varFixed + varRandom + varResidual) 
+
 }")
   
-  
+
   LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
                            N=nrow(calibrationData))
   
@@ -123,15 +145,25 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     }}else{NULL}
     
     BLM3_fit <- jags(data = ANCOVA2_Data,inits = inits,
-                     parameters = c("alpha","beta"), 
+                     parameters = c("alpha","beta","conditionalR2", "marginalR2"), 
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
     
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData, hasMaterial = F),
-    getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = F),
-    getR2Bayesian(model=BLM3_fit, calibrationData=calibrationData, hasMaterial = T))
-    R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
+    getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = F))
+    
+    BLM3_fitR2<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep('conditional',row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
+    colnames(BLM3_fitR2)<-names(R2sComplete)
+    R2sComplete<-rbind(R2sComplete,BLM3_fitR2)
+    row.names(R2sComplete)<-NULL
+    BLM3_fitR2M<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep('marginal',row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
+    colnames(BLM3_fitR2M)<-names(R2sComplete)
+    row.names(BLM3_fitR2M)<-NULL
+    R2sComplete<-rbind(R2sComplete,BLM3_fitR2M)
+    R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit","BLM3_fit")
+    R2sComplete$class<-c("Conditional", "Conditional", "Conditional","Marginal")
+    
     
     DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC,  BLM3_fit$BUGSoutput$DIC)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")

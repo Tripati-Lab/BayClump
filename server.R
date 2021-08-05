@@ -6,7 +6,7 @@ server <- function(input, output, session) {
   ngenerationsBayesianPredictions <- 20000
   
   #Number of generations for Bayesian calibrations
-  ngenerationsBayes <- 20000
+  ngenerationsBayes <- 1000
   
   # Show package citations
   get_path <- reactive({
@@ -671,8 +671,10 @@ server <- function(input, output, session) {
           })
           
           
-          cat( paste0("\nBayesian mixed model complete \n *R^2=", round(attr(bayesmixedcals,"R2s")[3,2],4),
-                      " (95% CI, ",round(attr(bayesmixedcals,"R2s")[3,3],4),"-",round(attr(bayesmixedcals,"R2s")[3,4],4),")",
+          cat( paste0("\nBayesian mixed model complete \n *R^2 (conditional)=", round(attr(bayesmixedcals,"R2s")[3,3],4),
+                      " (95% CI, ",round(attr(bayesmixedcals,"R2s")[3,4],4),"-",round(attr(bayesmixedcals,"R2s")[3,5],4),")",
+                      "\n *R^2 (marginal)=", round(attr(bayesmixedcals,"R2s")[4,3],4),
+                      " (95% CI, ",round(attr(bayesmixedcals,"R2s")[4,4],4),"-",round(attr(bayesmixedcals,"R2s")[4,5],4),")",
                       "\n *DIC=", round(attr(bayesmixedcals,"DIC")[3,1],4),
                       " (95% CI, ",round(attr(bayesmixedcals,"DIC")[3,2],4),"-",round(attr(bayesmixedcals,"DIC")[3,3],4),")"
           )

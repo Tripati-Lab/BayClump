@@ -94,8 +94,8 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
   ncores = parallel::detectCores()
   
   # Use all available cores
-  tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
-  #tot = pblapply(1:replicates, single_rep)
+  #tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
+  tot = pblapply(1:replicates, single_rep)
   
   if(isMixed == F){
     
@@ -105,7 +105,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     )
     
     rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
-    rs2<-aggregate(rs2[, 1:3], list(rs2$model), mean)
+    rs2<-aggregate(rs2[, 1:3], list(rs2$model), median)
     attr(to_ret, 'R2s') <- rs2
     
     DICs<-lapply(tot, function(x) attr(x, "DICs") )
@@ -130,8 +130,14 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
          'BLMM_Measured_errors'= BLMMFin
     )
     rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
-    rs2<-aggregate(rs2[, 1:3], list(rs2$model), mean)
-    attr(to_ret, 'R2s') <- rs2
+    rs21<-aggregate(rs2[, 1:3], list(rs2$class,rs2$model), median)
+    rs22<-aggregate(rs2[, 1:3], list(rs2$class,rs2$model), FUN=quantile, probs=0.025)[,3]
+    rs23<-aggregate(rs2[, 1:3], list(rs2$class,rs2$model), FUN=quantile, probs=0.975)[,3]
+    rs21$lwr<-rs22
+    rs21$upr<-rs23
+    
+    attr(to_ret, 'R2s') <- rs21
+    
     DICs<-lapply(tot, function(x) attr(x, "DICs") )
     
     DICs<-do.call(rbind,lapply(1:3 , function(x){ 
