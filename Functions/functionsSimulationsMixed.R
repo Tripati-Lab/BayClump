@@ -72,6 +72,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
         cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]))
       attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
+      attr(to_ret, 'DICs') <- attr(Reg, "DICs") 
       to_ret
     }else{
       
@@ -83,6 +84,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
         cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1:nmaterials),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c((nmaterials+1):c(nmaterials+nmaterials)),1], 
                          'material'=unique(dataSub$Material )))
       attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
+      attr(to_ret, 'DICs') <- attr(Reg, "DICs") 
       to_ret
     }
     
@@ -105,6 +107,15 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
     rs2<-aggregate(rs2[, 1:3], list(rs2$model), mean)
     attr(to_ret, 'R2s') <- rs2
+    
+    DICs<-lapply(tot, function(x) attr(x, "DICs") )
+    
+    DICs<-do.call(rbind,lapply(1:2 , function(x){ 
+      a<-unlist(lapply(seq_along(DICs), function(y){ DICs[[y]][x] }))
+      cbind.data.frame(median=median(a), lwr=quantile(a, 0.025), upr=quantile(a, 0.975), model=names(a[1]))
+      }))
+
+    attr(to_ret, 'DICs') <- DICs
     to_ret
   }else{
     
@@ -121,6 +132,13 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
     rs2<-aggregate(rs2[, 1:3], list(rs2$model), mean)
     attr(to_ret, 'R2s') <- rs2
+    DICs<-lapply(tot, function(x) attr(x, "DICs") )
+    
+    DICs<-do.call(rbind,lapply(1:3 , function(x){ 
+      a<-unlist(lapply(seq_along(DICs), function(y){ DICs[[y]][x] }))
+      cbind.data.frame(median=median(a), lwr=quantile(a, 0.025), upr=quantile(a, 0.975), model=names(a[1]))
+    }))
+    attr(to_ret, 'DICs') <- DICs
     to_ret
   }
   

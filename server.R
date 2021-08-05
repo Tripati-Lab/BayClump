@@ -570,10 +570,14 @@ server <- function(input, output, session) {
           
           #print(noquote("Bayesian linear model complete"))
           
-          cat( paste0("Bayesian linear model complete \n *with errors R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
+          cat( paste0("Bayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
                                " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
-                      "\n *without errors R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
-                               " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")"
+                      "\n   *DIC=", round(attr(bayeslincals,"DICs")[1,1],4),
+                      " (95% CI, ",round(attr(bayeslincals,"DICs")[1,2],4),"-",round(attr(bayeslincals,"DICs")[1,2],4),")",
+                      "\n *without errors\n   *R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
+                               " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")",
+                      "\n   *DIC=", round(attr(bayeslincals,"DICs")[2,1],4),
+                      " (95% CI, ",round(attr(bayeslincals,"DICs")[2,2],4),"-",round(attr(bayeslincals,"DICs")[2,2],4),")"
           )
           )
           
@@ -666,9 +670,11 @@ server <- function(input, output, session) {
             return(bayesmixedfig)
           })
           
-
+          
           cat( paste0("\nBayesian mixed model complete \n *R^2=", round(attr(bayesmixedcals,"R2s")[3,2],4),
-                      " (95% CI, ",round(attr(bayesmixedcals,"R2s")[3,3],4),"-",round(attr(bayesmixedcals,"R2s")[3,4],4),")"
+                      " (95% CI, ",round(attr(bayesmixedcals,"R2s")[3,3],4),"-",round(attr(bayesmixedcals,"R2s")[3,4],4),")",
+                      "\n *DIC=", round(attr(bayesmixedcals,"DIC")[3,1],4),
+                      " (95% CI, ",round(attr(bayesmixedcals,"DIC")[3,2],4),"-",round(attr(bayesmixedcals,"DIC")[3,3],4),")"
           )
           )
           

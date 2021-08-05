@@ -133,6 +133,9 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     getR2Bayesian(model=BLM3_fit, calibrationData=calibrationData, hasMaterial = T))
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
     
+    DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC,  BLM3_fit$BUGSoutput$DIC)
+    names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
+    
     CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
     Y=NULL#IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
@@ -162,11 +165,15 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
                        getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData))
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors")
+    DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC)
+    names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors")
+    
     
     CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
   }
   attr(CompleteModelFit, 'data') <- calibrationData 
   attr(CompleteModelFit, 'R2s') <- R2sComplete 
+  attr(CompleteModelFit, 'DICs') <- DICs 
   
   return(CompleteModelFit)
 }
