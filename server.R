@@ -95,6 +95,7 @@ server <- function(input, output, session) {
     #                                   ifelse(input$replication == "1000", 1000, NA))))
     
     replicates <- input$replication
+
     # Bayesian n generations
     #ifelse(input$ngenerationsBayesian == "1000", 1000,
                          #ifelse(input$ngenerationsBayesian == "5000", 5000,
@@ -128,6 +129,9 @@ server <- function(input, output, session) {
     calData$TempError[is.na(calData$TempError)] <<- 0.000001
     calData$Material[is.na(calData$Material)] <<- 1
     
+    ##Limits of the CI
+    minLim <- ifelse(input$MinLim==0, min(calData$Temperature),input$MinLim)
+    maxLim <- ifelse(input$MaxLim==0, max(calData$Temperature),input$MaxLim)
     # For future implementation:
    # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
   #    calData$TempError <<- 1
@@ -181,7 +185,7 @@ server <- function(input, output, session) {
           lmcals <<- simulateLM_measured(calData, replicates = replicates)
           sink()
           
-          lmci <- RegressionSingleCI(data = lmcals, from = min(calData$Temperature), to = max(calData$Temperature))
+          lmci <- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
           lmcalci <- as.data.frame(lmci)
           
           output$lmcalibration <- renderPlotly({
@@ -255,7 +259,7 @@ server <- function(input, output, session) {
           lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates)
           sink()
           
-          lminverseci <- RegressionSingleCI(data = lminversecals, from = min(calData$Temperature), to = max(calData$Temperature))
+          lminverseci <- RegressionSingleCI(data = lminversecals, from = minLim, to = maxLim)
           lminversecalci <- as.data.frame(lminverseci)
           
           output$lminversecalibration <- renderPlotly({
@@ -328,7 +332,7 @@ server <- function(input, output, session) {
           yorkcals <<- simulateYork_measured(calData, replicates = replicates)
           sink()
           
-          yorkci <- RegressionSingleCI(data = yorkcals, from = min(calData$Temperature), to = max(calData$Temperature))
+          yorkci <- RegressionSingleCI(data = yorkcals, from = minLim, to = maxLim)
           yorkcalci <- as.data.frame(yorkci)
           
           output$yorkcalibration <- renderPlotly({
@@ -401,7 +405,7 @@ server <- function(input, output, session) {
           demingcals <<- simulateDeming(calData, replicates = replicates)
           sink()
           
-          demingci <- RegressionSingleCI(data = demingcals, from = min(calData$Temperature), to = max(calData$Temperature))
+          demingci <- RegressionSingleCI(data = demingcals, from = minLim, to = maxLim)
           demingcalci <- as.data.frame(demingci)
           
           output$demingcalibration <- renderPlotly({
@@ -475,9 +479,9 @@ server <- function(input, output, session) {
           bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F, generations=ngenerationsBayes)
           sink()
           
-          bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = min(calData$Temperature), to = max(calData$Temperature))
+          bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = minLim, to = maxLim)
           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
-          bayeslinciwitherror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
+          bayeslinciwitherror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_errors, from = minLim, to = maxLim)
           bayeslincalciwitherror <- as.data.frame(bayeslinciwitherror)
           
           output$bayeslincalibration <- renderPlotly({
@@ -564,7 +568,14 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Bayesian model with errors", bayeslincals$BLM_Measured_errors) # Write regression data
           writeData(wb, sheet = "Bayesian model with errors CI", bayeslincalciwitherror2)
           
-          print(noquote("Bayesian linear model complete"))
+          #print(noquote("Bayesian linear model complete"))
+          
+          cat( paste0("Bayesian linear model complete \n *with errors R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
+                               " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
+                      "\n *without errors R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
+                               " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")"
+          )
+          )
           
           output$blinnoerr <- renderPrint({
             
@@ -596,7 +607,7 @@ server <- function(input, output, session) {
           bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, replicates = replicates, isMixed = T, generations=ngenerationsBayes)
           sink()
           
-          bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = min(calData$Temperature), to = max(calData$Temperature))
+          bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = minLim, to = maxLim)
           bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
 
           addWorksheet(wb, "Bayesian mixed w errors") # Add a blank sheet
@@ -655,7 +666,11 @@ server <- function(input, output, session) {
             return(bayesmixedfig)
           })
           
-          print(noquote("Bayesian mixed model complete"))
+
+          cat( paste0("\nBayesian mixed model complete \n *R^2=", round(attr(bayesmixedcals,"R2s")[3,2],4),
+                      " (95% CI, ",round(attr(bayesmixedcals,"R2s")[3,3],4),"-",round(attr(bayesmixedcals,"R2s")[3,4],4),")"
+          )
+          )
           
           output$blinmwerr <- renderPrint(
             ddply(bayesmixedcals$BLMM_Measured_errors, .( material), 

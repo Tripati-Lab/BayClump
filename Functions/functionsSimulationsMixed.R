@@ -68,20 +68,22 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     
     
     if(isMixed==F ){
-      list(
+      to_ret<-list(
         cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]))
-      
+      attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
+      to_ret
     }else{
       
       nmaterials<-length(unique(data_BR_Measured$Material))
       
-      list(
+      to_ret<-list(
         cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]),
         cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1:nmaterials),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c((nmaterials+1):c(nmaterials+nmaterials)),1], 
                          'material'=unique(dataSub$Material )))
-      
+      attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
+      to_ret
     }
     
   }
@@ -91,15 +93,19 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
   
   # Use all available cores
   tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
-  
+  #tot = pblapply(1:replicates, single_rep)
   
   if(isMixed == F){
     
-    list('BLM_Measured_errors'=
+    to_ret<-list('BLM_Measured_errors'=
            do.call(rbind,lapply(tot, function(x) x[[1]])),
          'BLM_Measured_no_errors'=do.call(rbind,lapply(tot, function(x) x[[2]]))
     )
     
+    rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
+    rs2<-aggregate(rs2[, 1:3], list(rs2$model), mean)
+    attr(to_ret, 'R2s') <- rs2
+    to_ret
   }else{
     
     targetlist<-lapply(tot, function(x) x[[3]])
@@ -107,12 +113,15 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     BLMMFin<-do.call(rbind,targetlist)
     #BLMMFin<-BLMMFin[grep("[",row.names(BLMMFin), fixed = T),]
     
-    list('BLM_Measured_errors'=
+    to_ret<-list('BLM_Measured_errors'=
            do.call(rbind,lapply(tot, function(x) x[[1]])),
          'BLM_Measured_no_errors'=do.call(rbind,lapply(tot, function(x) x[[2]])),
          'BLMM_Measured_errors'= BLMMFin
     )
-    
+    rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
+    rs2<-aggregate(rs2[, 1:3], list(rs2$model), mean)
+    attr(to_ret, 'R2s') <- rs2
+    to_ret
   }
   
   

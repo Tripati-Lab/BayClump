@@ -128,6 +128,10 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
     
+    R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData, hasMaterial = F),
+    getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = F),
+    getR2Bayesian(model=BLM3_fit, calibrationData=calibrationData, hasMaterial = T))
+    R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
     
     CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
@@ -155,9 +159,15 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
     
     BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2)
     
+    R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
+                       getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData))
+    R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors")
+    
     CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
   }
   attr(CompleteModelFit, 'data') <- calibrationData 
+  attr(CompleteModelFit, 'R2s') <- R2sComplete 
+  
   return(CompleteModelFit)
 }
 
