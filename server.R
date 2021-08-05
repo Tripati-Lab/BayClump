@@ -6,7 +6,7 @@ server <- function(input, output, session) {
   ngenerationsBayesianPredictions <- 20000
   
   #Number of generations for Bayesian calibrations
-  ngenerationsBayes <- 1000
+  ngenerationsBayes <- 20000
   
   # Show package citations
   get_path <- reactive({
