@@ -84,7 +84,7 @@ body <- dashboardBody(
                          #selectInput("replication", label = "Number of bootstrap replicates for every model", 
                         #             choices = c("50", "100", "500", "1000"), selected = "100"),
                         numericInput("replication", label = "Number of bootstrap replicates for every model", 
-                                      1000, min = 1, max = 10000),
+                                      1000, min = 2, max = 10000),
                         numericInput("MinLim", label = "Lowest temperature number for CI estimation", 
                                      0, min = 5, max = 10.5),
                         numericInput("MaxLim", label = "Highest temperature number for CI estimation", 

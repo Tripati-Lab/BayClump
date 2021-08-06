@@ -6,7 +6,7 @@ server <- function(input, output, session) {
   ngenerationsBayesianPredictions <- 20000
   
   #Number of generations for Bayesian calibrations
-  ngenerationsBayes <- 20000
+  ngenerationsBayes <- 1000
   
   # Show package citations
   get_path <- reactive({
@@ -245,7 +245,11 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Linear regression", lmcals) # Write regression data
           writeData(wb, sheet = "Linear regression CI", lmcalci2)
           
-          print(noquote("Linear regression complete"))
+          
+          
+          cat("Linear regression complete \n *R^2=", round(unlist(attributes(lmcals)$R2[1],4)),
+              " (95% CI, ",round(unlist(attributes(lmcals)$R2[2],4)),"-",round(unlist(attributes(lmcals)$R2[3],4)),")"
+          )
           output$lmcal <- renderPrint({
             do.call(rbind.data.frame,apply(lmcals, 2, function(x){
               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
@@ -318,7 +322,10 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Inverse linear regression", lminversecals) # Write regression data
           writeData(wb, sheet = "Inverse linear regression CI", lminversecalci2)
           
-          print(noquote("Inverse linear regression complete"))
+          cat("\nInverse regression complete \n *R^2=", round(unlist(attributes(lminversecals)$R2[1],4)),
+              " (95% CI, ",round(unlist(attributes(lminversecals)$R2[2],4)),"-",round(unlist(attributes(lminversecals)$R2[3],4)),")"
+          )
+          
           output$lminversecal <- renderPrint({
             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
@@ -391,7 +398,7 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "York regression", yorkcals) # Write regression data
           writeData(wb, sheet = "York regression CI", yorkcalci2)
           
-          print(noquote("York regression complete"))
+          cat("\nYork regression complete")
           output$york <- renderPrint({
             do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
@@ -464,7 +471,7 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Deming regression", demingcals) # Write regression data
           writeData(wb, sheet = "Deming regression CI", demingcalci2)
           
-          print(noquote("Deming regression complete"))
+          cat("\nDeming regression complete")
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
               cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
@@ -570,7 +577,7 @@ server <- function(input, output, session) {
           
           #print(noquote("Bayesian linear model complete"))
           
-          cat( paste0("Bayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
+          cat( paste0("\nBayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
                                " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
                       "\n   *DIC=", round(attr(bayeslincals,"DICs")[1,1],4),
                       " (95% CI, ",round(attr(bayeslincals,"DICs")[1,2],4),"-",round(attr(bayeslincals,"DICs")[1,2],4),")",

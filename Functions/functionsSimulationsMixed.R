@@ -11,24 +11,41 @@ simulateYork_measured<<-function(data, replicates, samples=NULL, D47error="D47er
 
 
 simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47error"){
-  do.call(rbind,pblapply(1:replicates, function(x){
+  
+  a<-pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
     Reg<-summary(lm(D47 ~ Temperature,  dataSub))
-    cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
-  }))
+    res<-cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
+    attr(res, 'R2') <- Reg$r.squared
+    res
+  })
+  
+  R2s<-unlist(lapply(a, function(x) attributes(x)$R2))
+  R2s<-data.frame(median=median(R2s), lwr=quantile(R2s, 0.025), upr=quantile(R2s, 0.975))
+  a<-do.call(rbind,a)
+  attr(a, 'R2') <- R2s
+  return(a)
 }
 
 
 simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D47error"){
-  do.call(rbind,pblapply(1:replicates, function(x){
+  a<-pblapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
     Reg<-summary(lm(D47 ~ Temperature,  dataSub, weights = y_SE))
-    cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
-  }))
+    res<-cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
+    attr(res, 'R2') <- Reg$r.squared
+    res
+  })
+  
+  R2s<-unlist(lapply(a, function(x) attributes(x)$R2))
+  R2s<-data.frame(median=median(R2s), lwr=quantile(R2s, 0.025), upr=quantile(R2s, 0.975))
+  a<-do.call(rbind,a)
+  attr(a, 'R2') <- R2s
+  return(a)
 }
 
 
@@ -94,8 +111,8 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
   ncores = parallel::detectCores()
   
   # Use all available cores
-  tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
-  #tot = pblapply(1:replicates, single_rep)
+  #tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
+  tot = pblapply(1:replicates, single_rep)
   
   if(isMixed == F){
     
