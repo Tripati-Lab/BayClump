@@ -132,6 +132,7 @@ server <- function(input, output, session) {
     ##Limits of the CI
     minLim <- ifelse(input$MinLim==0, min(calData$Temperature),input$MinLim)
     maxLim <- ifelse(input$MaxLim==0, max(calData$Temperature),input$MaxLim)
+    
     # For future implementation:
    # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
   #    calData$TempError <<- 1

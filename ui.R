@@ -80,15 +80,17 @@ body <- dashboardBody(
               # Model selection
               box(width = 4,
                   title = "Step 2: Select Models", solidHeader = TRUE,
-                  column(12, "For help choosing an appropriate number of bootstrap replicates, see the User Manual",
+                  column(12, "For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual",
                          #selectInput("replication", label = "Number of bootstrap replicates for every model", 
                         #             choices = c("50", "100", "500", "1000"), selected = "100"),
                         numericInput("replication", label = "Number of bootstrap replicates for every model", 
                                       1000, min = 2, max = 10000),
-                        numericInput("MinLim", label = "Lowest temperature number for CI estimation", 
-                                     0, min = 5, max = 10.5),
-                        numericInput("MaxLim", label = "Highest temperature number for CI estimation", 
-                                     0, min = 10.5, max = 15),
+                        numericInput("MinLim", 
+                                     label = HTML(paste0("Lowest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
+                                     1, min = 0, max = 15),
+                        numericInput("MaxLim", 
+                                     label = HTML(paste0("Highest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
+                                     14, min = 0, max = 15),
                          checkboxInput("simulateLM_measured", "Linear model", FALSE),
                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measured", "York regression", FALSE),
@@ -279,7 +281,7 @@ body <- dashboardBody(
     #Manuscript
     tabItem(tabName = "manuscript",
             fluidRow(
-              column(12, "Our manuscript here (if open access)"
+              column(12, "A static link to the publisher's website will be embedded here upon acceptance for publication"
                      #includeHTML("Our manuscript here")
               ))),
     
@@ -287,7 +289,7 @@ body <- dashboardBody(
     tabItem(tabName = "download",
             fluidRow(
               column(12,
-                     "Package BayClump as an Electron app for desktop and put download links here!")))
+                     "BayClump will be made available as a standalone Electron app upon acceptance for publication, and a download link will be provided here")))
   )
 )
 
