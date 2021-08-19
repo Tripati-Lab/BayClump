@@ -9,7 +9,7 @@ getR2Bayesian <- function(model = NULL, calibrationData=NULL, hasMaterial=F) {
   resid = sweep(fit, 2, calibrationData$D47, "-")
   var_f = apply(fit, 1, var)
   var_e = apply(resid, 1, var)
-  R2 = var_f / (var_f + var_e)
+  R2 = var_f / (var_f + ifelse(is.na(var_e), 0,var_e))
   cbind.data.frame(
     median = median(R2),
     lwr = quantile(R2, 0.025),

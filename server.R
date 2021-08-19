@@ -6,7 +6,7 @@ server <- function(input, output, session) {
   ngenerationsBayesianPredictions <- 20000
   
   #Number of generations for Bayesian calibrations
-  ngenerationsBayes <- 1000
+  ngenerationsBayes <- 20000
   
   # Show package citations
   get_path <- reactive({
@@ -875,7 +875,7 @@ server <- function(input, output, session) {
             infTempBayesianC <<- clumpipe(calData=calData,
                                        PipCriteria=PipCriteria, 
                                        targetD47=recData$D47, 
-                                       error_targetD47=recData$D47error, 
+                                       error_targetD47=ifelse(recData$D47error==0,0.00001,recData$D47error), 
                                        materials = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
                                        nrep=100,
                                        hasMaterial = T,
