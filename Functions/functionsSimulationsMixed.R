@@ -73,7 +73,7 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
     }else{
       dataSub<- do.call(rbind,lapply(unique(data_BR_Measured$Material), function(x){
         material1<-data_BR_Measured[data_BR_Measured$Material ==x,]
-        dataSub1<-material1[sample(seq_along(material1[,1]), round(if(is.null(samples)){nrow(data)}else{nrow(data)*samples}/length(unique(data_BR_Measured$Material))), replace = T),]
+        dataSub1<-material1[sample(seq_along(material1[,1]), round((if(is.null(samples)){nrow(data)}else{nrow(data)*samples}) /length(unique(data_BR_Measured$Material))), replace = T),]
         dataSub1
       } ))
       
