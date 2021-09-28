@@ -111,8 +111,8 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
   ncores = parallel::detectCores()
   
   # Use all available cores
-  #tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
-  tot = pblapply(1:replicates, single_rep)
+  tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
+  #tot = pblapply(1:replicates, single_rep)
   
   if(isMixed == F){
     
