@@ -84,42 +84,23 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
                                                               materialsPred=errors[,3],
                                                               n.iter= generations)
   
-  predictionsWithinBayesian_up<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
-                                                                 useInits=T, 
-                                                                 hasMaterial = hasMaterial,
-                                                                 D47Pred=errors[,1]+1.96*errors[,2],
-                                                                 materialsPred=errors[,3],
-                                                                 n.iter= generations)
-  
-  predictionsWithinBayesian_low<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
-                                                                  useInits=T, 
-                                                                  hasMaterial = hasMaterial,
-                                                                  D47Pred=errors[,1]-1.96*errors[,2],
-                                                                  materialsPred=errors[,3],
-                                                                  n.iter= generations)
-  
   errors<-errors[,-3]
-  #errors<-as.data.frame(errors)
+  
   predsComplete<-if(hasMaterial){
     
     fullProp<-rbind(
       cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian_low$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian_up$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
+                       lwr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
       ),
       cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian_low$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian_up$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)]),
+                       lwr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)]),
       cbind.data.frame(model='BLM3_fit',errors,median=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian_low$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian_up$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)])
+                       lwr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)])
     )
     
-    corMax<-apply(fullProp[,c('lwr', 'upr')], 1, max)
-    corMin<-apply(fullProp[,c('lwr', 'upr')], 1, min)
-    
-    fullProp$lwr<-corMin
-    fullProp$upr<-corMax
     fullProp$type<-"Parameter Uncertainty"
     fullProp$BayesianPredictions<-'Yes'
     
@@ -136,21 +117,14 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
     
   }else{
     
-    
     fullProp<-  rbind(
       cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian_low$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian_up$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
+                       lwr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
       ),
       cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian_low$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian_up$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)])  ) 
-    
-    corMax<-apply(fullProp[,c('lwr', 'upr')], 1, max)
-    corMin<-apply(fullProp[,c('lwr', 'upr')], 1, min)
-    
-    fullProp$lwr<-corMin
-    fullProp$upr<-corMax
+                       lwr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
+                       upr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)])  ) 
     
     fullProp$type<-"Parameter Uncertainty"
     fullProp$BayesianPredictions<-'Yes'

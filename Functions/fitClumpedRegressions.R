@@ -1,37 +1,37 @@
-fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial=F, 
-                                n.iter= 20000, burninFrac=0.5,
-                                alphaBLM1='dnorm(0.231,0.065)', betaBLM1= "dnorm(0.039,0.004)",
-                                useInits=T, D47error="D47error"){
+fitClumpedRegressions<-function(calibrationData, predictionData=NULL, hasMaterial=F, 
+                                n.iter= 5000, burninFrac=0.5,
+                                alphaBLM1='dnorm(0.231,0.065)', betaBLM1= 'dnorm(0.039,0.004)',
+                                useInits=T, D47error='D47error'){
   
   ##Models
   BLM1<-paste(" model{
     # Diffuse normal priors for predictors
     alpha ~ ", alphaBLM1," \n ",
               "beta ~ ", betaBLM1," \n ", 
-              "# Uniform prior for standard deviation
-    tauy <- pow(sigma, -2)                               # precision
-    sigma ~ dunif(0, 100)                                # diffuse prior for standard deviation
-    # Diffuse normal priors for true x
+    "
+    sigma <- 1/sqrt(tauy)                              
+    tauy ~ dgamma(0.1, 0.1)                                
+    
     for (i in 1:N){
-        x[i] ~ dnorm(0,1e-3)
+        x[i] ~ dnorm(11,0.01)
     }
     # Likelihood
     for (i in 1:N){
         obsy[i] ~ dnorm(y[i],pow(erry[i],-2))
         y[i] ~ dnorm(mu[i],tauy)
         obsx[i] ~ dnorm(x[i],pow(errx[i],-2))
-        mu[i] <- alpha+beta*x[i]
+        mu[i] <- alpha + beta*x[i]
     }
 }")
   
-  
+
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors
                 alpha ~ ", alphaBLM1," \n ",
                        "beta ~ ", betaBLM1," \n ",
-                       "# Gamma prior for scatter
-                 tau ~ dgamma(1e-3, 1e-3)
-                epsilon <- pow(tau, -2)
+                       "
+    sigma <- 1/sqrt(tau)                              
+    tau ~ dgamma(0.1, 0.1)  
                 for (i in 1:N){
                 y[i] ~ dnorm(mu[i],tau)
                 mu[i]<- eta[i]
@@ -48,15 +48,14 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
               
               " alpha[i] ~  ",alphaBLM1 ," \n ",
               " }
-
-
+              
     # Gamma prior for standard deviation
-    tau ~ dgamma(1e-3, 1e-3) # precision
+    tau ~ dgamma(0.1, 0.1) # precision
     sigma <- 1 / sqrt(tau) # standard deviation
 
     # Diffuse normal priors for true x
     for (i in 1:N){
-        x1[i] ~ dnorm(0,1e-3)
+        x1[i] ~ dnorm(11,0.01)
     }
 
     # Likelihood function
@@ -123,18 +122,15 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
       
     }}else{NULL}
     
-    BLM1_fit <- jags(data = LM_Data,inits = inits,
+    BLM1_fit <- jags(data = LM_Data, inits = inits,
                      parameters = c("alpha","beta", "tauy"),
                      model = textConnection(BLM1), n.chains = 3, 
                      n.iter = n.iter, n.burnin = n.iter*burninFrac)
-    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
-    
+
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    
-    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2)
     
     
     ##ANCOVA 2
@@ -148,8 +144,7 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
                      parameters = c("alpha","beta","conditionalR2", "marginalR2"), 
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    BLM3_fit <- autojags(BLM3_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
-    
+
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData, hasMaterial = F),
     getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = F))
     
@@ -185,14 +180,11 @@ fitClumpedRegressions<-function(calibrationData, predictionData=NULL,hasMaterial
                      parameters = c("alpha","beta", "tauy"),
                      model = textConnection(BLM1), n.chains = 3, 
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    BLM1_fit <- autojags(BLM1_fit,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2) 
-    
+
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    
-    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors,n.iter = n.iter,  n.burnin = n.iter*burninFrac, Rhat = 1.1, n.update = 2)
     
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
                        getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData))
