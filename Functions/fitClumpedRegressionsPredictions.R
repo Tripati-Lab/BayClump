@@ -4,6 +4,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                                            betaBLM1= 'dnorm(0.039,0.004)',
                                            useInits=T, 
                                            D47Pred,
+                                           D47Prederror,
                                            materialsPred){
   
   ##Models
@@ -30,11 +31,44 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
       
     #T_C = sqrt((beta * 10^6) / (y - alpha)) - 273.15
 
+    # Diffuse normal priors for true D47 pred
+    for (i in 1:NPred){
+        truepredD47[i] ~ dnorm(0.6,0.001)
+    }
+
 	   for ( i in 1:NPred) {
-	   tw[i] <- sqrt((beta * 10^6) / (D47Pred[i] - alpha)) - 273.15
+	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
+	   tw[i] <- sqrt((beta * 10^6) / (truepredD47[i] - alpha)) - 273.15
 		 Tcpropagated[i] ~ dnorm(tw[i], tauy)
 	   }
 	   
+}")
+
+
+  BLM1_NoErrors<-paste("model{
+                # Diffuse normal priors for predictors
+                alpha ~ ", alphaBLM1," \n ",
+                       "beta ~ ", betaBLM1," \n ",
+                       "
+    sigma <- 1/sqrt(tau)                              
+    tau ~ dgamma(0.1, 0.1)  
+                for (i in 1:N){
+                y[i] ~ dnorm(mu[i],tau)
+                mu[i]<- eta[i]
+                eta[i] <- alpha + inprod(x[i],beta)
+                }
+ 
+     # Diffuse normal priors for true D47 pred
+    for (i in 1:NPred){
+        truepredD47[i] ~ dnorm(0.6,0.001)
+    }
+
+	   for ( i in 1:NPred) {
+	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
+	   tw[i] <- sqrt((beta * 10^6) / (truepredD47[i] - alpha)) - 273.15
+		 Tcpropagated[i] ~ dnorm(tw[i], tau)
+	   }
+  
 }")
   
   
@@ -66,23 +100,33 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
         mu[i] <- alpha[type[i]] + beta[type[i]] * x1[i]
     }
     
+	   # Diffuse normal priors for true D47 pred
+    for (i in 1:NPred){
+        truepredD47[i] ~ dnorm(0.6,0.001)
+    }
+
 	   for ( i in 1:NPred) {
-	   tw[i] <- sqrt((beta[typePred[i]] * 10^6) / (D47Pred[i] - alpha[typePred[i]])) - 273.15
-	   Tcpropagated[i] ~ dnorm(tw[i], tau)
+	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
+	   tw[i] <- sqrt((beta[typePred[i]] * 10^6) / (truepredD47[i] - alpha[typePred[i]])) - 273.15
+		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
 }")
+  
   
   
   LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
                   errx = calibrationData$TempError, erry = calibrationData$D47error, 
                   N=nrow(calibrationData), 
                   NPred=length(D47Pred), 
-                  D47Pred=D47Pred)
+                  D47Pred=D47Pred,
+                  D47Prederror= D47Prederror
+                  )
   
   LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
                            N=nrow(calibrationData), 
                            NPred=length(D47Pred),
-                           D47Pred=D47Pred)
+                           D47Pred=D47Pred,
+                           D47Prederror= D47Prederror)
   
   ##Fit linear models
   if(hasMaterial == T){
@@ -93,6 +137,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                     errx = calibrationData$TempError, erry = calibrationData$D47error, 
                     N=nrow(calibrationData), 
                     NPred=length(D47Pred),
+                    D47Prederror= D47Prederror,
                     D47Pred=D47Pred)
     
     ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
@@ -102,12 +147,14 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                          type= as.numeric(factor(calibrationData$Material)), 
                          NPred=length(D47Pred),
                          D47Pred=D47Pred,
+                         D47Prederror= D47Prederror,
                          typePred= as.numeric(factor(materialsPred)))
     
     ##Fit the models
     inits <- if(useInits==T){ function () {
       list(alpha = rnorm(1,0.231,0.065),
-           beta = rnorm(1,0.039,0.004))
+           beta = rnorm(1,0.039,0.004),
+           truepredD47 = rnorm(LM_Data$NPred,0.6,0.01) )
       
     }}else{NULL}
     
@@ -125,7 +172,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
     ##ANCOVA 2
     inits <- if(useInits==T){ function () {
       list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
-           beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
+           beta = rnorm(ANCOVA2_Data$K,0.039,0.004),
+           truepredD47 = rnorm(LM_Data$NPred,0.6,0.01))
     }}else{NULL}
     
     BLM3_fit <- jags(data = ANCOVA2_Data, inits = inits,

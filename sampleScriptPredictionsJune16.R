@@ -19,10 +19,15 @@ sapply(list.files('Functions', full.names = T), source)
 
 ##Load the calibration dataset
 calData<-read.csv('Data/SampleData.csv')
-calData$T2 <- (10^6)/(calData$Temperature + 273.15)^2 
+calData$T2 <- calData$Temperature
 
-##The user need to provide more than one target D47 and an error
-targetD47<-c(0.71,0.72); error_targetD47<-c(0.02,0.03)
+calData<-calData[complete.cases(calData),]
+
+##Two replicates of the same sample
+targetD47<-c(0.71,0.72, 0.71)
+n<-predictTclassic(calData, targetD47, model='wlm')
+
+
 
 
 ################################################
@@ -31,11 +36,14 @@ targetD47<-c(0.71,0.72); error_targetD47<-c(0.02,0.03)
 
 ##If the user wants to get predictions given a LM
 reg<-summary(lm(calData$D47 ~ calData$T2))
+
+
 predictTcNonBayes(data=cbind(targetD47,error_targetD47), 
                   slope=reg$coefficients[2,1], 
                   slpcnf=reg$coefficients[2,2], 
                   intercept=reg$coefficients[1,1], 
                   intcnf=reg$coefficients[1,2])
+
 
 ##If the user wants to get predictions given a York model
 Reg<-york(cbind.data.frame(calData$T2, 

@@ -81,6 +81,7 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=F, onlyW
                                                               useInits=T, 
                                                               hasMaterial = hasMaterial,
                                                               D47Pred=errors[,1],
+                                                              D47Prederror=errors[,2],
                                                               materialsPred=errors[,3],
                                                               n.iter= generations)
   
