@@ -90,6 +90,8 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
         cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]))
       attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
       attr(to_ret, 'DICs') <- attr(Reg, "DICs") 
+      attr(to_ret, 'Conv') <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput, 
+                                   BLM1_fit_NoErrors= Reg$BLM1_fit_NoErrors$BUGSoutput)
       to_ret
     }else{
       
@@ -102,6 +104,10 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
                          'material'=unique(dataSub$Material )))
       attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
       attr(to_ret, 'DICs') <- attr(Reg, "DICs") 
+      attr(to_ret, 'Conv') <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput, 
+                                   BLM1_fit_NoErrors= Reg$BLM1_fit_NoErrors$BUGSoutput,
+                                   BLM3_fit=Reg$BLM3_fit$BUGSoutput
+      )
       to_ret
     }
     
@@ -133,6 +139,11 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
       }))
 
     attr(to_ret, 'DICs') <- DICs
+    
+    Conv<-lapply(tot, function(x) attr(x, "Conv") )
+    attr(to_ret, 'Conv') <- Conv
+    
+    
     to_ret
   }else{
     
@@ -162,6 +173,10 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
       cbind.data.frame(median=median(a), lwr=quantile(a, 0.025), upr=quantile(a, 0.975), model=names(a[1]))
     }))
     attr(to_ret, 'DICs') <- DICs
+    
+    Conv<-lapply(tot, function(x) attr(x, "Conv") )
+    attr(to_ret, 'Conv') <- Conv
+    
     to_ret
   }
   
