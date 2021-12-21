@@ -1,48 +1,18 @@
-  |                                                                     |   0%, ETA NACompiling model graph
+  |                                                                               |   0%, ETA NACompiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 525
-   Total graph size: 2272
+   Observed stochastic nodes: 82
+   Unobserved stochastic nodes: 85
+   Total graph size: 403
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 525
-   Total graph size: 2268
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 525
-   Total graph size: 2263
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 525
-   Total graph size: 2264
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 525
-   Total graph size: 2260
-
-Initializing model
-
-Initializing model
-
-Initializing model
+   Observed stochastic nodes: 82
+   Unobserved stochastic nodes: 85
+   Total graph size: 403
 
 Initializing model
 
@@ -52,9 +22,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 261
+   Observed stochastic nodes: 41
    Unobserved stochastic nodes: 3
-   Total graph size: 690
+   Total graph size: 158
 
 Initializing model
 
@@ -62,19 +32,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 261
+   Observed stochastic nodes: 41
    Unobserved stochastic nodes: 3
-   Total graph size: 698
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 261
-   Unobserved stochastic nodes: 3
-   Total graph size: 690
-
-Initializing model
+   Total graph size: 158
 
 Initializing model
 
@@ -82,9 +42,9 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 261
-   Unobserved stochastic nodes: 3
-   Total graph size: 694
+   Observed stochastic nodes: 82
+   Unobserved stochastic nodes: 128
+   Total graph size: 549
 
 Initializing model
 
@@ -92,60 +52,10 @@ Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 261
-   Unobserved stochastic nodes: 3
-   Total graph size: 682
+   Observed stochastic nodes: 82
+   Unobserved stochastic nodes: 128
+   Total graph size: 549
 
 Initializing model
 
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3076
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3068
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3080
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3072
-
-Initializing model
-
-Initializing model
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3071
-
-Initializing model
-
-  |=============                                                     |  20%, ETA 01:14  |==========================                                        |  40%, ETA 00:28  |========================================                          |  60%, ETA 00:13  |=====================================================             |  80%, ETA 00:05  |==============================================================| 100%, Elapsed 00:19
+  |======================================                                      |  50%, ETA 00:03  |========================================================================| 100%, Elapsed 00:03

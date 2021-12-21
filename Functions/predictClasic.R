@@ -11,12 +11,18 @@ library(investr)
 
 predictTclassic<-function(calData, targety, model='lm'){
   
+  if("T2" %in% colnames(calData) ){}else{
+  calData$T2 <- calData$Temperature
+  }
+  
   if(model == 'lm'){
     mod <- lm(D47 ~ T2, calData)
     estimate <- invest(mod, y0 = targety,
            interval = "percentile", 
            nsim = 1000, seed = 3, 
-           extendInt="yes", progress=T)
+           extendInt="yes", progress=T, 
+           lower=-100,
+           upper=100)
   }
   
   if(model == 'wlm'){
@@ -24,7 +30,9 @@ predictTclassic<-function(calData, targety, model='lm'){
     estimate <- invest(mod, y0 = targety,
                        interval = "percentile", 
                        nsim = 1000, seed = 3, 
-                       extendInt="yes", progress=T)
+                       extendInt="yes", progress=T, 
+                       lower=-100,
+                       upper=100)
   }
   
   if(model == 'York'){
@@ -61,7 +69,7 @@ predictTclassic<-function(calData, targety, model='lm'){
                        upper=100)
   }
   
-  cbind.data.frame(D47= paste( targetD47, collapse = "," ), 
+  cbind.data.frame(D47= paste( targety, collapse = "," ), 
                    temp=estimate$estimate, lwr=estimate$lower, upr=estimate$upper
                    )
 

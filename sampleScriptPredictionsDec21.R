@@ -43,7 +43,21 @@ predictTcBayes(calibrationData=calData[sample(1:nrow(calData),nrow(calData)),],
                data=cbind(D47=targetD47,error=error_targetD47), generations=20000, 
                hasMaterial=F)
 
+predictTcBayes_replicates(calData=calData, 
+                          targetD47=targetD47, 
+                          error_targetD47=error_targetD47, 
+                          material=material, 
+                          nrep=2, 
+                          hasMaterial=F, 
+                          generations=1000)
 
+predictTcBayes_replicates(calData=calData, 
+                          targetD47=targetD47, 
+                          error_targetD47=error_targetD47, 
+                          material=material, 
+                          nrep=2, 
+                          hasMaterial=T, 
+                          generations=1000)
 
 
 

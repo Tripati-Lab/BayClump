@@ -66,18 +66,18 @@ simulateBLM_measuredMaterial<<-function(data, replicates, samples=NULL, generati
   
   single_rep<-function(i){
     
+    dataSub <- data_BR_Measured
     
-    if(isMixed == F){
-      dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
-      
-    }else{
-      dataSub<- do.call(rbind,lapply(unique(data_BR_Measured$Material), function(x){
-        material1<-data_BR_Measured[data_BR_Measured$Material ==x,]
-        dataSub1<-material1[sample(seq_along(material1[,1]), round((if(is.null(samples)){nrow(data)}else{nrow(data)*samples}) /length(unique(data_BR_Measured$Material))), replace = T),]
-        dataSub1
-      } ))
-      
-    }
+    # if(isMixed == F){
+    #   dataSub<-data_BR_Measured[sample(seq_along(data_BR_Measured[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
+    #   
+    # }else{
+    #   dataSub<- do.call(rbind,lapply(unique(data_BR_Measured$Material), function(x){
+    #     material1<-data_BR_Measured[data_BR_Measured$Material ==x,]
+    #     dataSub1<-material1[sample(seq_along(material1[,1]), round((if(is.null(samples)){nrow(data)}else{nrow(data)*samples}) /length(unique(data_BR_Measured$Material))), replace = T),]
+    #     dataSub1
+    #   } ))
+    # }
     
     Reg<-fitClumpedRegressions(calibrationData=dataSub,
                                hasMaterial = isMixed, n.iter = generations)
