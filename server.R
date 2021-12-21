@@ -884,7 +884,7 @@ server <- function(input, output, session) {
                                       targetD47=recData_byS$D47, 
                                       error_targetD47=ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                       material = as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material))),
-                                      nrep=1000, 
+                                      nrep=2, 
                                       hasMaterial=T, 
                                       generations=ngenerationsBayesianPredictions)
             
@@ -1000,14 +1000,13 @@ server <- function(input, output, session) {
             
             df1 <- lmrec
             
-            names(df1) <- c("Δ47 (‰)", "Temperature (10^6/T2 (k))", "Lower 95% CI", "Upper 95% CI")
+            names(df1) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df1) <- NULL
             
            
             output$lmrecswun <- renderTable({
               
               df1$`Δ47 (‰)` <- formatC(df1$`Δ47 (‰)`, digits = 3, format = "f")
-              df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 3, format = "f")
               df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 1, format = "f")
               df1$`Lower 95% CI` <- formatC(df1$`Lower 95% CI`, digits = 1, format = "f")
               df1$`Upper 95% CI` <- formatC(df1$`Upper 95% CI`, digits = 1, format = "f")
@@ -1035,7 +1034,7 @@ server <- function(input, output, session) {
             lminverserecwun <- lminverserec
             
             df3<-lminverserecwun
-            names(df3) <- c("Δ47 (‰)", "Temperature (10^6/T^2)", "Lower 95% CI", "Upper 95% CI")
+            names(df3) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df3) <- NULL
             
             
@@ -1043,7 +1042,6 @@ server <- function(input, output, session) {
             output$lminverserecswun <- renderTable({
               
               df3$`Δ47 (‰)` <- formatC(df3$`Δ47 (‰)`, digits = 3, format = "f")
-              df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 3, format = "f")
               df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 1, format = "f")
               df3$`Lower 95% CI` <- formatC(df3$`Lower 95% CI`, digits = 1, format = "f")
               df3$`Upper 95% CI` <- formatC(df3$`Upper 95% CI`, digits = 1, format = "f")
@@ -1075,14 +1073,13 @@ server <- function(input, output, session) {
             yorkrecwun <- yorkrec
             
             df5<-yorkrecwun
-            names(df5) <- c("Δ47 (‰)", "Temperature (10^6/T^2)", "Lower 95% CI", "Upper 95% CI")
+            names(df5) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df5) <- NULL
             
             
             output$yorkrecswun <- renderTable({
               
               df5$`Δ47 (‰)` <- formatC(df5$`Δ47 (‰)`, digits = 3, format = "f")
-              df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 3, format = "f")
               df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 1, format = "f")
               df5$`Lower 95% CI` <- formatC(df5$`Lower 95% CI`, digits = 1, format = "f")
               df5$`Upper 95% CI` <- formatC(df5$`Upper 95% CI`, digits = 1, format = "f")
@@ -1113,13 +1110,12 @@ server <- function(input, output, session) {
             demingrecwun <- demingrec
 
             df7<-demingrecwun
-            names(df7) <- c("Δ47 (‰)", "Temperature (10^6/T^2)", "Lower 95% CI", "Upper 95% CI")
+            names(df7) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df7) <- NULL
             
             output$demingrecswun <- renderTable({
               
               df7$`Δ47 (‰)` <- formatC(df7$`Δ47 (‰)`, digits = 3, format = "f")
-              df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 3, format = "f")
               df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 1, format = "f")
               df7$`Lower 95% CI` <- formatC(df7$`Lower 95% CI`, digits = 1, format = "f")
               df7$`Upper 95% CI` <- formatC(df7$`Upper 95% CI`, digits = 1, format = "f")
