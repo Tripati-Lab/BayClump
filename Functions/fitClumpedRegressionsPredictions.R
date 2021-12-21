@@ -38,13 +38,13 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 
 	   for ( i in 1:NPred) {
 	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
-	   tw[i] <- sqrt((beta * 10^6) / (truepredD47[i] - alpha)) - 273.15
+	   tw[i] <-  (truepredD47[i] - alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tauy)
 	   }
 	   
 }")
-
-
+  
+  
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors
                 alpha ~ ", alphaBLM1," \n ",
@@ -65,7 +65,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 
 	   for ( i in 1:NPred) {
 	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
-	   tw[i] <- sqrt((beta * 10^6) / (truepredD47[i] - alpha)) - 273.15
+	   tw[i] <- (truepredD47[i] - alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
   
@@ -107,7 +107,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 
 	   for ( i in 1:NPred) {
 	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
-	   tw[i] <- sqrt((beta[typePred[i]] * 10^6) / (truepredD47[i] - alpha[typePred[i]])) - 273.15
+	   tw[i] <- (truepredD47[i] - alpha[typePred[i]])/beta[typePred[i]]
 		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
 }")

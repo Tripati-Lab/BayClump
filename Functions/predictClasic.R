@@ -39,7 +39,9 @@ predictTclassic<-function(calData, targety, model='lm'){
     estimate <- invest(fit1, y0 = targety,
                        interval = "percentile", 
                        nsim = 1000, seed = 3, 
-                       extendInt="yes", progress=T)
+                       extendInt="yes", progress=T, 
+                       lower=-100,
+                       upper=100)
   }
   
   if(model == 'Deming'){
@@ -54,7 +56,9 @@ predictTclassic<-function(calData, targety, model='lm'){
     estimate <- invest(fit1, y0 = targety,
                        interval = "percentile", 
                        nsim = 1000, seed = 3, 
-                       extendInt="yes", progress=T)
+                       extendInt="yes", progress=T, 
+                       lower=-100,
+                       upper=100)
   }
   
   cbind.data.frame(D47= paste( targetD47, collapse = "," ), 

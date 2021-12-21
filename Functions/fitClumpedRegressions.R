@@ -1,7 +1,12 @@
-fitClumpedRegressions<-function(calibrationData, predictionData=NULL, hasMaterial=F, 
-                                n.iter= 5000, burninFrac=0.5,
-                                alphaBLM1='dnorm(0.231,0.065)', betaBLM1= 'dnorm(0.039,0.004)',
-                                useInits=T, D47error='D47error'){
+fitClumpedRegressions<-function(calibrationData, 
+                                predictionData=NULL, 
+                                hasMaterial=F, 
+                                n.iter= 5000, 
+                                burninFrac=0.5,
+                                alphaBLM1='dnorm(0.231,0.065)', 
+                                betaBLM1= 'dnorm(0.039,0.004)',
+                                useInits=T, 
+                                D47error='D47error'){
   
   ##Models
   BLM1<-paste(" model{

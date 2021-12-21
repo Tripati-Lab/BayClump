@@ -54,7 +54,7 @@ simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
-    Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/dataSub$x_SE, ystd= 1/dataSub$y_SE)
+    Reg<-deming(D47 ~ Temperature, dataSub, xstd= x_SE, ystd= y_SE)
     cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
   }))
 }
