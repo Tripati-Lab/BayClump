@@ -1,4 +1,4 @@
-  |                                                                               |   0%, ETA NACompiling model graph
+  |                                                                                                     |   0%, ETA NACompiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
@@ -26,6 +26,8 @@ Graph information:
    Unobserved stochastic nodes: 13
    Total graph size: 198
 
+Initializing model
+
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
@@ -36,8 +38,6 @@ Graph information:
 
 Initializing model
 
-Initializing model
-
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
@@ -58,4 +58,4 @@ Graph information:
 
 Initializing model
 
-  |======================================                                      |  50%, ETA 00:02  |========================================================================| 100%, Elapsed 00:02
+  |=================================================                                                 |  50%, ETA 00:02  |==============================================================================================| 100%, Elapsed 00:02
