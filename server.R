@@ -94,7 +94,7 @@ server <- function(input, output, session) {
     #                            ifelse(input$replication == "500", 500,
     #                                   ifelse(input$replication == "1000", 1000, NA))))
     
-    replicates <- input$replication
+    replicates <<- input$replication
 
     # Bayesian n generations
     #ifelse(input$ngenerationsBayesian == "1000", 1000,
@@ -884,7 +884,7 @@ server <- function(input, output, session) {
                                       targetD47=recData_byS$D47, 
                                       error_targetD47=ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                       material = as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material))),
-                                      nrep=2, 
+                                      nrep=replicates, 
                                       hasMaterial=T, 
                                       generations=ngenerationsBayesianPredictions)
             
@@ -994,12 +994,20 @@ server <- function(input, output, session) {
           # Need to use a sample-based dataset
           if( !is.null(lmcals) ) {
             
+            calData$T2 <<- calData$Temperature
+            
             lmrec <<- do.call(rbind,lapply(unique(recData$Sample), function(x){
-              predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='lm')
+              predictTclassic(calData, targety=recData[recData$Sample == x,"D47"], model='lm', replicates=replicates)
             } ))
             
             df1 <- lmrec
             
+            df1$temp<-sqrt(10^6/df1$temp)-273.15
+            colnames(df1)[c(3:4)]<-c('upr', 'lwr')
+            df1$lwr<-sqrt(10^6/df1$lwr)-273.15
+            df1$upr<-sqrt(10^6/df1$upr)-273.15
+            df1<-df1[,c("D47", "temp","lwr","upr")]
+
             names(df1) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df1) <- NULL
             
@@ -1026,14 +1034,21 @@ server <- function(input, output, session) {
           
           #Inverse weighted linear model 
           if( !is.null(lminversecals) ) {
+            calData$T2 <<- calData$Temperature
             
             lminverserec <<- do.call(rbind,lapply(unique(recData$Sample), function(x){
-              predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='wlm')
+              predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='wlm', replicates=replicates)
             } ))
               
             lminverserecwun <- lminverserec
             
             df3<-lminverserecwun
+            df3$temp<-sqrt(10^6/df3$temp)-273.15
+            colnames(df3)[c(3:4)]<-c('upr', 'lwr')
+            df3$lwr<-sqrt(10^6/df3$lwr)-273.15
+            df3$upr<-sqrt(10^6/df3$upr)-273.15
+            df3<-df3[,c("D47", "temp","lwr","upr")]
+            
             names(df3) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df3) <- NULL
             
@@ -1055,8 +1070,6 @@ server <- function(input, output, session) {
               
             )
             
-            
-            
             addWorksheet(wb2, "Inverse linear w uncertainty") # Add a blank sheet
             writeData(wb2, sheet = "Inverse linear w uncertainty", df3) # Write reconstruction data
             print(noquote("Inverse weighted linear reconstruction complete"))
@@ -1065,14 +1078,20 @@ server <- function(input, output, session) {
           
           # York regression
           if( !is.null(yorkcals) ) {
+            calData$T2 <<- calData$Temperature
             
             yorkrec <<- do.call(rbind,lapply(unique(recData$Sample), function(x){
-              predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='York')
+              predictTclassic(calData=calData, targety=recData[recData$Sample == x,"D47"], model='York', replicates=replicates)
             } ))
             
             yorkrecwun <- yorkrec
             
             df5<-yorkrecwun
+            df5$temp<-sqrt(10^6/df5$temp)-273.15
+            colnames(df5)[c(3:4)]<-c('upr', 'lwr')
+            df5$lwr<-sqrt(10^6/df5$lwr)-273.15
+            df5$upr<-sqrt(10^6/df5$upr)-273.15
+            df5<-df5[,c("D47", "temp","lwr","upr")]
             names(df5) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df5) <- NULL
             
@@ -1093,7 +1112,6 @@ server <- function(input, output, session) {
               
             )
             
-            
             addWorksheet(wb2, "York w uncertainty") # Add a blank sheet
             writeData(wb2, sheet = "York w uncertainty", df5) # Write reconstruction data
             print(noquote("York reconstruction complete"))
@@ -1102,14 +1120,21 @@ server <- function(input, output, session) {
           
           # Deming regression
           if( !is.null(demingcals) ) {
-            
+            calData$T2 <<- calData$Temperature
+          
             demingrec <<- do.call(rbind,lapply(unique(recData$Sample), function(x){
-              predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming')
+              predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming', replicates=replicates)
             } ))
             
             demingrecwun <- demingrec
 
             df7<-demingrecwun
+            df7$temp<-sqrt(10^6/df7$temp)-273.15
+            colnames(df7)[c(3:4)]<-c('upr', 'lwr')
+            df7$lwr<-sqrt(10^6/df7$lwr)-273.15
+            df7$upr<-sqrt(10^6/df7$upr)-273.15
+            df7<-df7[,c("D47", "temp","lwr","upr")]
+            
             names(df7) <- c("Δ47 (‰)", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
             rownames(df7) <- NULL
             
@@ -1132,7 +1157,6 @@ server <- function(input, output, session) {
             
             addWorksheet(wb2, "Deming w uncertainty") # Add a blank sheet
             writeData(wb2, sheet = "Deming w uncertainty", df7) # Write reconstruction data
-
             print(noquote("Deming reconstruction complete"))
             
           }
