@@ -32,7 +32,7 @@ simulateLM_measured<<-function(data, replicates, samples=NULL, D47error="D47erro
 
 simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D47error"){
   a<-pblapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
     Reg0<-lm(D47 ~ Temperature,  dataSub)
@@ -54,7 +54,7 @@ simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D
 simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
   ncores = parallel::detectCores()
   do.call(rbind,pbmclapply(1:replicates, mc.cores = ncores, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{nrow(data)*samples}, replace = T),]
+    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
     dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
     Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
@@ -82,7 +82,7 @@ simulateBLM_measuredMaterial<<-function(data,
     }else{
       dataSub<- do.call(rbind,lapply(unique(data_BR_Measured$Material), function(x){
         material1<-data_BR_Measured[data_BR_Measured$Material ==x,]
-        dataSub1<-material1[sample(seq_along(material1[,1]), round((if(is.null(samples)){nrow(data_BR_Measured)}else{nrow(data_BR_Measured)*samples}) /length(unique(data_BR_Measured$Material))), replace = T),]
+        dataSub1<-material1[sample(seq_along(material1[,1]), round((if(is.null(samples)){nrow(data_BR_Measured)}else{samples}) /length(unique(data_BR_Measured$Material))), replace = T),]
         dataSub1
       } ))
     }
