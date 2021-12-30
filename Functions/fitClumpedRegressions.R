@@ -3,10 +3,18 @@ fitClumpedRegressions<-function(calibrationData,
                                 hasMaterial=F, 
                                 n.iter= 5000, 
                                 burninFrac=0.5,
-                                alphaBLM1='dnorm(0.231,0.065)', 
-                                betaBLM1= 'dnorm(0.039,0.004)',
+                                priors = "informative",
                                 useInits=T, 
                                 D47error='D47error'){
+  
+  
+  if(priors == 'informative'){
+  alphaBLM1='dnorm(0.231,0.065)' 
+  betaBLM1= 'dnorm(0.039,0.004)'}else{
+    alphaBLM1='dnorm(0, 0.01)' 
+    betaBLM1= 'dnorm(0, 0.01)'
+  }
+  
   
   ##Models
   BLM1<-paste(" model{
@@ -95,24 +103,16 @@ fitClumpedRegressions<-function(calibrationData,
 
 }")
   
-
-  LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
-                           N=nrow(calibrationData))
   
-  ##Fit linear models
+  
+  
+  ##If mixed
   if(hasMaterial == T){
-    
     
     Y= NULL#IsoplotR::york(cbind(calibrationData[,c('Temperature','TempError','D47', 'D47error')]))
     M0=NULL#lm(D47 ~ Temperature, calibrationData)
     M1=NULL#lm(D47 ~ Temperature+Material, calibrationData)
     M2=NULL#lm(D47 ~ Temperature*Material, calibrationData)
-    
-    
-    ##Create the calibrationDatasets for Bayesian Models
-    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                    errx = calibrationData$TempError, erry = calibrationData[,D47error], 
-                    N=nrow(calibrationData))
     
     ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
                          errx1 = calibrationData$TempError, erry = calibrationData[,D47error], 
@@ -120,25 +120,6 @@ fitClumpedRegressions<-function(calibrationData,
                          N=nrow(calibrationData),
                          type= as.numeric(calibrationData$Material))
     
-    ##Fit the models
-    inits <- if(useInits==T){ function () {
-      list(alpha = rnorm(1,0.231,0.065),
-           beta = rnorm(1,0.039,0.004))
-      
-    }}else{NULL}
-    
-    BLM1_fit <- jags(data = LM_Data, inits = inits,
-                     parameters = c("alpha","beta", "tauy"),
-                     model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter, n.burnin = n.iter*burninFrac)
-
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
-                              parameters = c("alpha","beta", "tau"),
-                              model = textConnection(BLM1_NoErrors), n.chains = 3,
-                              n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    
-    
-    ##ANCOVA 2
     inits <- if(useInits==T){ function () {
       list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
            beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
@@ -150,8 +131,13 @@ fitClumpedRegressions<-function(calibrationData,
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
 
-    R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData, hasMaterial = F),
-    getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = F))
+    
+    #Avoid running the other models when running the mixed model
+    BLM1_fit<- BLM3_fit
+    BLM1_fit_NoErrors <- BLM3_fit
+    
+    R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData, hasMaterial = T),
+    getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = T))
     
     BLM3_fitR2<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep('conditional',row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
     colnames(BLM3_fitR2)<-names(R2sComplete)
@@ -164,42 +150,53 @@ fitClumpedRegressions<-function(calibrationData,
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit","BLM3_fit")
     R2sComplete$class<-c("Conditional", "Conditional", "Conditional","Marginal")
     
-    
     DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC,  BLM3_fit$BUGSoutput$DIC)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
     
     CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
-    Y=NULL#IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
-    M0=NULL#lm(D47 ~ Temperature, calibrationData)
+    
+    
+    ##Non-mixed models
+    
+    LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
+                             N=nrow(calibrationData))
+    
+    ##Create the calibrationDatasets for Bayesian Models
     LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                    errx = calibrationData$TempError, erry = calibrationData[,D47error], 
+                    errx = calibrationData$TempError, erry = abs(calibrationData[,D47error]), 
                     N=nrow(calibrationData))
+    
+    
     ##Fit the models
     inits <- if(useInits==T){ function () {
       list(alpha = rnorm(1,0.231,0.065),
            beta = rnorm(1,0.039,0.004))
+      
     }}else{NULL}
     
-    BLM1_fit <- jags(data = LM_Data,inits = inits,
+    BLM1_fit <- jags(data = LM_Data, inits = inits,
                      parameters = c("alpha","beta", "tauy"),
                      model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-
+                     n.iter = n.iter, n.burnin = n.iter*burninFrac)
+    
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+    
+    Y=NULL#IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
+    M0=NULL#lm(D47 ~ Temperature, calibrationData)
     
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
                        getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData))
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors")
     DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors")
-    
-    
+
     CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
   }
+  
   attr(CompleteModelFit, 'data') <- calibrationData 
   attr(CompleteModelFit, 'R2s') <- R2sComplete 
   attr(CompleteModelFit, 'DICs') <- DICs 

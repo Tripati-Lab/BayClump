@@ -2,12 +2,6 @@
 server <- function(input, output, session) { 
   options(shiny.maxRequestSize=800*1024^2) 
   
-  #Number of generations for Bayesian predictions
-  ngenerationsBayesianPredictions <- 20000
-  
-  #Number of generations for Bayesian calibrations
-  ngenerationsBayes <- 20000
-  
   # Show package citations
   get_path <- reactive({
     path <- file.path(paste0(getwd()), paste("Rpackages", ".bib", sep=""))
@@ -61,17 +55,33 @@ server <- function(input, output, session) {
     )
   })
 
-  
+  #For parameter estimates
   if(exists("wb")) rm(wb) # Delete any existing workbook in preparation for new results
   wb <- createWorkbook("calibration output") # Prepare a workbook for calibration outputs
+  
+  #For convergence
+  if(exists("wb3")) rm(wb3) # Delete any existing workbook in preparation for new results
+  wb3 <- createWorkbook("Bayesian output") # Prepare a workbook for calibration outputs
+  
+  
+  observeEvent(calibrationData(),{
+  output$myList <-  renderUI({
+    numericInput("samples", min = 3, max = nrow(calibrationData()), 
+                label = paste0("Number of observations per bootstrap sample, (max. recommended: ", nrow(calibrationData()) ,")" ), 
+                value =  nrow(calibrationData()))
+  })
+  })
+  
+  
   
   observe({
     output$contents <- renderTable({
       calsummary <- calibrationData() %>%
         summarize(
+          "Total samples" = length(calibrationData()$Sample.Name),
           "Unique samples" = length(unique(calibrationData()$Sample.Name)),
           "Total replicates" = sum(calibrationData()$N),
-          "Mineralogies" = length(unique(calibrationData()$Mineralogy)),
+          #"Mineralogies" = length(unique(calibrationData()$Mineralogy)),
           "Materials" = length(unique(calibrationData()$Material))
         )
       return(calsummary)
@@ -88,21 +98,11 @@ server <- function(input, output, session) {
     
     hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
     
-    # Update the number of bootstrap replicates to run based on user selection
-    #replicates <- ifelse(input$replication == "50", 50,
-    #                     ifelse(input$replication == "100", 100,
-    #                            ifelse(input$replication == "500", 500,
-    #                                   ifelse(input$replication == "1000", 1000, NA))))
-    
+    priors <<- input$priors
     replicates <<- input$replication
+    ngenerationsBayes <<- input$generations
+    ngenerationsBayesianPredictions <<- input$generations
 
-    # Bayesian n generations
-    #ifelse(input$ngenerationsBayesian == "1000", 1000,
-                         #ifelse(input$ngenerationsBayesian == "5000", 5000,
-                        #        ifelse(input$ngenerationsBayesian == "10000", 10000,
-                         #              ifelse(input$ngenerationsBayesian == "20000", 20000, NA))))
-    
-    
     # Remove existing worksheets from wb on 'run' click, if any
     if("Linear regression" %in% names(wb) == TRUE) 
     {removeWorksheet(wb, "Linear regression") & removeWorksheet(wb, "Linear regression CI")}
@@ -119,9 +119,23 @@ server <- function(input, output, session) {
     if("Bayesian mixed w errors" %in% names(wb) == TRUE)
     {removeWorksheet(wb, "Bayesian mixed w errors") & removeWorksheet(wb, "Bayesian mixed w errors CI")}
     
+    
+    ##Also for the Bayesian sheet
+    if("Bayesian model no errors" %in% names(wb3) == TRUE) 
+    {removeWorksheet(wb3, "Bayesian model no errors")}
+    if("Bayesian model with errors" %in% names(wb3) == TRUE) 
+    {removeWorksheet(wb3, "Bayesian model with errors") }
+    if("Bayesian mixed w errors" %in% names(wb3) == TRUE)
+    {removeWorksheet(wb3, "Bayesian mixed w errors")}
+    
+    
     calData <<- NULL
     calData <<- calibrationData()
 
+    samples <<- if(is.null(input$samples)){nrow(calData) }else{input$samples}
+    samples <<- ifelse(samples==2, 3, samples)
+      
+      
     # Recode NA or 0 error values to dummy value
     calData$D47error[calData$D47error == 0] <<- 0.000001
     calData$TempError[calData$TempError == 0] <<- 0.000001
@@ -129,9 +143,14 @@ server <- function(input, output, session) {
     calData$TempError[is.na(calData$TempError)] <<- 0.000001
     calData$Material[is.na(calData$Material)] <<- 1
     
+    
     ##Limits of the CI
-    minLim <- ifelse(input$MinLim==0, min(calData$Temperature),input$MinLim)
-    maxLim <- ifelse(input$MaxLim==0, max(calData$Temperature),input$MaxLim)
+    
+    minLim <- ifelse(input$range[1]==0, min(calData$Temperature),input$range[1])
+    maxLim <- ifelse(input$range[2]==0, max(calData$Temperature),input$range[2])
+    
+    #minLim <- ifelse(input$MinLim==0, min(calData$Temperature),input$MinLim)
+    #maxLim <- ifelse(input$MaxLim==0, max(calData$Temperature),input$MaxLim)
     
     # For future implementation:
    # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
@@ -183,7 +202,7 @@ server <- function(input, output, session) {
         
         if(input$simulateLM_measured != FALSE) {
           sink(file = "linmodtext.txt", type = "output")
-          lmcals <<- simulateLM_measured(calData, replicates = replicates)
+          lmcals <<- simulateLM_measured(calData, replicates = replicates, samples = samples)
           sink()
           
           lmci <- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
@@ -251,9 +270,11 @@ server <- function(input, output, session) {
           cat("Linear regression complete \n *R^2=", round(unlist(attributes(lmcals)$R2[1],4)),
               " (95% CI, ",round(unlist(attributes(lmcals)$R2[2],4)),"-",round(unlist(attributes(lmcals)$R2[3],4)),")"
           )
+          
+
           output$lmcal <- renderPrint({
             do.call(rbind.data.frame,apply(lmcals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Median= round(median(x), 4), `SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
             }))
           })
           
@@ -261,7 +282,7 @@ server <- function(input, output, session) {
         
         if(input$simulateLM_inverseweights != FALSE) {
           sink(file = "inverselinmodtext.txt", type = "output")
-          lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates)
+          lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates, samples = samples)
           sink()
           
           lminverseci <- RegressionSingleCI(data = lminversecals, from = minLim, to = maxLim)
@@ -329,7 +350,7 @@ server <- function(input, output, session) {
           
           output$lminversecal <- renderPrint({
             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
             }))
           })
           
@@ -337,7 +358,7 @@ server <- function(input, output, session) {
         
         if(input$simulateYork_measured != FALSE) {
           sink(file = "yorkmodtext.txt", type = "output")
-          yorkcals <<- simulateYork_measured(calData, replicates = replicates)
+          yorkcals <<- simulateYork_measured(calData, replicates = replicates, samples = samples)
           sink()
           
           yorkci <- RegressionSingleCI(data = yorkcals, from = minLim, to = maxLim)
@@ -402,7 +423,7 @@ server <- function(input, output, session) {
           cat("\nYork regression complete")
           output$york <- renderPrint({
             do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
             }))
           })
           
@@ -410,7 +431,7 @@ server <- function(input, output, session) {
         
         if(input$simulateDeming != FALSE) {
           sink(file = "demingmodtext.txt", type = "output")
-          demingcals <<- simulateDeming(calData, replicates = replicates)
+          demingcals <<- simulateDeming(calData, replicates = replicates, samples = samples)
           sink()
           
           demingci <- RegressionSingleCI(data = demingcals, from = minLim, to = maxLim)
@@ -475,7 +496,7 @@ server <- function(input, output, session) {
           cat("\nDeming regression complete")
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
             }))
           })
           
@@ -484,7 +505,12 @@ server <- function(input, output, session) {
         #     checkboxInput("linear", "Linear model", FALSE),
         if(input$simulateBLM_measuredMaterial != FALSE) {
           sink(file = "Bayeslinmodtext.txt", type = "output")
-          bayeslincals <<- simulateBLM_measuredMaterial(calData, replicates = replicates, isMixed=F, generations=ngenerationsBayes)
+          bayeslincals <<- simulateBLM_measuredMaterial(calData, 
+                                                        replicates = replicates, 
+                                                        isMixed=F, 
+                                                        generations=ngenerationsBayes,
+                                                        priors = priors, 
+                                                        samples = samples)
           sink()
           
           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = minLim, to = maxLim)
@@ -570,11 +596,29 @@ server <- function(input, output, session) {
           bayeslincalciwitherror2 <- bayeslincalciwitherror
           names(bayeslincalciwitherror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
+
           writeData(wb, sheet = "Bayesian model no errors", bayeslincals$BLM_Measured_no_errors) # Write regression data
           writeData(wb, sheet = "Bayesian model no errors CI", bayeslincalcinoerror2)
           
           writeData(wb, sheet = "Bayesian model with errors", bayeslincals$BLM_Measured_errors) # Write regression data
           writeData(wb, sheet = "Bayesian model with errors CI", bayeslincalciwitherror2)
+          
+          
+          ##For the Bayesian sheet
+          conv_BLM <- do.call(rbind, lapply(seq_along(attr(bayeslincals, "Conv")), function(x){
+            cbind(Replicate=x,attr(bayeslincals, "Conv")[[x]][[1]]) }))
+          conv_BLM_errors <- do.call(rbind, lapply(seq_along(attr(bayeslincals, "Conv")), function(x){
+            cbind(Replicate=x,attr(bayeslincals, "Conv")[[x]][[2]]) }))
+          
+          conv_BLM <- cbind.data.frame(parameter=row.names(conv_BLM),conv_BLM)
+          conv_BLM_errors <- cbind.data.frame(parameter=row.names(conv_BLM_errors),conv_BLM_errors)
+          
+          
+          addWorksheet(wb3, "Bayesian model no errors") # Add a blank sheet
+          addWorksheet(wb3, "Bayesian model with errors") # Add a blank sheet
+          writeData(wb3, sheet = "Bayesian model no errors", conv_BLM) # Write regression data
+          writeData(wb3, sheet = "Bayesian model with errors", conv_BLM_errors) # Write regression data
+          
           
           #print(noquote("Bayesian linear model complete"))
           
@@ -592,7 +636,7 @@ server <- function(input, output, session) {
           output$blinnoerr <- renderPrint({
             
             do.call(rbind.data.frame,apply(bayeslincals$BLM_Measured_no_errors, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
             }))
             
           })
@@ -600,7 +644,7 @@ server <- function(input, output, session) {
           output$blinwerr <- renderPrint({
             
             do.call(rbind.data.frame,apply(bayeslincals$BLM_Measured_errors, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
             }))
             
           })
@@ -616,7 +660,12 @@ server <- function(input, output, session) {
           calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
           
           sink(file = "Bayesmixmodtext.txt", type = "output")
-          bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, replicates = replicates, isMixed = T, generations=ngenerationsBayes)
+          bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, 
+                                                         replicates = replicates, 
+                                                         isMixed = T, 
+                                                         generations=ngenerationsBayes,
+                                                         priors = priors, 
+                                                         samples = samples)
           sink()
           
           bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = minLim, to = maxLim)
@@ -630,6 +679,17 @@ server <- function(input, output, session) {
           
           writeData(wb, sheet = "Bayesian mixed w errors", bayesmixedcals$BLMM_Measured_errors) # Write regression data
           writeData(wb, sheet = "Bayesian mixed w errors CI", bayeslmmincalciwitherror2)
+          
+          ##For the Bayesian sheet
+          conv_BLMM <- do.call(rbind, lapply(seq_along(attr(bayesmixedcals, "Conv")), function(x){
+            cbind(Replicate=x,attr(bayesmixedcals, "Conv")[[x]][[1]]) }))
+
+          conv_BLMM <- cbind.data.frame(parameter=row.names(conv_BLMM),conv_BLMM)
+          
+          addWorksheet(wb3, "Bayesian mixed w errors") # Add a blank sheet
+          writeData(wb3, sheet = "Bayesian mixed w errors", conv_BLMM) # Write regression data
+
+          
           
           output$bayesmixedcalibration <- renderPlotly({
             bayesmixedfig <- plot_ly(data = calibrationData()
@@ -690,13 +750,16 @@ server <- function(input, output, session) {
           
           output$blinmwerr <- renderPrint(
             ddply(bayesmixedcals$BLMM_Measured_errors, .( material), 
-                  function(x) cbind.data.frame('Median'=round(median(x$intercept),4),
-                            'Lower 95% CI'=round(quantile(x$intercept, c(0.025)),4),
-                            'Upper 95% CI'=round(quantile(x$intercept, c(0.975)),4),
-                            'medianSlope'=round(median(x$slope),4),
-                            'lwrSlope'=round(quantile(x$slope, c(0.025)),4),
-                            'uprSlope'=round(quantile(x$slope, c(0.975)),4)
-            ))
+                  function(x) cbind.data.frame('median (I)'=round(median(x$intercept),4),
+                                               'SES (I)'=round(sd(x$slope)/sqrt(length(x$intercept)),7),
+                            'Lower 95% CI (I)'=round(quantile(x$intercept, c(0.025)),4),
+                            'Upper 95% CI (I)'=round(quantile(x$intercept, c(0.975)),4),
+                            
+                            'median (S)'=round(median(x$slope),4),
+                            'SE (S)'=round(sd(x$slope)/sqrt(length(x$slope)),7),
+                            'lwr (S)'=round(quantile(x$slope, c(0.025)),4),
+                            'upr (S)'=round(quantile(x$slope, c(0.975)),4))
+            )
         ) 
 
       
@@ -721,6 +784,18 @@ server <- function(input, output, session) {
       saveWorkbook(wb, file, overwrite = TRUE)
     }
   )
+  
+  
+  output$downloadBayesian <- downloadHandler(
+    filename = function() { 
+      paste("Bayesian_output_", Sys.time(), ".xlsx", sep="")
+    },
+    
+    content = function(file) {
+      saveWorkbook(wb3, file, overwrite = TRUE)
+    }
+  )
+  
   
   
   ########################### Example code

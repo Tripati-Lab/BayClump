@@ -81,16 +81,21 @@ body <- dashboardBody(
               box(width = 4,
                   title = "Step 2: Select Models", solidHeader = TRUE,
                   column(12, "For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual",
-                         #selectInput("replication", label = "Number of bootstrap replicates for every model", 
-                        #             choices = c("50", "100", "500", "1000"), selected = "100"),
-                        numericInput("replication", label = "Number of bootstrap replicates for every model", 
+                         numericInput("replication", label = "Number of bootstrap replicates for every model", 
                                       1000, min = 2, max = 10000),
-                        numericInput("MinLim", 
-                                     label = HTML(paste0("Lowest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
-                                     1, min = 0, max = 15),
-                        numericInput("MaxLim", 
-                                     label = HTML(paste0("Highest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
-                                     14, min = 0, max = 15),
+                        sliderInput("range", label = HTML(paste0("Range for temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
+                                    min = 0, max = 30, value = c(1, 14)),
+                        # numericInput("MinLim", 
+                        #             label = HTML(paste0("Lowest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
+                        #             1, min = 0, max = 15),
+                        # numericInput("MaxLim", 
+                        #             label = HTML(paste0("Highest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
+                        #             14, min = 0, max = 15),
+                        numericInput("generations", label = "Number of iterations for Bayesian models", 
+                                     20000, min = 1000, max = 1000000),
+                         uiOutput("myList"),
+                         selectInput("priors", label = "Bayesian priors", 
+                                    choices = c("Informative", "Diffuse"), selected = "Informative"),
                          checkboxInput("simulateLM_measured", "Linear model", FALSE),
                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measured", "York regression", FALSE),
@@ -146,7 +151,9 @@ body <- dashboardBody(
                   ),
                   
                   # Download all calibration data
-                  downloadButton("downloadcalibrations", label = "Download full calibration output with confidence intervals")
+                  downloadButton("downloadcalibrations", label = "Download full calibration output"),
+                  downloadButton("downloadBayesian", label = "Download raw results for Bayesian models")
+                  
               )
             )
     ),
