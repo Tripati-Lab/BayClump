@@ -1,7 +1,11 @@
-predictTcBayes<-function(calibrationData, data, generations,hasMaterial=T){
+predictTcBayes<-function(calibrationData, data, generations,hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 1000){
+  
+  single_rep<<-function(i){
   
   errors<-data
   if(ncol(errors) < 3 ){ errors<-cbind(errors,Material=1)}
+  
+  if(bootDataset){calibrationData <- calibrationData[sample(1:nrow(calibrationData),nrow(calibrationData), replace = T),] }
   
   predictionsWithinBayesian<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
                                                               useInits=T, 
@@ -53,4 +57,33 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=T){
 
   row.names(predsComplete) <-NULL
   predsComplete
+  }
+  
+  if(bootDataset){
+    
+    # Find out how many cores there are
+    ncores = parallel::detectCores()
+    
+    # Use all available cores
+    tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
+    #tot = lapply(1:replicates, single_rep)
+    tot <- do.call(rbind,tot)
+    
+    if(onlyMedian){
+
+      ##Need to fix
+      ddply(d, .(Name), summarize,  Rate1=mean(Rate1), Rate2=mean(Rate2))
+      
+    }else{
+      tot %>% 
+        group_by(model, D47, D47error, Material) %>%
+        summarise(across(-c(type,BayesianPredictions), median, na.rm = TRUE)) %>% 
+        as.data.frame()
+      
+    }
+    
+  }else{
+    single_rep()
+  }
+  
 }
