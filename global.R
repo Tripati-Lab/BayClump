@@ -27,7 +27,6 @@ library(ggridges)
 library(ggpubr)
 library(pbmcapply)
 library(openxlsx)
-#library(clumpedr)
 library(bib2df)
 
 # Create automatic bibliography containing loaded packages and their dependencies

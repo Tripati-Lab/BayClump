@@ -949,7 +949,6 @@ server <- function(input, output, session) {
             
             ##Mean and SD per sample: recData
             
-            library(dplyr)
             recData_byS <- recData %>% 
               group_by(Sample, Material) %>% 
               summarise(D47 = mean(D47),
