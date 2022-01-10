@@ -192,4 +192,12 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     
 }
 
+##Predictions based on the actual replicates
 
+classicCalibration <- function(reps, targetD47, error_targetD47) {
+  point <- (median(reps$intercept) - targetD47) / median(reps$slope)
+  error_point <-
+    (median(reps$intercept) - (targetD47 + error_targetD47)) / median(reps$slope)
+  se_1sd <- point - error_point
+  cbind.data.frame(point, se_1sd)
+}

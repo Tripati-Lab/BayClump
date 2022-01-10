@@ -68,7 +68,7 @@ simulateBLM_measuredMaterial<<-function(data,
                                         samples=NULL, 
                                         generations=20000, 
                                         isMixed=F,
-                                        priors = priors){
+                                        priors = "informative"){
   
   data_BR_Measured<-data
   

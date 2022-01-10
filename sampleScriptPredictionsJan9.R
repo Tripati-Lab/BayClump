@@ -11,7 +11,7 @@ library(plyr)
 library(dplyr)
 
 #Potentially new packages!
-library(clumpedr) ##devtools::install_github("isoverse/clumpedr", ref = "dev")
+#library(clumpedr) ##devtools::install_github("isoverse/clumpedr", ref = "dev")
 library(data.table)
 
 
@@ -49,13 +49,16 @@ predictTclassic(calData, targety=targetD47, model='Deming', replicates=5, bootDa
 ##Bayesian use mean and error for a given sample
 error_targetD47 <- c(0.01, 0.02,0.02)
 material <- c(1,2,3)
-predictTcBayes(calibrationData=calData[sample(1:nrow(calData),nrow(calData)),], 
-               data=cbind(D47=targetD47,error=error_targetD47), generations=20000, 
-               hasMaterial=T)
+predictTcBayes(calibrationData=calData, 
+               data=cbind(D47=targetD47,error=error_targetD47), generations=1000, 
+               hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 5)
+predictTcBayes(calibrationData=calData, 
+               data=cbind(D47=targetD47,error=error_targetD47), generations=1000, 
+               hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 5)
+predictTcBayes(calibrationData=calData, 
+               data=cbind(D47=targetD47,error=error_targetD47), generations=1000, 
+               hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 5)
 
-predictTcBayes(calibrationData=calData[sample(1:nrow(calData),nrow(calData)),], 
-               data=cbind(D47=targetD47,error=error_targetD47), generations=20000, 
-               hasMaterial=F)
 
 predictTcBayes_replicates(calData=calData, 
                           targetD47=targetD47, 
@@ -77,10 +80,22 @@ predictTcBayes_replicates(calData=calData,
 
 ###########Classic approach
 
-simulateYork_measured(data=calData, replicates=5)
-simulateLM_measured(data=calData, replicates=5)
-simulateDeming(data=calData, replicates=5)
-simulateLM_inverseweights(data=calData, replicates=5)
-simulateBLM_measuredMaterial(data=calData, replicates=5, generations=1000, isMixed=F)
-simulateBLM_measuredMaterial(data=calData, replicates=5, generations=1000, isMixed=T)
+a<- simulateYork_measured(data=calData, replicates=5)
+b<- simulateLM_measured(data=calData, replicates=5)
+c<- simulateDeming(data=calData, replicates=5)
+d<- simulateLM_inverseweights(data=calData, replicates=5)
+e<- simulateBLM_measuredMaterial(data=calData, replicates=5, generations=1000, isMixed=F)
+f<- simulateBLM_measuredMaterial(data=calData, replicates=5, generations=1000, isMixed=T)
+
+classicCalibration(reps = a, targetD47=targetD47, error_targetD47=error_targetD47)
+classicCalibration(reps = b, targetD47=targetD47, error_targetD47=error_targetD47)
+classicCalibration(reps = c, targetD47=targetD47, error_targetD47=error_targetD47)
+classicCalibration(reps = d, targetD47=targetD47, error_targetD47=error_targetD47)
+classicCalibration(reps = e$BLM_Measured_errors, targetD47=targetD47, error_targetD47=error_targetD47)
+classicCalibration(reps = e$BLM_Measured_no_errors, targetD47=targetD47, error_targetD47=error_targetD47)
+classicCalibration(reps = f$BLMM_Measured_errors, targetD47=targetD47, error_targetD47=error_targetD47)
+
+
+
+
 

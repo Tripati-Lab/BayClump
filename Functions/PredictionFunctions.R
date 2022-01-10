@@ -1,6 +1,6 @@
-predictTcBayes<-function(calibrationData, data, generations,hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 1000){
+predictTcBayes <- function(calibrationData, data, generations,hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 1000){
   
-  single_rep<<-function(i){
+  single_rep <<- function(i){
   
   errors<-data
   if(ncol(errors) < 3 ){ errors<-cbind(errors,Material=1)}
@@ -70,20 +70,18 @@ predictTcBayes<-function(calibrationData, data, generations,hasMaterial=T, bootD
     tot <- do.call(rbind,tot)
     
     if(onlyMedian){
+      tot %>% group_by(model, D47, D47error, Material) %>% summarise_each(funs(mean, sd))
+      ddply(tot,~model+D47+D47error+Material,summarise, median=mean(Tc),lwr=mean(Tc)-(sd(Tc)/sqrt(length(Tc))),upr=mean(Tc)+(sd(Tc)/sqrt(length(Tc))))
 
-      ##Need to fix
-      ddply(d, .(Name), summarize,  Rate1=mean(Rate1), Rate2=mean(Rate2))
-      
     }else{
       tot %>% 
         group_by(model, D47, D47error, Material) %>%
         summarise(across(-c(type,BayesianPredictions), median, na.rm = TRUE)) %>% 
         as.data.frame()
-      
     }
     
   }else{
-    single_rep()
+    single_rep()[,c(1:7)]
   }
   
 }
