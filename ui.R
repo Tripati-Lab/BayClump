@@ -204,7 +204,7 @@ body <- dashboardBody(
             fluidRow(
               box(width = 5, 
                   title = "Step 1: Reconstruction setup", solidHeader = TRUE,
-                  column(12, tags$b("Calibration models are automatically transferred to this tab. If you have not yet run calibration models, please do so before proceeding."),
+                  column(12, tags$b("Parameters for the selected models are automatically transferred from the Calibration tab to this tab. If you are interested in running classic reconstructions, please calibrate the relevant models calibration before."),
                          tags$br(),
                          # Download templates
                          downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
