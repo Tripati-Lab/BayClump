@@ -93,6 +93,7 @@ body <- dashboardBody(
                         #             14, min = 0, max = 15),
                         numericInput("generations", label = "Number of iterations for Bayesian models", 
                                      20000, min = 1000, max = 1000000),
+                        checkboxInput("multicore", "Multicore", TRUE),
                          uiOutput("myList"),
                          selectInput("priors", label = "Bayesian priors", 
                                     choices = c("Informative", "Diffuse"), selected = "Informative"),
@@ -100,8 +101,6 @@ body <- dashboardBody(
                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measured", "York regression", FALSE),
                          checkboxInput("simulateDeming", "Deming regression", FALSE),
-                      #   selectInput("ngenerationsBayesian", label = "Number of generations for Bayesian models", 
-                      #               choices = c("1000", "5000", "10000", "20000"), selected = "10000"),
                          checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear model", FALSE),
                          checkboxInput("simulateBLMM_measuredMaterial", "Bayesian mixed model", FALSE),
                          
@@ -223,10 +222,18 @@ body <- dashboardBody(
                          
                          # Summary stats panel
                          tableOutput("contents2"),
+                         tags$b("Models to run:"),
+                         checkboxInput("simulateLM_measuredRec", "Linear model", FALSE),
+                         checkboxInput("simulateLM_inverseweightsRec", "Inverse weighted linear model", FALSE),
+                         checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
+                         checkboxInput("simulateDemingRec", "Deming regression", FALSE),
+                         checkboxInput("simulateBLM_measuredMaterialRec", "Bayesian simple linear model", FALSE),
+                         checkboxInput("simulateBLMM_measuredMaterialRec", "Bayesian mixed model", FALSE),
+                         
                          tags$b("Click to confirm:"),
                          checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame"),
                          tags$b("For help choosing appropriate reconstruction options, see the User Manual"),
-                         checkboxInput("bayesianPredictions", "Use Bayesian predictions (Implemented for Bayesian linear model with errors only)"),
+                         checkboxInput("classicPreds", "Use the classic approach in the field (ignore parameter uncertainty)"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),

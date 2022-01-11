@@ -51,7 +51,10 @@ simulateLM_inverseweights<<-function(data, replicates, samples=NULL, D47error="D
 }
 
 
-simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
+simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error", multicore=TRUE){
+  
+  if(multicore){
+  
   ncores = parallel::detectCores()
   do.call(rbind,pbmclapply(1:replicates, mc.cores = ncores, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
@@ -60,6 +63,17 @@ simulateDeming<<-function(data, replicates, samples=NULL, D47error="D47error"){
     Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
     cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
   }))
+  
+  }else{
+    do.call(rbind,lapply(1:replicates, mc.cores = ncores, function(x){
+      dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
+      dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
+      dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
+      Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
+      cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
+    }))
+  }
+  
 }
 
 
@@ -68,7 +82,8 @@ simulateBLM_measuredMaterial<<-function(data,
                                         samples=NULL, 
                                         generations=20000, 
                                         isMixed=F,
-                                        priors = "informative"){
+                                        priors = "informative", 
+                                        multicore=TRUE){
   
   data_BR_Measured<-data
   
@@ -123,11 +138,13 @@ simulateBLM_measuredMaterial<<-function(data,
   }
   
   # Find out how many cores there are
-  ncores = parallel::detectCores()
   
-  # Use all available cores
+  if(multicore){
+  ncores = parallel::detectCores()
   tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
-  #tot = pblapply(1:replicates, single_rep)
+  }else{
+  tot = pblapply(1:replicates, single_rep)
+  }
   
   if(isMixed == F){
     

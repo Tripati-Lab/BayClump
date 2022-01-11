@@ -1,4 +1,4 @@
-predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 1000, method= 'mclapply', priors='informative'){
+predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 1000, multicore= TRUE, priors='informative'){
   
   single_rep <<- function(i){
   
@@ -60,7 +60,7 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
     ncores = parallel::detectCores()
     
     # Use all available cores
-    tot =if( method != 'lapply' ){ 
+    tot =if( multicore ){ 
       pbmclapply(1:replicates, mc.cores = ncores, single_rep) } else {
               lapply(1:replicates, single_rep)}
     tot <- do.call(rbind,tot)
