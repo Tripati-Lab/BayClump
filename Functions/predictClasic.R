@@ -194,10 +194,28 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
 
 ##Predictions based on the actual replicates
 
-classicCalibration <- function(reps, targetD47, error_targetD47) {
-  point <- (median(reps$intercept) - targetD47) / median(reps$slope)
+classicCalibration <- function(reps, targetD47, error_targetD47, material,  mixed=F) {
+  
+  if(mixed){
+    
+   do.call(rbind, lapply(1:length(targetD47), function(x){
+    point <- (targetD47[x]- median(reps$intercept[reps$material == material[x]]) ) / median(reps$slope[reps$material == material[x]])
+    error_point <-
+      ((targetD47[x] + error_targetD47[x])- median(reps$intercept[reps$material == material[x]]) ) / median(reps$slope[reps$material == material[x]])
+    se_1sd <- error_point-point
+    cbind.data.frame(targetD47=targetD47[x],error_targetD47=error_targetD47[x], material=material[x],Tc=point, se=se_1sd)
+    })
+   )
+    
+  }else{
+  point <- (targetD47- median(reps$intercept) ) / median(reps$slope)
   error_point <-
-    (median(reps$intercept) - (targetD47 + error_targetD47)) / median(reps$slope)
-  se_1sd <- point - error_point
-  cbind.data.frame(point, se_1sd)
+    ((targetD47 + error_targetD47)- median(reps$intercept) ) / median(reps$slope)
+  se_1sd <- error_point-point
+  cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=se_1sd)
+  
+  }
+  
+  
+  
 }

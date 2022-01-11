@@ -1,11 +1,18 @@
 fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F, 
                                            n.iter= 20000, burninFrac=0.5,
-                                           alphaBLM1='dnorm(0.231,0.065)', 
-                                           betaBLM1= 'dnorm(0.039,0.004)',
                                            useInits=T, 
                                            D47Pred,
                                            D47Prederror,
-                                           materialsPred){
+                                           materialsPred,
+                                           priors='informative'){
+  
+  if(priors == 'informative'){
+    alphaBLM1='dnorm(0.231,0.065)' 
+    betaBLM1= 'dnorm(0.039,0.004)'}else{
+      alphaBLM1='dnorm(0, 0.01)' 
+      betaBLM1= 'dnorm(0, 0.01)'
+    }
+  
   
   ##Models
   BLM1<-paste(" model{
@@ -114,31 +121,9 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
   
   
   
-  LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                  errx = calibrationData$TempError, erry = calibrationData$D47error, 
-                  N=nrow(calibrationData), 
-                  NPred=length(D47Pred), 
-                  D47Pred=D47Pred,
-                  D47Prederror= D47Prederror
-                  )
-  
-  LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
-                           N=nrow(calibrationData), 
-                           NPred=length(D47Pred),
-                           D47Pred=D47Pred,
-                           D47Prederror= D47Prederror)
-  
   ##Fit linear models
   if(hasMaterial == T){
     
-    
-    ##Create the calibrationDatasets for Bayesian Models
-    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                    errx = calibrationData$TempError, erry = calibrationData$D47error, 
-                    N=nrow(calibrationData), 
-                    NPred=length(D47Pred),
-                    D47Prederror= D47Prederror,
-                    D47Pred=D47Pred)
     
     ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
                          errx1 = calibrationData$TempError, erry = calibrationData$D47error, 
@@ -150,30 +135,13 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                          D47Prederror= D47Prederror,
                          typePred= as.numeric(factor(materialsPred)))
     
-    ##Fit the models
-    inits <- if(useInits==T){ function () {
-      list(alpha = rnorm(1,0.231,0.065),
-           beta = rnorm(1,0.039,0.004),
-           truepredD47 = rnorm(LM_Data$NPred,0.6,0.01) )
-      
-    }}else{NULL}
-    
-    BLM1_fit <- jags(data = LM_Data,inits = inits,
-                     parameters = c("Tcpropagated"),
-                     model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter, n.burnin = n.iter*burninFrac)
-    
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
-                              parameters = c("Tcpropagated"),
-                              model = textConnection(BLM1_NoErrors), n.chains = 3,
-                              n.iter = n.iter,  n.burnin = n.iter*burninFrac)
-    
-    
+
+
     ##ANCOVA 2
     inits <- if(useInits==T){ function () {
       list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
            beta = rnorm(ANCOVA2_Data$K,0.039,0.004),
-           truepredD47 = rnorm(LM_Data$NPred,0.6,0.01))
+           truepredD47 = rnorm(ANCOVA2_Data$NPred,0.6,0.01))
     }}else{NULL}
     
     BLM3_fit <- jags(data = ANCOVA2_Data, inits = inits,
@@ -181,8 +149,26 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
+    BLM1_fit <- BLM3_fit
+      
+    BLM1_fit_NoErrors <- BLM3_fit
+    
     CompleteModelFit<-list("BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
+    
+    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
+                    errx = calibrationData$TempError, erry = calibrationData$D47error, 
+                    N=nrow(calibrationData), 
+                    NPred=length(D47Pred), 
+                    D47Pred=D47Pred,
+                    D47Prederror= D47Prederror
+    )
+    
+    LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
+                             N=nrow(calibrationData), 
+                             NPred=length(D47Pred),
+                             D47Pred=D47Pred,
+                             D47Prederror= D47Prederror)
     
     ##Fit the models
     inits <- if(useInits==T){ function () {

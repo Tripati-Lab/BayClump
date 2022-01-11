@@ -953,27 +953,42 @@ server <- function(input, output, session) {
               group_by(Sample, Material) %>% 
               summarise(D47 = mean(D47),
                         D47error = mean(D47error)) %>% na.omit()
+          
+            ##Linear models
+            infTempBayesianCLinear <- if(classicPredictions == TRUE ){ 
+            
+             cpreds<- rbind.data.frame(
+              cbind.data.frame(model= "BLM1_fit",classicCalibration(reps = bayeslincals$BLM_Measured_no_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error)),
+              cbind.data.frame(model= "BLM1_fit_NoErrors",classicCalibration(reps = bayeslincals$BLM_Measured_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error))
+        )
 
-            infTempBayesianC <- predictTcBayes_replicates(calData=calData, 
-                                      targetD47=recData_byS$D47, 
-                                      error_targetD47=ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
-                                      material = as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material))),
-                                      nrep=replicates, 
-                                      hasMaterial=T, 
-                                      generations=ngenerationsBayesianPredictions)
+             
+            }else{
+              
+              predictTcBayes(calibrationData=calData, 
+                             data=cbind(recData_byS$D47, 
+                                        ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
+                                        as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
+                             generations=ngenerationsBayes, 
+                             hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, method = 'lapply', priors=priors)
+              
+            }
             
             
             sink()
-            infTempBayesian_werrors<-infTempBayesianC[[1]][,-1]
+            infTempBayesian_werrors<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit",] 
+            infTempBayesian_werrors$T<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
+            a <- sqrt(10^6/infTempBayesian_werrors$Tc + infTempBayesian_werrors$se)-273.15
             infTempBayesian_werrors$Tc<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
-            colnames(infTempBayesian_werrors)[c(4:5)]<-c('upr', 'lwr')
-            infTempBayesian_werrors$lwr<-sqrt(10^6/infTempBayesian_werrors$lwr)-273.15
-            infTempBayesian_werrors$upr<-sqrt(10^6/infTempBayesian_werrors$upr)-273.15
-            infTempBayesian_werrors<-infTempBayesian_werrors[,c("D47","D47error", "Tc","lwr","upr")]
+            infTempBayesian_werrors$se<-a - infTempBayesian_werrors$Tc
+            infTempBayesian_werrors$T <-NULL
+            infTempBayesian_werrors$Material <- NULL
+            infTempBayesian_werrors$model <- NULL
+            #infTempBayesian_werrors<-infTempBayesian_werrors[,c("D47","D47error", "Tc","Tc_SE_1SD")]
 
           
           df0<-infTempBayesian_werrors
-          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0) <- NULL
           
           output$BpredictionsErrors <- renderTable({
@@ -997,16 +1012,18 @@ server <- function(input, output, session) {
           writeData(wb2, sheet = "Bayesian linear model, errors", df0)
           
           ##Without errors
-          infTempBayesian<-infTempBayesianC[[2]][,-1]
+          infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit_NoErrors",] 
+          infTempBayesian$T<-sqrt(10^6/infTempBayesian$Tc)-273.15
+          a <- sqrt(10^6/infTempBayesian$Tc + infTempBayesian$se)-273.15
           infTempBayesian$Tc<-sqrt(10^6/infTempBayesian$Tc)-273.15
-          colnames(infTempBayesian)[c(4:5)]<-c('upr', 'lwr')
-          infTempBayesian$lwr<-sqrt(10^6/infTempBayesian$lwr)-273.15
-          infTempBayesian$upr<-sqrt(10^6/infTempBayesian$upr)-273.15
-          infTempBayesian<-infTempBayesian[,c("D47","D47error", "Tc","lwr","upr")]
+          infTempBayesian$se<-a - infTempBayesian$Tc
+          infTempBayesian$T <-NULL
+          infTempBayesian$Material <- NULL
+          infTempBayesian$model <- NULL
 
           
           df0.1<-infTempBayesian
-          names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.1) <- NULL
           
           output$Bpredictions <- renderTable({
@@ -1029,17 +1046,41 @@ server <- function(input, output, session) {
           addWorksheet(wb2, "Bayesian linear model") # Add a blank sheet
           writeData(wb2, sheet = "Bayesian linear model", df0.1)
           
-          ##BLMM
-          infTempBayesianBLMM<-infTempBayesianC[[3]][,-1]
+          
+          ## Mixed model
+          infTempBayesianCMixed <- if(classicPredictions == TRUE ){ 
+            
+            cpreds<- classicCalibration(reps = bayesmixedcals$BLMM_Measured_errors, 
+                                        targetD47=recData_byS$D47, 
+                                        error_targetD47=recData_byS$D47error,
+                                        material=as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material))),
+                                        mixed=T
+                                        ) 
+            cpreds
+            
+          }else{
+            
+            predictTcBayes(calibrationData=calData, 
+                           data=cbind(recData_byS$D47, 
+                                      ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
+                                      as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
+                           generations=ngenerationsBayes, 
+                           hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, method = 'lapply', priors=priors)
+            
+          }
+          
+          
+          
+          infTempBayesianBLMM<-infTempBayesianCMixed
+          infTempBayesianBLMM$T<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
+          a <- sqrt(10^6/infTempBayesianBLMM$Tc + infTempBayesianBLMM$se)-273.15
           infTempBayesianBLMM$Tc<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
-          colnames(infTempBayesianBLMM)[c(4:5)]<-c('upr', 'lwr')
-          infTempBayesianBLMM$lwr<-sqrt(10^6/infTempBayesianBLMM$lwr)-273.15
-          infTempBayesianBLMM$upr<-sqrt(10^6/infTempBayesianBLMM$upr)-273.15
-          infTempBayesianBLMM<-infTempBayesianBLMM[,c("D47","D47error", "Tc","lwr","upr")]
-
+          infTempBayesianBLMM$se<-a - infTempBayesianBLMM$Tc
+          infTempBayesianBLMM$T <-NULL
+          infTempBayesianBLMM$model <- NULL
           
           df0.2<-infTempBayesianBLMM
-          names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "Lower 95% CI", "Upper 95% CI")
+          names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.2) <- NULL
           
           output$BpredictionsBLMM <- renderTable({
