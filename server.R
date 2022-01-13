@@ -1136,7 +1136,6 @@ server <- function(input, output, session) {
           rownames = FALSE,
           spacing = "m",
           align = "c"
-            
           )
           
           addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
