@@ -978,7 +978,7 @@ server <- function(input, output, session) {
                         D47error = mean(D47error)) %>% na.omit()
           
             ##Linear models
-            infTempBayesianCLinear <- if(classicPredictions == TRUE ){ 
+            infTempBayesianCLinear <- if(classicPredictions){ 
               
              cpreds<- rbind.data.frame(
               cbind.data.frame(model= "BLM1_fit",classicCalibration(reps = bayeslincals$BLM_Measured_no_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error)),
@@ -997,9 +997,12 @@ server <- function(input, output, session) {
               
             }
             
-            
             sink()
             infTempBayesian_werrors<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit",] 
+            
+            if(classicPredictions){
+              infTempBayesian_werrors <- infTempBayesian_werrors[,-1]
+            }else{
             infTempBayesian_werrors$T<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
             a <- sqrt(10^6/infTempBayesian_werrors$Tc + infTempBayesian_werrors$se)-273.15
             infTempBayesian_werrors$Tc<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
@@ -1008,7 +1011,7 @@ server <- function(input, output, session) {
             infTempBayesian_werrors$Material <- NULL
             infTempBayesian_werrors$model <- NULL
             #infTempBayesian_werrors<-infTempBayesian_werrors[,c("D47","D47error", "Tc","Tc_SE_1SD")]
-
+            }
           
           df0<-infTempBayesian_werrors
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
@@ -1035,6 +1038,10 @@ server <- function(input, output, session) {
           
           ##Without errors
           infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit_NoErrors",] 
+          if(classicPredictions){
+            infTempBayesian <- infTempBayesian[,-1]
+          }else{
+            
           infTempBayesian$T<-sqrt(10^6/infTempBayesian$Tc)-273.15
           a <- sqrt(10^6/infTempBayesian$Tc + infTempBayesian$se)-273.15
           infTempBayesian$Tc<-sqrt(10^6/infTempBayesian$Tc)-273.15
@@ -1042,7 +1049,7 @@ server <- function(input, output, session) {
           infTempBayesian$T <-NULL
           infTempBayesian$Material <- NULL
           infTempBayesian$model <- NULL
-
+          }
           
           df0.1<-infTempBayesian
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
@@ -1100,15 +1107,18 @@ server <- function(input, output, session) {
           }
           
           
-          
+          sink()
           infTempBayesianBLMM<-infTempBayesianCMixed
+          if(classicPredictions){
+            infTempBayesianBLMM <- infTempBayesianBLMM[,-1]
+          }else{
           infTempBayesianBLMM$T<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
           a <- sqrt(10^6/infTempBayesianBLMM$Tc + infTempBayesianBLMM$se)-273.15
           infTempBayesianBLMM$Tc<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
           infTempBayesianBLMM$se<-a - infTempBayesianBLMM$Tc
           infTempBayesianBLMM$T <-NULL
           infTempBayesianBLMM$model <- NULL
-          
+          }
           df0.2<-infTempBayesianBLMM
           names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.2) <- NULL
@@ -1167,11 +1177,16 @@ server <- function(input, output, session) {
             
              
             df1 <- lmrec
+            
+            if(classicPredictions){
+              df1<-df1
+            }else{
             df1$T<-sqrt(10^6/df1$Tc)-273.15
             a <- sqrt(10^6/df1$Tc + df1$se)-273.15
             df1$Tc<-sqrt(10^6/df1$Tc)-273.15
             df1$se<-a - df1$Tc
             df1$T <- NULL
+            }
             
             names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df1) <- NULL
@@ -1225,15 +1240,17 @@ server <- function(input, output, session) {
             }
               
             lminverserecwun <- lminverserec
-            
             df3<-lminverserecwun
             
+            if(classicPredictions){
+              df3 <- df3
+            }else{
             df3$T<-sqrt(10^6/df3$Tc)-273.15
             a <- sqrt(10^6/df3$Tc + df3$se)-273.15
             df3$Tc<-sqrt(10^6/df3$Tc)-273.15
             df3$se<-a - df3$Tc
             df3$T <- NULL
-            
+            }
             names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df3) <- NULL
             
@@ -1289,12 +1306,15 @@ server <- function(input, output, session) {
             
             
             df5 <- yorkrec
+            if(classicPredictions){
+              df5 <- df5
+            }else{
             df5$T<-sqrt(10^6/df5$Tc)-273.15
             a <- sqrt(10^6/df5$Tc + df5$se)-273.15
             df5$Tc<-sqrt(10^6/df5$Tc)-273.15
             df5$se<-a - df5$Tc
             df5$T <- NULL
-            
+            }
             names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df5) <- NULL
             
@@ -1349,12 +1369,15 @@ server <- function(input, output, session) {
             
             
             df7 <- demingrec
+            if(classicPredictions){
+              df7 <- df7
+            }else{
             df7$T<-sqrt(10^6/df7$Tc)-273.15
             a <- sqrt(10^6/df7$Tc + df7$se)-273.15
             df7$Tc<-sqrt(10^6/df7$Tc)-273.15
             df7$se<-a - df7$Tc
             df7$T <- NULL
-            
+            }
             names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df7) <- NULL
 

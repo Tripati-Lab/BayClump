@@ -199,20 +199,25 @@ classicCalibration <- function(reps, targetD47, error_targetD47, material,  mixe
   if(mixed){
     
    do.call(rbind, lapply(1:length(targetD47), function(x){
-    point <- (targetD47[x]- median(reps$intercept[reps$material == material[x]]) ) / median(reps$slope[reps$material == material[x]])
-    error_point <-
-      ((targetD47[x] + error_targetD47[x])- median(reps$intercept[reps$material == material[x]]) ) / median(reps$slope[reps$material == material[x]])
-    se_1sd <- error_point-point
-    cbind.data.frame(targetD47=targetD47[x],error_targetD47=error_targetD47[x], material=material[x],Tc=point, se=se_1sd)
+    point <- sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / 
+                    (targetD47 -  median(reps$intercept[reps$material == material[x]]))) - 273.15
+      
+    error_point <- sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / (targetD47 - median(reps$intercept[reps$material == material[x]])))
+    - 273.15 - (sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / (targetD47 + error_targetD47  - 
+                                                                                      median(reps$intercept[reps$material == material[x]]))) - 273.15)
+    cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=error_point)
+    
+   
     })
    )
     
   }else{
-  point <- (targetD47- median(reps$intercept) ) / median(reps$slope)
-  error_point <-
-    ((targetD47 + error_targetD47)- median(reps$intercept) ) / median(reps$slope)
-  se_1sd <- error_point-point
-  cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=se_1sd)
+    point <- sqrt((median(reps$slope) * 10^6) / (targetD47 -  median(reps$intercept))) - 273.15
+    
+    error_point <- sqrt((median(reps$slope) * 10 ^ 6) / (targetD47 - median(reps$intercept))) - 273.15 - (sqrt((median(reps$slope) * 10 ^ 6) / (targetD47 + error_targetD47  - 
+                                                                                      median(reps$intercept))) - 273.15)
+    
+  cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=error_point)
   
   }
   
