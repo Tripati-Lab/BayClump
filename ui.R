@@ -226,7 +226,7 @@ body <- dashboardBody(
                          tags$b("Click to confirm:"),
                          checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame"),
                          tags$b("For help choosing appropriate reconstruction options, see the User Manual"),
-                         checkboxInput("classicPreds", "Use the classic approach in the field (ignore parameter uncertainty)"),
+                         checkboxInput("classicPreds", "Ignore parameter uncertainty"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),

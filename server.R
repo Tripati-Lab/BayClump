@@ -661,7 +661,7 @@ server <- function(input, output, session) {
           calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
           
           sink(file = "Bayesmixmodtext.txt", type = "output")
-          bayesmixedcals <- simulateBLM_measuredMaterial(data=calData, 
+          bayesmixedcals <<- simulateBLM_measuredMaterial(data=calData, 
                                                          replicates = replicates, 
                                                          isMixed = T, 
                                                          generations=ngenerationsBayes,
@@ -753,7 +753,7 @@ server <- function(input, output, session) {
           output$blinmwerr <- renderPrint(
             ddply(bayesmixedcals$BLMM_Measured_errors, .( material), 
                   function(x) cbind.data.frame('median (I)'=round(median(x$intercept),4),
-                                               'SES (I)'=round(sd(x$slope)/sqrt(length(x$intercept)),7),
+                                               'SE (I)'=round(sd(x$slope)/sqrt(length(x$intercept)),7),
                             'Lower 95% CI (I)'=round(quantile(x$intercept, c(0.025)),4),
                             'Upper 95% CI (I)'=round(quantile(x$intercept, c(0.975)),4),
                             
@@ -960,6 +960,12 @@ server <- function(input, output, session) {
           
           classicPredictions <- input$classicPreds
           
+          ##Replicate-based input
+          recData_byS <- recData %>% 
+            group_by(Sample, Material) %>% 
+            summarise(D47Mean = mean(D47),
+                      D47error = sd(D47), .groups = 'drop') %>% na.omit()%>%
+            `colnames<-`(c("Sample", "Material","D47", "D47error"))
             
           
           if(input$simulateBLM_measuredMaterialRec == TRUE){
@@ -972,10 +978,7 @@ server <- function(input, output, session) {
             
             ##Mean and SD per sample: recData
             
-            recData_byS <- recData %>% 
-              group_by(Sample, Material) %>% 
-              summarise(D47 = mean(D47),
-                        D47error = mean(D47error)) %>% na.omit()
+
           
             ##Linear models
             infTempBayesianCLinear <- if(classicPredictions){ 
@@ -1085,7 +1088,7 @@ server <- function(input, output, session) {
         if(is.null(bayesmixedcals) & classicPredictions ) { print(noquote("Please run the calibration step for Bayesian mixed model first")) }else{
               
             
-          infTempBayesianCMixed <- if(classicPredictions == TRUE ){ 
+          infTempBayesianCMixed <- if(classicPredictions){ 
               
             cpreds<- classicCalibration(reps = bayesmixedcals$BLMM_Measured_errors, 
                                         targetD47=recData_byS$D47, 
@@ -1107,10 +1110,10 @@ server <- function(input, output, session) {
           }
           
           
-          sink()
+          #sink()
           infTempBayesianBLMM<-infTempBayesianCMixed
           if(classicPredictions){
-            infTempBayesianBLMM <- infTempBayesianBLMM[,-1]
+            infTempBayesianBLMM
           }else{
           infTempBayesianBLMM$T<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
           a <- sqrt(10^6/infTempBayesianBLMM$Tc + infTempBayesianBLMM$se)-273.15
@@ -1155,7 +1158,7 @@ server <- function(input, output, session) {
             
             calData$T2 <<- calData$Temperature
             
-            lmrec <<- if(classicPredictions == TRUE ){ 
+            lmrec <<- if(classicPredictions ){ 
               
               cpreds<- classicCalibration(reps = lmcals, 
                                           targetD47=recData_byS$D47, 
@@ -1164,28 +1167,15 @@ server <- function(input, output, session) {
               cpreds
               
             }else{
-              
               cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,"D47"], model='lm', replicates=replicates, DegreeC=F)
+                predictTclassic(calData, targety=recData[recData$Sample == x,"D47"], model='lm', replicates=replicates)
               } ))
-              cpreds$error_targetD47 <- 'replicate-based'
-              colnames(cpreds)[2] <- 'Tc'
-              cpreds[,c("D47",'error_targetD47', "Tc", "se")]
+              colnames(cpreds)[3] <- 'Tc'
+              cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
-            
-             
             df1 <- lmrec
             
-            if(classicPredictions){
-              df1<-df1
-            }else{
-            df1$T<-sqrt(10^6/df1$Tc)-273.15
-            a <- sqrt(10^6/df1$Tc + df1$se)-273.15
-            df1$Tc<-sqrt(10^6/df1$Tc)-273.15
-            df1$se<-a - df1$Tc
-            df1$T <- NULL
-            }
             
             names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df1) <- NULL
@@ -1219,7 +1209,7 @@ server <- function(input, output, session) {
               
             calData$T2 <<- calData$Temperature
             
-            lminverserec <<- if(classicPredictions == TRUE ){ 
+            lminverserec <<- if(classicPredictions ){ 
               
               cpreds<- classicCalibration(reps = lminversecals, 
                                           targetD47=recData_byS$D47, 
@@ -1230,26 +1220,16 @@ server <- function(input, output, session) {
             }else{
               
               cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='wlm', replicates=replicates, DegreeC=F)
+                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='wlm', replicates=replicates)
               } ))
               
-              cpreds$error_targetD47 <- 'replicate-based'
-              colnames(cpreds)[2] <- 'Tc'
-              cpreds[,c("D47",'error_targetD47', "Tc", "se")]
+              colnames(cpreds)[3] <- 'Tc'
+              cpreds[,c("D47",'D47se', "Tc", "se")]
             }
               
             lminverserecwun <- lminverserec
             df3<-lminverserecwun
             
-            if(classicPredictions){
-              df3 <- df3
-            }else{
-            df3$T<-sqrt(10^6/df3$Tc)-273.15
-            a <- sqrt(10^6/df3$Tc + df3$se)-273.15
-            df3$Tc<-sqrt(10^6/df3$Tc)-273.15
-            df3$se<-a - df3$Tc
-            df3$T <- NULL
-            }
             names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df3) <- NULL
             
@@ -1297,23 +1277,13 @@ server <- function(input, output, session) {
                 predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='York', replicates=replicates, DegreeC=F)
               } ))
               
-              cpreds$error_targetD47 <- 'replicate-based'
-              colnames(cpreds)[2] <- 'Tc'
-              cpreds[,c("D47",'error_targetD47', "Tc", "se")]
+              colnames(cpreds)[3] <- 'Tc'
+              cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
             
             
             df5 <- yorkrec
-            if(classicPredictions){
-              df5 <- df5
-            }else{
-            df5$T<-sqrt(10^6/df5$Tc)-273.15
-            a <- sqrt(10^6/df5$Tc + df5$se)-273.15
-            df5$Tc<-sqrt(10^6/df5$Tc)-273.15
-            df5$se<-a - df5$Tc
-            df5$T <- NULL
-            }
             names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df5) <- NULL
             
@@ -1359,24 +1329,13 @@ server <- function(input, output, session) {
               cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
                 predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming', replicates=replicates, DegreeC=F)
               } ))
-              
-              cpreds$error_targetD47 <- 'replicate-based'
-              colnames(cpreds)[2] <- 'Tc'
-              cpreds[,c("D47",'error_targetD47', "Tc", "se")]
+              colnames(cpreds)[3] <- 'Tc'
+              cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
             
             
             df7 <- demingrec
-            if(classicPredictions){
-              df7 <- df7
-            }else{
-            df7$T<-sqrt(10^6/df7$Tc)-273.15
-            a <- sqrt(10^6/df7$Tc + df7$se)-273.15
-            df7$Tc<-sqrt(10^6/df7$Tc)-273.15
-            df7$se<-a - df7$Tc
-            df7$T <- NULL
-            }
             names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
             rownames(df7) <- NULL
 
