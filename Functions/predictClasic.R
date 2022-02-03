@@ -206,13 +206,11 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
 classicCalibration <- function(reps, targetD47, error_targetD47, material,  mixed=F) {
   
   if(mixed){
-    
    do.call(rbind, lapply(1:length(targetD47), function(x){
     point <- sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / 
                     (targetD47[x] -  median(reps$intercept[reps$material == material[x]]))) - 273.15
       
-    error_point <- sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / (targetD47[x] - median(reps$intercept[reps$material == material[x]])))- 273.15 - (sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / (targetD47[x] + error_targetD47[x]  - 
-                                                                                      median(reps$intercept[reps$material == material[x]]))) - 273.15)
+    error_point <- point - (sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / (targetD47[x] + error_targetD47[x] - median(reps$intercept[reps$material == material[x]]))) - 273.15)
     cbind.data.frame(targetD47=targetD47[x],error_targetD47=error_targetD47[x], material=material[x], Tc=point, se=error_point)
     
    
@@ -221,14 +219,7 @@ classicCalibration <- function(reps, targetD47, error_targetD47, material,  mixe
     
   }else{
     point <- sqrt((median(reps$slope) * 10^6) / (targetD47 -  median(reps$intercept))) - 273.15
-    
-    error_point <- sqrt((median(reps$slope) * 10 ^ 6) / (targetD47 - median(reps$intercept))) - 273.15 - (sqrt((median(reps$slope) * 10 ^ 6) / (targetD47 + error_targetD47  - 
-                                                                                      median(reps$intercept))) - 273.15)
-    
-  cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=error_point)
-  
+    error_point <- point - (sqrt((median(reps$slope) * 10 ^ 6) / (targetD47 + error_targetD47  - median(reps$intercept))) - 273.15)
+    cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=error_point)
   }
-  
-  
-  
 }

@@ -996,7 +996,7 @@ server <- function(input, output, session) {
                                         ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                         as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
                              generations=ngenerationsBayes, 
-                             hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)
+                             hasMaterial=F, bootDataset=T, onlyMedian=F, replicates = replicates, multicore = multicore, priors=priors)
               
             }
             
@@ -1105,7 +1105,7 @@ server <- function(input, output, session) {
                                       ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                       as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
                            generations=ngenerationsBayes, 
-                           hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)
+                           hasMaterial=T, bootDataset=T, onlyMedian=F, replicates = replicates, multicore = multicore, priors=priors)
             
           }
           
@@ -1274,7 +1274,7 @@ server <- function(input, output, session) {
             }else{
               
               cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='York', replicates=replicates, DegreeC=F)
+                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='York', replicates=replicates)
               } ))
               
               colnames(cpreds)[3] <- 'Tc'
@@ -1327,7 +1327,7 @@ server <- function(input, output, session) {
             }else{
               
               cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming', replicates=replicates, DegreeC=F)
+                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming', replicates=replicates)
               } ))
               colnames(cpreds)[3] <- 'Tc'
               cpreds[,c("D47",'D47se', "Tc", "se")]

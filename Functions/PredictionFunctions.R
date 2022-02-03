@@ -1,4 +1,4 @@
-predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 1000, multicore= TRUE, priors='informative'){
+predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bootDataset=T, onlyMedian=F, replicates = 1000, multicore= TRUE, priors='informative'){
   
   single_rep <<- function(i){
   
@@ -62,18 +62,16 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
     # Use all available cores
     tot =if( multicore ){ 
       pbmclapply(1:replicates, mc.cores = ncores, single_rep) } else {
-              lapply(1:replicates, single_rep)}
+              lapply(1:replicates, single_rep)
+        }
     tot <- do.call(rbind,tot)
     
     if(onlyMedian){
-     dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=mean(Tc), se=(sd(Tc)/sqrt(length(Tc))))
+     dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), se=(sd(Tc)/sqrt(length(Tc))))
      names(dat)[5] <- "Tc"
      dat
     }else{
-      tot %>% 
-        group_by(model, D47, D47error, Material) %>%
-        summarise(across(-c(type,BayesianPredictions), median, na.rm = TRUE)) %>% 
-        as.data.frame()
+      dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), se= (median(lwr) - median(upr)) / 3.92 )
       names(dat)[5] <- "Tc"
       dat
     }

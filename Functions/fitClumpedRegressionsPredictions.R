@@ -46,6 +46,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   for ( i in 1:NPred) {
 	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
 	   tw[i] <-  (truepredD47[i] - alpha)/beta
+	   #tw[i] <- sqrt((beta * 10^6) / (truepredD47[i] - alpha)) - 273.15
 		 Tcpropagated[i] ~ dnorm(tw[i], tauy)
 	   }
 	   
