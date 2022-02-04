@@ -4,7 +4,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
                                            D47Pred,
                                            D47Prederror,
                                            materialsPred,
-                                           priors='informative'){
+                                           priors='informative',
+                                           degC=T){
   
   if(priors == 'informative'){
     alphaBLM1='dnorm(0.231,0.065)' 
@@ -35,9 +36,7 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
         obsx[i] ~ dnorm(x[i],pow(errx[i],-2))
         mu[i] <- alpha+beta*x[i]
     }
-      
-    #T_C = sqrt((beta * 10^6) / (y - alpha)) - 273.15
-
+    
     # Diffuse normal priors for true D47 pred
     for (i in 1:NPred){
         truepredD47[i] ~ dnorm(0.6,0.001)
@@ -46,13 +45,11 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   for ( i in 1:NPred) {
 	   D47Pred[i] ~ dnorm(truepredD47[i], pow(D47Prederror[i],-2))
 	   tw[i] <-  (truepredD47[i] - alpha)/beta
-	   #tw[i] <- sqrt((beta * 10^6) / (truepredD47[i] - alpha)) - 273.15
 		 Tcpropagated[i] ~ dnorm(tw[i], tauy)
 	   }
-	   
 }")
   
-  
+
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors
                 alpha ~ ", alphaBLM1," \n ",
@@ -76,9 +73,8 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   tw[i] <- (truepredD47[i] - alpha)/beta
 		 Tcpropagated[i] ~ dnorm(tw[i], tau)
 	   }
-  
 }")
-  
+
   
   ##Mixed Model (interaction effects; multiple slopes and intercepts)
   BLM3<-paste(" model{

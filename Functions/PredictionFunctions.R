@@ -14,39 +14,32 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
                                                               D47Prederror=errors[,2],
                                                               materialsPred=errors[,3],
                                                               n.iter= generations,
-                                                              priors=priors
-                                                              )
+                                                              priors=priors)
   
   predsComplete<-if(hasMaterial){
     
     fullProp<-
       cbind.data.frame(model='BLM3_fit',errors,median=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)])
+                       lwr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)],
+                       upr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)])
     
-    
-    fullProp$type<-"Parameter Uncertainty"
-    fullProp$BayesianPredictions<-'Yes'
-    
+  
 
-      colnames(fullProp)<-c('model', 'D47', 'D47error','Material' ,'Tc', 'lwr', 'upr', 'type', 'BayesianPredictions')
+      colnames(fullProp)<-c('model', 'D47', 'D47error','Material' ,'Tc', 'lwr', 'upr')
       fullProp
 
   }else{
     
     fullProp<-  rbind(
       cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)]
+                       lwr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)],
+                       upr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)]
       ),
       cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)],
-                       upr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)])  ) 
+                       lwr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)],
+                       upr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)])  ) 
     
-    fullProp$type<-"Parameter Uncertainty"
-    fullProp$BayesianPredictions<-'Yes'
-  
-      colnames(fullProp)<-c('model', 'D47', 'D47error',"Material", 'Tc', 'lwr', 'upr', 'type', 'BayesianPredictions')
+      colnames(fullProp)<-c('model', 'D47', 'D47error',"Material", 'Tc', 'lwr', 'upr')
       fullProp
   }
 
@@ -67,13 +60,21 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
     tot <- do.call(rbind,tot)
     
     if(onlyMedian){
-     dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), se=(sd(Tc)/sqrt(length(Tc))))
+     dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), lwr= quantile(Tc, 0.025), upr= quantile(Tc, 0.975))
      names(dat)[5] <- "Tc"
-     dat
+     dat$Tc <- sqrt(10^6/dat$Tc)-273.15
+     dat$lwr <- sqrt(10^6/dat$lwr)-273.15
+     dat$upr <- sqrt(10^6/dat$upr)-273.15
+     dat$se <- (dat$lwr - dat$upr) / 3.92
+     dat[,c(1:5,8)]
     }else{
-      dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), se= (median(lwr) - median(upr)) / 3.92 )
+      dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), lwr= median(lwr), upr= median(upr) )
       names(dat)[5] <- "Tc"
-      dat
+      dat$Tc <- sqrt(10^6/dat$Tc)-273.15
+      dat$lwr <- sqrt(10^6/dat$lwr)-273.15
+      dat$upr <- sqrt(10^6/dat$upr)-273.15
+      dat$se <- (dat$lwr - dat$upr) / 3.92
+      dat[,c(1:5,8)]
     }
     
   }else{

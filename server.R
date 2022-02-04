@@ -996,26 +996,14 @@ server <- function(input, output, session) {
                                         ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                         as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
                              generations=ngenerationsBayes, 
-                             hasMaterial=F, bootDataset=T, onlyMedian=F, replicates = replicates, multicore = multicore, priors=priors)
+                             hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)
               
             }
             
             sink()
-            infTempBayesian_werrors<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit",] 
-            
-            if(classicPredictions){
-              infTempBayesian_werrors <- infTempBayesian_werrors[,-1]
-            }else{
-            infTempBayesian_werrors$T<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
-            a <- sqrt(10^6/infTempBayesian_werrors$Tc + infTempBayesian_werrors$se)-273.15
-            infTempBayesian_werrors$Tc<-sqrt(10^6/infTempBayesian_werrors$Tc)-273.15
-            infTempBayesian_werrors$se<-a - infTempBayesian_werrors$Tc
-            infTempBayesian_werrors$T <-NULL
-            infTempBayesian_werrors$Material <- NULL
-            infTempBayesian_werrors$model <- NULL
-            #infTempBayesian_werrors<-infTempBayesian_werrors[,c("D47","D47error", "Tc","Tc_SE_1SD")]
-            }
-          
+          infTempBayesian_werrors<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit",] 
+          infTempBayesian_werrors <- infTempBayesian_werrors[,-c(1,4)]
+
           df0<-infTempBayesian_werrors
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0) <- NULL
@@ -1041,19 +1029,8 @@ server <- function(input, output, session) {
           
           ##Without errors
           infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit_NoErrors",] 
-          if(classicPredictions){
-            infTempBayesian <- infTempBayesian[,-1]
-          }else{
-            
-          infTempBayesian$T<-sqrt(10^6/infTempBayesian$Tc)-273.15
-          a <- sqrt(10^6/infTempBayesian$Tc + infTempBayesian$se)-273.15
-          infTempBayesian$Tc<-sqrt(10^6/infTempBayesian$Tc)-273.15
-          infTempBayesian$se<-a - infTempBayesian$Tc
-          infTempBayesian$T <-NULL
-          infTempBayesian$Material <- NULL
-          infTempBayesian$model <- NULL
-          }
-          
+          infTempBayesian <- infTempBayesian[,-c(1,4)]
+        
           df0.1<-infTempBayesian
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.1) <- NULL
@@ -1105,7 +1082,7 @@ server <- function(input, output, session) {
                                       ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                       as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
                            generations=ngenerationsBayes, 
-                           hasMaterial=T, bootDataset=T, onlyMedian=F, replicates = replicates, multicore = multicore, priors=priors)
+                           hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)
             
           }
           
@@ -1115,12 +1092,7 @@ server <- function(input, output, session) {
           if(classicPredictions){
             infTempBayesianBLMM
           }else{
-          infTempBayesianBLMM$T<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
-          a <- sqrt(10^6/infTempBayesianBLMM$Tc + infTempBayesianBLMM$se)-273.15
-          infTempBayesianBLMM$Tc<-sqrt(10^6/infTempBayesianBLMM$Tc)-273.15
-          infTempBayesianBLMM$se<-a - infTempBayesianBLMM$Tc
-          infTempBayesianBLMM$T <-NULL
-          infTempBayesianBLMM$model <- NULL
+            infTempBayesianBLMM <- infTempBayesianBLMM[,-1]
           }
           df0.2<-infTempBayesianBLMM
           names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "SE (1SD) Temperature (°C)")
