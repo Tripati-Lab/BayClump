@@ -988,7 +988,6 @@ server <- function(input, output, session) {
               cbind.data.frame(model= "BLM1_fit_NoErrors",classicCalibration(reps = bayeslincals$BLM_Measured_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error))
         )
 
-             
             }else{
               
               predictTcBayes(calibrationData=calData, 
@@ -996,13 +995,13 @@ server <- function(input, output, session) {
                                         ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
                                         as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
                              generations=ngenerationsBayes, 
-                             hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)
+                             hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)[,-4]
               
             }
             
             sink()
           infTempBayesian_werrors<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit",] 
-          infTempBayesian_werrors <- infTempBayesian_werrors[,-c(1,4)]
+          infTempBayesian_werrors <- infTempBayesian_werrors[,-c(1)]
 
           df0<-infTempBayesian_werrors
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
@@ -1029,7 +1028,7 @@ server <- function(input, output, session) {
           
           ##Without errors
           infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit_NoErrors",] 
-          infTempBayesian <- infTempBayesian[,-c(1,4)]
+          infTempBayesian <- infTempBayesian[,-c(1)]
         
           df0.1<-infTempBayesian
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
@@ -1143,6 +1142,7 @@ server <- function(input, output, session) {
                 predictTclassic(calData, targety=recData[recData$Sample == x,"D47"], model='lm', replicates=replicates)
               } ))
               colnames(cpreds)[3] <- 'Tc'
+              cpreds$D47se <- recData_byS$D47error
               cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
@@ -1196,6 +1196,7 @@ server <- function(input, output, session) {
               } ))
               
               colnames(cpreds)[3] <- 'Tc'
+              cpreds$D47se <- recData_byS$D47error
               cpreds[,c("D47",'D47se', "Tc", "se")]
             }
               
@@ -1250,6 +1251,7 @@ server <- function(input, output, session) {
               } ))
               
               colnames(cpreds)[3] <- 'Tc'
+              cpreds$D47se <- recData_byS$D47error
               cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
@@ -1302,6 +1304,7 @@ server <- function(input, output, session) {
                 predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming', replicates=replicates)
               } ))
               colnames(cpreds)[3] <- 'Tc'
+              cpreds$D47se <- recData_byS$D47error
               cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
