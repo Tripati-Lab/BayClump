@@ -221,8 +221,7 @@ body <- dashboardBody(
                          checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("simulateBLM_measuredMaterialRec", "Bayesian simple linear model", FALSE),
-                         checkboxInput("simulateBLMM_measuredMaterialRec", "Bayesian mixed model", FALSE),
-                         
+                         #checkboxInput("simulateBLMM_measuredMaterialRec", "Bayesian mixed model", FALSE),
                          tags$b("Click to confirm:"),
                          checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame"),
                          tags$b("For help choosing appropriate reconstruction options, see the User Manual"),

@@ -164,7 +164,7 @@ fitClumpedRegressions<-function(calibrationData,
     
     ##Create the calibrationDatasets for Bayesian Models
     LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                    errx = calibrationData$TempError, erry = abs(calibrationData[,D47error]), 
+                    errx = calibrationData$TempError, erry = calibrationData[,D47error], 
                     N=nrow(calibrationData))
     
     

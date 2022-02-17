@@ -49,6 +49,19 @@ fitClumpedRegressionsPredictions<-function(calibrationData, hasMaterial=F,
 	   }
 }")
   
+  LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
+                  errx = calibrationData$TempError, erry = calibrationData$D47error, 
+                  N=nrow(calibrationData), 
+                  NPred=length(D47Pred), 
+                  D47Pred=D47Pred,
+                  D47Prederror= D47Prederror
+  )
+  
+  BLM1_fit <- jags(data = LM_Data,inits = inits,
+                   parameters = c("Tcpropagated"),
+                   model = textConnection(BLM1), n.chains = 3, 
+                   n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+  
 
   BLM1_NoErrors<-paste("model{
                 # Diffuse normal priors for predictors

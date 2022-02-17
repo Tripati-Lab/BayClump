@@ -976,10 +976,6 @@ server <- function(input, output, session) {
             ##(Only Bayesian simple linear with error for now)
             sink("bayespredictions.txt", type = "output")
             
-            ##Mean and SD per sample: recData
-            
-
-          
             ##Linear models
             infTempBayesianCLinear <- if(classicPredictions){ 
               
@@ -990,18 +986,17 @@ server <- function(input, output, session) {
 
             }else{
               
-              predictTcBayes(calibrationData=calData, 
-                             data=cbind(recData_byS$D47, 
-                                        ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
-                                        as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
-                             generations=ngenerationsBayes, 
-                             hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)[,-4]
-              
+              recsBayesian <- fitClumpedPredictions(calibrationData=calData, 
+                                    n.iter= 5000, 
+                                    burninFrac=0.5,
+                                    priors = "informative",
+                                    D47error='D47error', 
+                                    D47Pred=recData_byS$D47,
+                                    D47Prederror=recData_byS$D47error)
             }
             
             sink()
-          infTempBayesian_werrors<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit",] 
-          infTempBayesian_werrors <- infTempBayesian_werrors[,-c(1)]
+          infTempBayesian_werrors<-recsBayesian$Preds
 
           df0<-infTempBayesian_werrors
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
@@ -1027,9 +1022,7 @@ server <- function(input, output, session) {
           writeData(wb2, sheet = "Bayesian linear model, errors", df0)
           
           ##Without errors
-          infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear$model == "BLM1_fit_NoErrors",] 
-          infTempBayesian <- infTempBayesian[,-c(1)]
-        
+          infTempBayesian<-recsBayesian$Preds_NE
           df0.1<-infTempBayesian
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.1) <- NULL
@@ -1057,66 +1050,6 @@ server <- function(input, output, session) {
           }
           
           
-          
-          if(input$simulateBLMM_measuredMaterialRec == TRUE){
-          ## Mixed model
-            
-        if(is.null(bayesmixedcals) & classicPredictions ) { print(noquote("Please run the calibration step for Bayesian mixed model first")) }else{
-              
-            
-          infTempBayesianCMixed <- if(classicPredictions){ 
-              
-            cpreds<- classicCalibration(reps = bayesmixedcals$BLMM_Measured_errors, 
-                                        targetD47=recData_byS$D47, 
-                                        error_targetD47=recData_byS$D47error,
-                                        material=as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material))),
-                                        mixed=T
-                                        ) 
-            cpreds
-            
-          }else{
-            
-            predictTcBayes(calibrationData=calData, 
-                           data=cbind(recData_byS$D47, 
-                                      ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error), 
-                                      as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
-                           generations=ngenerationsBayes, 
-                           hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors)
-            
-          }
-          
-          
-          #sink()
-          infTempBayesianBLMM<-infTempBayesianCMixed
-          if(classicPredictions){
-            infTempBayesianBLMM
-          }else{
-            infTempBayesianBLMM <- infTempBayesianBLMM[,-1]
-          }
-          df0.2<-infTempBayesianBLMM
-          names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "SE (1SD) Temperature (°C)")
-          rownames(df0.2) <- NULL
-          
-          output$BpredictionsBLMM <- renderTable({
-            
-            df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
-            df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
-            df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
-            df0.2$`SE (1SD) Temperature (°C)` <- formatC(df0.2$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
-            head(df0.2)
-          },
-            caption = "Bayesian predictions under a Bayesian linear mixed model",
-            caption.placement = getOption("xtable.caption.placement", "top"),
-          rownames = FALSE,
-          spacing = "m",
-          align = "c"
-          )
-          
-          addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
-          writeData(wb2, sheet = "Bayesian linear mixed model", df0.2)
-          
-        }
-          }
 
           # Run prediction function
           # Need to use a sample-based dataset
