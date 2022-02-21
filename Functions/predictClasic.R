@@ -20,7 +20,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     estimate <<- investr::invest(mod, y0 = targety,
            interval = "percentile", 
            nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-           extendInt="yes", progress=T, 
+           extendInt="yes", progress=F, 
            lower=-100,
            upper=100)
     }))
@@ -31,7 +31,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
       estimate <<- investr::invest(mod, y0 = targety,
                                    interval = "percentile", 
                                    nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                                   extendInt="yes", progress=T, 
+                                   extendInt="yes", progress=F, 
                                    lower=-100,
                                    upper=100)
       
@@ -50,7 +50,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
         estimate <<- investr::invest(mod, y0 = targety,
                                      interval = "percentile", 
                                      nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                                     extendInt="yes", progress=T, 
+                                     extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
       }))
@@ -63,7 +63,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     estimate <<- investr::invest(mod, y0 = targety,
                        interval = "percentile", 
                        nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                       extendInt="yes", progress=T, 
+                       extendInt="yes", progress=F, 
                        lower=-100,
                        upper=100)
     }
@@ -86,7 +86,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
         estimate <<- investr::invest(fit1, y0 = targety,
                                      interval = "percentile", 
                                      nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                                     extendInt="yes", progress=T, 
+                                     extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
         
@@ -104,7 +104,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     estimate <<- investr::invest(fit1, y0 = targety,
                        interval = "percentile", 
                        nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                       extendInt="yes", progress=T, 
+                       extendInt="yes", progress=F, 
                        lower=-100,
                        upper=100)
     }
@@ -130,7 +130,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
         estimate <<- investr::invest(fit1, y0 = targety,
                                      interval = "percentile", 
                                      nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                                     extendInt="yes", progress=T, 
+                                     extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
       }))
@@ -148,7 +148,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     estimate <<- investr::invest(fit1, y0 = targety,
                        interval = "percentile", 
                        nsim = if(bootDataset){1}else{replicates}, seed = 3, 
-                       extendInt="yes", progress=T, 
+                       extendInt="yes", progress=F, 
                        lower=-100,
                        upper=100)
     }

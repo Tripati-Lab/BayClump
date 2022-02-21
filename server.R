@@ -205,7 +205,7 @@ server <- function(input, output, session) {
           lmcals <<- simulateLM_measured(calData, replicates = replicates, samples = samples)
           sink()
           
-          lmci <- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
+          lmci <<- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
           lmcalci <- as.data.frame(lmci)
           
           output$lmcalibration <- renderPlotly({
@@ -979,24 +979,25 @@ server <- function(input, output, session) {
             ##Linear models
             infTempBayesianCLinear <- if(classicPredictions){ 
               
-             cpreds<- rbind.data.frame(
-              cbind.data.frame(model= "BLM1_fit",classicCalibration(reps = bayeslincals$BLM_Measured_no_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error)),
-              cbind.data.frame(model= "BLM1_fit_NoErrors",classicCalibration(reps = bayeslincals$BLM_Measured_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error))
-        )
-
+             cpreds<- list(
+              "BLM1_fit"=classicCalibration(reps = bayeslincals$BLM_Measured_no_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error),
+              "BLM1_fit_NoErrors"=classicCalibration(reps = bayeslincals$BLM_Measured_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error)
+              )
+        
+             
             }else{
               
               recsBayesian <- fitClumpedPredictions(calibrationData=calData, 
-                                    n.iter= 5000, 
-                                    burninFrac=0.5,
+                                    n.iter= ngenerationsBayes, 
                                     priors = "informative",
                                     D47error='D47error', 
                                     D47Pred=recData_byS$D47,
                                     D47Prederror=recData_byS$D47error)
+              
             }
             
-            sink()
-          infTempBayesian_werrors<-recsBayesian$Preds
+          sink()
+          infTempBayesian_werrors<-infTempBayesianCLinear[[1]]
 
           df0<-infTempBayesian_werrors
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
@@ -1022,7 +1023,7 @@ server <- function(input, output, session) {
           writeData(wb2, sheet = "Bayesian linear model, errors", df0)
           
           ##Without errors
-          infTempBayesian<-recsBayesian$Preds_NE
+          infTempBayesian<-infTempBayesianCLinear[[2]]
           df0.1<-infTempBayesian
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.1) <- NULL
@@ -1050,7 +1051,6 @@ server <- function(input, output, session) {
           }
           
           
-
           # Run prediction function
           # Need to use a sample-based dataset
           
@@ -1071,12 +1071,11 @@ server <- function(input, output, session) {
               cpreds
               
             }else{
-              cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,"D47"], model='lm', replicates=replicates)
+              cpreds<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='lm', replicates=replicates)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='lm', replicates=replicates)
+                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
-              colnames(cpreds)[3] <- 'Tc'
-              cpreds$D47se <- recData_byS$D47error
-              cpreds[,c("D47",'D47se', "Tc", "se")]
             }
             
             df1 <- lmrec
@@ -1124,9 +1123,11 @@ server <- function(input, output, session) {
               
             }else{
               
-              cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='wlm', replicates=replicates)
-              } ))
+              cpreds<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='wlm', replicates=replicates)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='wlm', replicates=replicates)
+                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+                } ))
               
               colnames(cpreds)[3] <- 'Tc'
               cpreds$D47se <- recData_byS$D47error
@@ -1179,8 +1180,10 @@ server <- function(input, output, session) {
               
             }else{
               
-              cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='York', replicates=replicates)
+              cpreds<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='York', replicates=replicates)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='York', replicates=replicates)
+                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
               
               colnames(cpreds)[3] <- 'Tc'
@@ -1233,9 +1236,12 @@ server <- function(input, output, session) {
               
             }else{
               
-              cpreds<-  do.call(rbind,lapply(unique(recData$Sample), function(x){
-                predictTclassic(calData, targety=recData[recData$Sample == x,]$D47, model='Deming', replicates=replicates)
-              } ))
+              cpreds<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='Deming', replicates=replicates)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='Deming', replicates=replicates)
+                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+                
+                } ))
               colnames(cpreds)[3] <- 'Tc'
               cpreds$D47se <- recData_byS$D47error
               cpreds[,c("D47",'D47se', "Tc", "se")]

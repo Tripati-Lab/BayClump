@@ -67,17 +67,25 @@ Terr <- Tcpropagated-Tcpropagated2
 
 }")
   
+  sa <- nrow(BLM1_fit$BUGSoutput$sims.matrix)
   
-  valsPreds <- lapply(sample(1:nrow(BLM1_fit$BUGSoutput$sims.matrix), 500), function(i){
+  valsPreds <- lapply(1:ifelse(sa>500, 500, sa), function(i){
+    
+    T0=(D47Pred- BLM1_fit$BUGSoutput$sims.matrix[i,1])/
+      BLM1_fit$BUGSoutput$sims.matrix[i,2]
+    T0 <- ifelse(T0 == 0, 11, T0)
+    
+    T1=(D47Pred+D47Prederror- BLM1_fit$BUGSoutput$sims.matrix[i,1])/
+      BLM1_fit$BUGSoutput$sims.matrix[i,2]
+    T1 <- ifelse(T1 == 0, 11, T1)
+    
   LM_Data_pred <- list(N=length(D47Pred), obsy1 = D47Pred, obsy2=D47Pred+D47Prederror,
                        erry=D47Prederror,
                        alpha= BLM1_fit$BUGSoutput$sims.matrix[i,1],
                        beta=BLM1_fit$BUGSoutput$sims.matrix[i,2],
                        tauy=BLM1_fit$BUGSoutput$sims.matrix[i,4],
-                       T0=(D47Pred- BLM1_fit$BUGSoutput$sims.matrix[i,1])/
-                         BLM1_fit$BUGSoutput$sims.matrix[i,2],
-                       T1=(D47Pred+D47Prederror- BLM1_fit$BUGSoutput$sims.matrix[i,1])/
-                         BLM1_fit$BUGSoutput$sims.matrix[i,2]
+                       T0=T0,
+                       T1=T1
   )
   
    BLM1_fit_pred <- jags(data = LM_Data_pred,inits = NULL,
@@ -116,17 +124,28 @@ Terr <- Tcpropagated-Tcpropagated2
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+
     
-    valsPreds <- lapply(sample(1:nrow(BLM1_fit_NoErrors$BUGSoutput$sims.matrix), 500), function(i){
+    
+    sa <- nrow(BLM1_fit_NoErrors$BUGSoutput$sims.matrix)
+    valsPreds <- lapply(1:ifelse(sa>500, 500, sa), function(i){
+      
+      
+      T0=(D47Pred- BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,1])/
+        BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,2]
+      T0 = ifelse(T0==0, 11, T0)
+      
+      T1=(D47Pred+D47Prederror- BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,1])/
+        BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,2]
+      T1 = ifelse(T1==0, 11, T1)
+      
       LM_Data_pred <- list(N=length(D47Pred), obsy1 = D47Pred, obsy2=D47Pred+D47Prederror,
                            erry=D47Prederror,
                            alpha= BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,1],
                            beta=BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,2],
                            tauy=BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,4],
-                           T0=(D47Pred- BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,1])/
-                             BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,2],
-                           T1=(D47Pred+D47Prederror- BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,1])/
-                             BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,2]
+                           T0=T0,
+                           T1=T1
       )
       
       BLM1_fit_pred <- jags(data = LM_Data_pred,inits = NULL,
