@@ -960,12 +960,14 @@ server <- function(input, output, session) {
           
           classicPredictions <- input$classicPreds
           
+          recData_byS <- recData
+          
           ##Replicate-based input
-          recData_byS <- recData %>% 
-            group_by(Sample, Material) %>% 
-            summarise(D47Mean = mean(D47),
-                      D47error = sd(D47), .groups = 'drop') %>% na.omit()%>%
-            `colnames<-`(c("Sample", "Material","D47", "D47error"))
+          # recData_byS <- recData %>% 
+          #   group_by(Sample, Material) %>% 
+          #   summarise(D47Mean = mean(D47),
+          #             D47error = sd(D47), .groups = 'drop') %>% na.omit()%>%
+          #   `colnames<-`(c("Sample", "Material","D47", "D47error"))
             
           
           if(input$simulateBLM_measuredMaterialRec == TRUE){
@@ -979,27 +981,31 @@ server <- function(input, output, session) {
             ##Linear models
             infTempBayesianCLinear <- if(classicPredictions){ 
               
-             cpreds<- list(
-              "BLM1_fit"=classicCalibration(reps = bayeslincals$BLM_Measured_no_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error),
-              "BLM1_fit_NoErrors"=classicCalibration(reps = bayeslincals$BLM_Measured_errors, targetD47=recData_byS$D47, error_targetD47=recData_byS$D47error)
-              )
-        
+             cpreds<- predictTcBayes(calibrationData=calData,
+                                     data=cbind(recData_byS$D47,
+                                                ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error),
+                                                as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
+                                     generations=ngenerationsBayes,
+                                     hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
+                                     errorsD47=F)
              
             }else{
               
-              recsBayesian <- fitClumpedPredictions(calibrationData=calData, 
-                                    n.iter= ngenerationsBayes, 
-                                    priors = "informative",
-                                    D47error='D47error', 
-                                    D47Pred=recData_byS$D47,
-                                    D47Prederror=recData_byS$D47error)
+              cpreds<- predictTcBayes(calibrationData=calData,
+                              data=cbind(recData_byS$D47,
+                              ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error),
+                              as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
+                              generations=ngenerationsBayes,
+                              hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
+                             errorsD47=T)
+
               
             }
             
           sink()
-          infTempBayesian_werrors<-infTempBayesianCLinear[[1]]
+          infTempBayesian_werrors<- infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit",]
 
-          df0<-infTempBayesian_werrors
+          df0<-infTempBayesian_werrors[,-c(1,4)]
           names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0) <- NULL
           
@@ -1023,8 +1029,8 @@ server <- function(input, output, session) {
           writeData(wb2, sheet = "Bayesian linear model, errors", df0)
           
           ##Without errors
-          infTempBayesian<-infTempBayesianCLinear[[2]]
-          df0.1<-infTempBayesian
+          infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit_NoErrors",]
+          df0.1<-infTempBayesian[,-c(1,4)]
           names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
           rownames(df0.1) <- NULL
           

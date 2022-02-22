@@ -69,7 +69,7 @@ Terr <- Tcpropagated-Tcpropagated2
   
   sa <- nrow(BLM1_fit$BUGSoutput$sims.matrix)
   
-  valsPreds <- lapply(1:ifelse(sa>500, 500, sa), function(i){
+  valsPreds <- lapply(1:ifelse(sa>500, 500), function(i){
     
     T0=(D47Pred- BLM1_fit$BUGSoutput$sims.matrix[i,1])/
       BLM1_fit$BUGSoutput$sims.matrix[i,2]
@@ -128,7 +128,7 @@ Terr <- Tcpropagated-Tcpropagated2
     
     
     sa <- nrow(BLM1_fit_NoErrors$BUGSoutput$sims.matrix)
-    valsPreds <- lapply(1:ifelse(sa>500, 500, sa), function(i){
+    valsPreds <- lapply(sample(1:ifelse(sa>500,500,sa),ifelse(sa>500,500,sa)), function(i){
       
       
       T0=(D47Pred- BLM1_fit_NoErrors$BUGSoutput$sims.matrix[i,1])/

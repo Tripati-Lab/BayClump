@@ -1,4 +1,13 @@
-predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bootDataset=T, onlyMedian=F, replicates = 1000, multicore= TRUE, priors='informative'){
+predictTcBayes <- function(calibrationData, 
+                           data, 
+                           generations, 
+                           hasMaterial=T, 
+                           bootDataset=T, 
+                           onlyMedian=F, 
+                           replicates = 1000, 
+                           multicore= TRUE, 
+                           priors='informative',
+                           errorsD47=T){
   
   single_rep <<- function(i){
   
@@ -7,7 +16,19 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
   
   if(bootDataset){calibrationData <- calibrationData[sample(1:nrow(calibrationData),nrow(calibrationData), replace = T),] }
   
-  predictionsWithinBayesian<-fitClumpedRegressionsPredictions(calibrationData=calibrationData, 
+  if(errorsD47){
+    
+    predictionsWithinBayesian<-fitClumpedRegressionsPredictions_D47errors(calibrationData=calibrationData, 
+                                                                    useInits=T, 
+                                                                    hasMaterial = hasMaterial,
+                                                                    D47Pred=errors[,1],
+                                                                    D47Prederror=errors[,2],
+                                                                    materialsPred=errors[,3],
+                                                                    n.iter= generations,
+                                                                    priors=priors)
+  }else{
+  
+  predictionsWithinBayesian<-fitClumpedRegressionsPredictions_D47(calibrationData=calibrationData, 
                                                               useInits=T, 
                                                               hasMaterial = hasMaterial,
                                                               D47Pred=errors[,1],
@@ -15,13 +36,13 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
                                                               materialsPred=errors[,3],
                                                               n.iter= generations,
                                                               priors=priors)
-  
+  }
   predsComplete<-if(hasMaterial){
     
     fullProp<-
-      cbind.data.frame(model='BLM3_fit',errors,median=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)],
-                       upr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)])
+      cbind.data.frame(model='BLM3_fit',errors,median=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)+1),c(5)],
+                       lwr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)+1),c(3)],
+                       upr=predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary[c(1:nrow(errors)+1),c(7)])
     
   
 
@@ -31,13 +52,13 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
   }else{
     
     fullProp<-  rbind(
-      cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(3)],
-                       upr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)),c(7)]
+      cbind.data.frame(model='BLM1_fit', errors, median=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)+1),c(5)],
+                       lwr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)+1),c(3)],
+                       upr=predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary[c(1:nrow(errors)+1),c(7)]
       ),
-      cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(5)],
-                       lwr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(3)],
-                       upr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)),c(7)])  ) 
+      cbind.data.frame(model='BLM1_fit_NoErrors',errors,median=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)+1),c(5)],
+                       lwr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)+1),c(3)],
+                       upr=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[c(1:nrow(errors)+1),c(7)])  ) 
     
       colnames(fullProp)<-c('model', 'D47', 'D47error',"Material", 'Tc', 'lwr', 'upr')
       fullProp
@@ -78,7 +99,7 @@ predictTcBayes <- function(calibrationData, data, generations, hasMaterial=T, bo
     }
     
   }else{
-    single_rep()[,c(1:7)]
+    single_rep()
   }
   
 }

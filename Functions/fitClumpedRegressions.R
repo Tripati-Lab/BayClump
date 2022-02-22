@@ -43,12 +43,13 @@ fitClumpedRegressions<-function(calibrationData,
                 alpha ~ ", alphaBLM1," \n ",
                        "beta ~ ", betaBLM1," \n ",
                        "
-    sigma <- 1/sqrt(tau)                              
-    tau ~ dgamma(0.1, 0.1)  
-                for (i in 1:N){
-                y[i] ~ dnorm(mu[i],tau)
-                mu[i]<- eta[i]
-                eta[i] <- alpha + inprod(x[i],beta)
+  sigma2 <- 1 / tau
+  tau ~ dgamma(0.01, 0.01)   
+  
+  # calibration
+  for(i in 1:N){   
+    y[i] ~ dnorm(mu[i], tau)
+    mu[i] <- alpha + beta * x[i]
   }
 }")
   
@@ -115,7 +116,7 @@ fitClumpedRegressions<-function(calibrationData,
     M2=NULL#lm(D47 ~ Temperature*Material, calibrationData)
     
     ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                         errx1 = calibrationData$TempError, erry = calibrationData[,D47error], 
+                         errx1 = abs(calibrationData$TempError), erry = calibrationData[,D47error], 
                          K=length(unique(calibrationData$Material)),
                          N=nrow(calibrationData),
                          type= as.numeric(calibrationData$Material))
@@ -126,7 +127,7 @@ fitClumpedRegressions<-function(calibrationData,
       
     }}else{NULL}
     
-    BLM3_fit <- jags(data = ANCOVA2_Data,inits = inits,
+    BLM3_fit <- jags(data = ANCOVA2_Data, #inits = inits,
                      parameters = c("alpha","beta","conditionalR2", "marginalR2"), 
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
@@ -164,7 +165,7 @@ fitClumpedRegressions<-function(calibrationData,
     
     ##Create the calibrationDatasets for Bayesian Models
     LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                    errx = calibrationData$TempError, erry = calibrationData[,D47error], 
+                    errx = abs(calibrationData$TempError), erry = calibrationData[,D47error], 
                     N=nrow(calibrationData))
     
     
@@ -175,12 +176,12 @@ fitClumpedRegressions<-function(calibrationData,
       
     }}else{NULL}
     
-    BLM1_fit <- jags(data = LM_Data, inits = inits,
+    BLM1_fit <- jags(data = LM_Data, #inits = inits,
                      parameters = c("alpha","beta", "tauy"),
                      model = textConnection(BLM1), n.chains = 3, 
                      n.iter = n.iter, n.burnin = n.iter*burninFrac)
     
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,inits = inits,
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
