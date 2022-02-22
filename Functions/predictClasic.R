@@ -9,7 +9,7 @@ library(investr)
 #' @param model string: lm, wlm, Deming, York
 
 
-predictTclassic <<- function(calData, targety, model='lm', replicates=1000, DegreeC=T, bootDataset=F, onlyMedian=T){
+predictTclassic <<- function(calData, targety, model='lm', replicates=1000, DegreeC=T, bootDataset=T, onlyMedian=T){
   calData$T2 <- calData$Temperature
   
   if(model == 'lm'){

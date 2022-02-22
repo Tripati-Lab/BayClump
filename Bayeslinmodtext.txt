@@ -4,7 +4,15 @@
 Graph information:
    Observed stochastic nodes: 1400
    Unobserved stochastic nodes: 1403
-   Total graph size: 6450
+   Total graph size: 6454
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 1403
+   Total graph size: 6462
 
 Compiling model graph
    Resolving undeclared variables
@@ -20,31 +28,61 @@ Compiling model graph
 Graph information:
    Observed stochastic nodes: 1400
    Unobserved stochastic nodes: 1403
-   Total graph size: 6471
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 1400
-   Unobserved stochastic nodes: 1403
-   Total graph size: 6458
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 1400
-   Unobserved stochastic nodes: 1403
    Total graph size: 6457
 
-Initializing model
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 1403
+   Total graph size: 6456
 
 Initializing model
 
 Initializing model
 
 Initializing model
+
+Initializing model
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 700
+   Unobserved stochastic nodes: 3
+   Total graph size: 2300
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 700
+   Unobserved stochastic nodes: 3
+   Total graph size: 2298
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 700
+   Unobserved stochastic nodes: 3
+   Total graph size: 2298
+
+Initializing model
+
+Initializing model
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 700
+   Unobserved stochastic nodes: 3
+   Total graph size: 2296
 
 Initializing model
 
@@ -56,46 +94,8 @@ Graph information:
    Unobserved stochastic nodes: 3
    Total graph size: 2292
 
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 700
-   Unobserved stochastic nodes: 3
-   Total graph size: 2294
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 700
-   Unobserved stochastic nodes: 3
-   Total graph size: 2314
-
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 700
-   Unobserved stochastic nodes: 3
-   Total graph size: 2308
-
 Initializing model
 
 Initializing model
 
-Compiling model graph
-   Resolving undeclared variables
-   Allocating nodes
-Graph information:
-   Observed stochastic nodes: 700
-   Unobserved stochastic nodes: 3
-   Total graph size: 2286
-
-Initializing model
-
-Initializing model
-
-Initializing model
-
-  |===============                                                          |  20%, ETA 00:27  |=============================                                            |  40%, ETA 00:10  |============================================                             |  60%, ETA 00:05  |==========================================================               |  80%, ETA 00:02  |=====================================================================| 100%, Elapsed 00:07
+  |===============                                                          |  20%, ETA 00:20  |=============================                                            |  40%, ETA 00:07  |============================================                             |  60%, ETA 00:03  |==========================================================               |  80%, ETA 00:01  |=====================================================================| 100%, Elapsed 00:05
