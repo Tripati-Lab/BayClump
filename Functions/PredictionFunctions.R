@@ -88,7 +88,7 @@ predictTcBayes <- function(calibrationData,
      dat$upr <- sqrt(10^6/dat$upr)-273.15
      dat$se <- (dat$lwr - dat$upr) / 3.92
      dat$sd <- dat$se * sqrt(replicates)
-     dat[,c(1:5,9)]
+     dat[,c(1:5,8)]
     }else{
       dat <- ddply(tot,~model+D47+D47error+Material,summarise, median=median(Tc), lwr= median(lwr), upr= median(upr) )
       names(dat)[5] <- "Tc"
@@ -97,7 +97,7 @@ predictTcBayes <- function(calibrationData,
       dat$upr <- sqrt(10^6/dat$upr)-273.15
       dat$se <- (dat$lwr - dat$upr) / 3.92
       dat$sd <- dat$se * sqrt(replicates)
-      dat[,c(1:5,9)]
+      dat[,c(1:5,8)]
     }
     
   }else{

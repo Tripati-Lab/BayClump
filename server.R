@@ -962,14 +962,7 @@ server <- function(input, output, session) {
           
           recData_byS <- recData
           
-          ##Replicate-based input
-          # recData_byS <- recData %>% 
-          #   group_by(Sample, Material) %>% 
-          #   summarise(D47Mean = mean(D47),
-          #             D47error = sd(D47), .groups = 'drop') %>% na.omit()%>%
-          #   `colnames<-`(c("Sample", "Material","D47", "D47error"))
-            
-          
+        
           if(input$simulateBLM_measuredMaterialRec == TRUE){
             
             if(is.null(bayeslincals) & classicPredictions) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
@@ -1069,8 +1062,8 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
             
             lmrec <<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='lm', replicates=replicates)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='lm', replicates=replicates)
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='lm', replicates=replicates, bootDataset=!classicPredictions)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='lm', replicates=replicates, bootDataset=!classicPredictions)
                 cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
             
@@ -1111,8 +1104,8 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
             
             lminverserec <<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='wlm', replicates=replicates)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='wlm', replicates=replicates)
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='wlm', replicates=replicates, bootDataset=!classicPredictions)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='wlm', replicates=replicates, bootDataset=!classicPredictions)
                 cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 } ))
               
@@ -1158,8 +1151,8 @@ server <- function(input, output, session) {
             if(is.null(yorkcals) & classicPredictions) { print(noquote("Please run the calibration step for the York linear model first")) }else{
               
             yorkrec <<-   do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='York', replicates=replicates)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='York', replicates=replicates)
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='York', replicates=replicates, bootDataset=!classicPredictions)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='York', replicates=replicates, bootDataset=!classicPredictions)
                 cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
               
@@ -1204,11 +1197,13 @@ server <- function(input, output, session) {
             demingrec <<-
               
               demingrec<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='Deming', replicates=replicates)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='Deming', replicates=replicates)
+                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='Deming', replicates=replicates, bootDataset=!classicPredictions)
+                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='Deming', replicates=replicates, bootDataset=!classicPredictions)
                 cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 
                 } ))
+            
+            
               colnames(demingrec)[3] <- 'Tc'
               demingrec$D47se <- recData_byS$D47error
               demingrec[,c("D47",'D47se', "Tc", "se")]
