@@ -229,7 +229,7 @@ simulateYork_measured <<- function(data,
                                    replicates, 
                                    samples, 
                                    D47error = "D47error"){
-  do.call(rbind,pblapply(1:replicates, function(x){
+  do.call(rbind,lapply(1:replicates, function(x){
     dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE <- dataSub[,D47error]
     dataSub$x_SE <- abs(dataSub$TempError)
@@ -251,7 +251,7 @@ simulateLM_measured <<- function(data,
                                samples, 
                                D47error="D47error"){
   
-  a<-pblapply(1:replicates, function(x){
+  a<-lapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
@@ -281,7 +281,7 @@ simulateLM_inverseweights <<- function(data,
                                      replicates, 
                                      samples, 
                                      D47error="D47error"){
-  a<-pblapply(1:replicates, function(x){
+  a<-lapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-abs(dataSub$TempError)
