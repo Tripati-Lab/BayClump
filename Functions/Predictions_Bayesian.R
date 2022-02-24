@@ -512,7 +512,7 @@ predictTcBayes <- function(calibrationData,
     
     # Use all available cores
     tot =if( multicore ){ 
-      pbmclapply(1:replicates, mc.cores = ncores, single_rep) } else {
+      mclapply(1:replicates, mc.cores = ncores, single_rep) } else {
         lapply(1:replicates, single_rep)
       }
     tot <- do.call(rbind,tot)

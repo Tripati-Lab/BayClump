@@ -318,7 +318,7 @@ simulateDeming <<- function(data,
   if(multicore){
   
   ncores = parallel::detectCores()
-  do.call(rbind,pbmclapply(1:replicates, mc.cores = ncores, function(x){
+  do.call(rbind,mclapply(1:replicates, mc.cores = ncores, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
     dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
@@ -413,7 +413,7 @@ simulateBLM_measuredMaterial <<- function(data,
   
   if(multicore){
   ncores = parallel::detectCores()
-  tot = pbmclapply(1:replicates, mc.cores = ncores, single_rep)
+  tot = mclapply(1:replicates, mc.cores = ncores, single_rep)
   }else{
   tot = lapply(1:replicates, single_rep)
   }
