@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
+
 Bayeslinmodtext.txt
 Bayesmixmodtext.txt
 Rpackages.bib
@@ -25,5 +27,6 @@ yorkmodtext.txt
 Yorkpredictions.txt
 out/Bayesmixmodtext.txt
 
+/out/
 out/
-*bib
+*.bib
