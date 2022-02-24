@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 Bayeslinmodtext.txt
+Bayesmixmodtext.txt
 Rpackages.bib
 demingmodtext.txt
 inverselinmodtext.txt
@@ -22,5 +23,6 @@ weightedPreds.txt
 wLMpredictions.txt
 yorkmodtext.txt
 Yorkpredictions.txt
+
 /out
 *bib
