@@ -26,5 +26,5 @@ yorkmodtext.txt
 Yorkpredictions.txt
 out/Bayesmixmodtext.txt
 /out/
-out/
+out/**
 *.bib
