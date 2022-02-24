@@ -23,6 +23,7 @@ weightedPreds.txt
 wLMpredictions.txt
 yorkmodtext.txt
 Yorkpredictions.txt
+out/Bayesmixmodtext.txt
 
-/out
+out/
 *bib
