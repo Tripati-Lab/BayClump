@@ -2,41 +2,41 @@
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3076
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 2103
+   Total graph size: 8583
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3082
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 2103
+   Total graph size: 8575
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3084
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 2103
+   Total graph size: 8597
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3075
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 2103
+   Total graph size: 8584
 
 Compiling model graph
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 522
-   Unobserved stochastic nodes: 790
-   Total graph size: 3077
+   Observed stochastic nodes: 1400
+   Unobserved stochastic nodes: 2103
+   Total graph size: 8556
 
 Initializing model
 
@@ -48,4 +48,4 @@ Initializing model
 
 Initializing model
 
-  |==============================                                                                                                                      |  20%, ETA 00:22  |===========================================================                                                                                         |  40%, ETA 00:08  |=========================================================================================                                                           |  60%, ETA 00:04  |======================================================================================================================                              |  80%, ETA 00:01  |================================================================================================================================================| 100%, Elapsed 00:06
+  |==============================                                                                                                                      |  20%, ETA 01:06  |===========================================================                                                                                         |  40%, ETA 00:25  |=========================================================================================                                                           |  60%, ETA 00:11  |======================================================================================================================                              |  80%, ETA 00:04  |================================================================================================================================================| 100%, Elapsed 00:17
