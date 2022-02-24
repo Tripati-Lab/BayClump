@@ -1,0 +1,51 @@
+  |                                                                                                                                                       |   0%, ETA NACompiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 522
+   Unobserved stochastic nodes: 790
+   Total graph size: 3076
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 522
+   Unobserved stochastic nodes: 790
+   Total graph size: 3082
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 522
+   Unobserved stochastic nodes: 790
+   Total graph size: 3084
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 522
+   Unobserved stochastic nodes: 790
+   Total graph size: 3075
+
+Compiling model graph
+   Resolving undeclared variables
+   Allocating nodes
+Graph information:
+   Observed stochastic nodes: 522
+   Unobserved stochastic nodes: 790
+   Total graph size: 3077
+
+Initializing model
+
+Initializing model
+
+Initializing model
+
+Initializing model
+
+Initializing model
+
+  |==============================                                                                                                                      |  20%, ETA 00:22  |===========================================================                                                                                         |  40%, ETA 00:08  |=========================================================================================                                                           |  60%, ETA 00:04  |======================================================================================================================                              |  80%, ETA 00:01  |================================================================================================================================================| 100%, Elapsed 00:06

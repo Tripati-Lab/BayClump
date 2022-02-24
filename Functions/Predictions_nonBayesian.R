@@ -1,5 +1,3 @@
-library(investr)
-
 #' This function performs temp reconstruction (10^6/T^2 with T in K) for
 #' multiple replicates of the same target.
 #' 
@@ -7,9 +5,20 @@ library(investr)
 #' @param calData Calibration data with the following columns: D47, T2, 
 #'                TempError, D47error
 #' @param model string: lm, wlm, Deming, York
+#' @param replicates the number of bootstrap replicates used in the overall dataset and in invest
+#' @param DegreeC Whether results should be in degrees C
+#' @param bootDataset Whether the dataset should be bootstrapped
+#' @param onlyMedian Use only point estimates across bootstraps?
+    
 
-
-predictTclassic <<- function(calData, targety, model='lm', replicates=1000, DegreeC=T, bootDataset=F, onlyMedian=T){
+predictTc <<- function(calData, 
+                       targety, 
+                       model='lm', 
+                       replicates=1000, 
+                       DegreeC=T, 
+                       bootDataset=F, 
+                       onlyMedian=T){
+  
   calData$T2 <- calData$Temperature
   
   if(model == 'lm'){
@@ -19,7 +28,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     mod <<- lm(D47 ~ T2, calData[sample(1:nrow(calData), nrow(calData), replace = T),])
     estimate <<- investr::invest(mod, y0 = targety,
            interval = "percentile", 
-           nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+           nsim = replicates, seed = 3, 
            extendInt="yes", progress=F, 
            lower=-100,
            upper=100)
@@ -30,7 +39,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
       mod <<- lm(D47 ~ T2, calData)
       estimate <<- investr::invest(mod, y0 = targety,
                                    interval = "percentile", 
-                                   nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                                   nsim = replicates, seed = 3, 
                                    extendInt="yes", progress=F, 
                                    lower=-100,
                                    upper=100)
@@ -44,12 +53,12 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     if(bootDataset){
       res <- do.call(rbind, lapply(1:replicates, function(x){
         ds <<- calData[sample(1:nrow(calData), nrow(calData), replace = T),]
-        Reg0 <- lm(D47 ~ T2,  ds)
-        wt <- 1 / lm(abs(Reg0$residuals) ~ Reg0$fitted.values)$fitted.values^2
+        Reg0 <<- lm(D47 ~ T2,  ds)
+        wt <<- 1 / lm(abs(Reg0$residuals) ~ Reg0$fitted.values)$fitted.values^2
         mod<<-lm(D47 ~ T2,  ds, weights = wt)
         estimate <<- investr::invest(mod, y0 = targety,
                                      interval = "percentile", 
-                                     nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                                     nsim = replicates, seed = 3, 
                                      extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
@@ -62,7 +71,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     mod <<-lm(D47 ~ T2,  calData, weights = wt)
     estimate <<- investr::invest(mod, y0 = targety,
                        interval = "percentile", 
-                       nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                       nsim = replicates, seed = 3, 
                        extendInt="yes", progress=F, 
                        lower=-100,
                        upper=100)
@@ -85,7 +94,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
                             algorithm = "port") 
         estimate <<- investr::invest(fit1, y0 = targety,
                                      interval = "percentile", 
-                                     nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                                     nsim = replicates, seed = 3, 
                                      extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
@@ -103,7 +112,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
                 algorithm = "port") 
     estimate <<- investr::invest(fit1, y0 = targety,
                        interval = "percentile", 
-                       nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                       nsim = replicates, seed = 3, 
                        extendInt="yes", progress=F, 
                        lower=-100,
                        upper=100)
@@ -129,7 +138,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
         
         estimate <<- investr::invest(fit1, y0 = targety,
                                      interval = "percentile", 
-                                     nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                                     nsim = replicates, seed = 3, 
                                      extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
@@ -147,7 +156,7 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     
     estimate <<- investr::invest(fit1, y0 = targety,
                        interval = "percentile", 
-                       nsim = if(bootDataset){1}else{replicates}, seed = 3, 
+                       nsim = replicates, seed = 3, 
                        extendInt="yes", progress=F, 
                        lower=-100,
                        upper=100)
@@ -201,25 +210,3 @@ predictTclassic <<- function(calData, targety, model='lm', replicates=1000, Degr
     
 }
 
-##Predictions based on the actual replicates
-
-classicCalibration <- function(reps, targetD47, error_targetD47, material,  mixed=F) {
-  
-  if(mixed){
-   do.call(rbind, lapply(1:length(targetD47), function(x){
-    point <- sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / 
-                    (targetD47[x] -  median(reps$intercept[reps$material == material[x]]))) - 273.15
-      
-    error_point <- point - (sqrt((median(reps$slope[reps$material == material[x]]) * 10 ^ 6) / (targetD47[x] + error_targetD47[x] - median(reps$intercept[reps$material == material[x]]))) - 273.15)
-    cbind.data.frame(targetD47=targetD47[x],error_targetD47=error_targetD47[x], material=material[x], Tc=point, se=error_point)
-    
-   
-    })
-   )
-    
-  }else{
-    point <- sqrt((median(reps$slope) * 10^6) / (targetD47 -  median(reps$intercept))) - 273.15
-    error_point <- point - (sqrt((median(reps$slope) * 10 ^ 6) / (targetD47 + error_targetD47  - median(reps$intercept))) - 273.15)
-    cbind.data.frame(targetD47=targetD47,error_targetD47=error_targetD47, Tc=point, se=error_point)
-  }
-}

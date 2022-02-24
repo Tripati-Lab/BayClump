@@ -1,13 +1,26 @@
-fitClumpedRegressionsPredictions_D47errors<-function(calibrationData, hasMaterial=F, 
-                                           n.iter= 20000, burninFrac=0.5,
-                                           useInits=T, 
-                                           D47Pred,
-                                           D47Prederror,
-                                           materialsPred,
-                                           priors='informative',
-                                           degC=T){
+#' This function generate temperature predictions (in 10^6/T2) based on a 
+#' calibration dataset and target D47. Note that this alternative function
+#' propagates uncertainty around the target D47.
+#' 
+#' @param calibrationData The calibration dataset
+#' @param hasMaterial Whether only a mixed model should be run
+#' @param n.iter number of MCMC iterations
+#' @param burninFrac burnin fraction (0-1)
+#' @param D47Pred the target D47
+#' @param D47Prederror error in the target D47
+#' @param materialsPred Material of the target D47
+#' @param priors Informative priors or not on the slope and intercept
+
+ClumpedPredictions_errors <- function(calibrationData, 
+                                    hasMaterial=FALSE, 
+                                    n.iter= 20000, 
+                                    burninFrac=0.5,
+                                    D47Pred,
+                                    D47Prederror,
+                                    materialsPred,
+                                    priors='Informative'){
   
-  if(priors == 'informative'){
+  if(priors == 'Informative'){
     alphaBLM1='dnorm(0.231,0.065)' 
     betaBLM1= 'dnorm(0.039,0.004)'}else{
       alphaBLM1='dnorm(0, 0.01)' 
@@ -194,17 +207,27 @@ BLM3<-paste(" model{
   return(CompleteModelFit)
 }
 
+#' This function generate temperature predictions (in 10^6/T2) based on a 
+#' calibration dataset and target D47. Note that this alternative function
+#' does not propagates uncertainty around the target D47.
+#' 
+#' @param calibrationData The calibration dataset
+#' @param hasMaterial Whether only a mixed model should be run
+#' @param n.iter number of MCMC iterations
+#' @param burninFrac burnin fraction (0-1)
+#' @param D47Pred the target D47
+#' @param D47Prederror error in the target D47
+#' @param materialsPred Material of the target D47
+#' @param priors Informative priors or not on the slope and intercept
 
-fitClumpedRegressionsPredictions_D47<-function(calibrationData, hasMaterial=F, 
+ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE, 
                                                      n.iter= 20000, burninFrac=0.5,
-                                                     useInits=T, 
                                                      D47Pred,
                                                      D47Prederror,
                                                      materialsPred,
-                                                     priors='informative',
-                                                     degC=T){
+                                                     priors='Informative'){
   
-  if(priors == 'informative'){
+  if(priors == 'Informative'){
     alphaBLM1='dnorm(0.231,0.065)' 
     betaBLM1= 'dnorm(0.039,0.004)'}else{
       alphaBLM1='dnorm(0, 0.01)' 
@@ -398,3 +421,126 @@ fitClumpedRegressionsPredictions_D47<-function(calibrationData, hasMaterial=F,
 }
 
 
+#' This function generate temperature predictions (in 10^6/T2) based on a 
+#' calibration dataset and target D47. Note that this alternative function
+#' does not propagates uncertainty around the target D47.
+#' 
+#' @param calibrationData The calibration dataset
+#' @param data The data on the target D47 including four columns (D47, error in D47, Material, and n)
+#' @param generations number of MCMC iterations
+#' @param hasMaterial Whether only a mixed model should be run
+#' @param bootDataset Whether we should conduct bootstrapping in the calibration dataset
+#' @param onlyMedian Whether we should only use point estimates across replicates to calculate uncertainty
+#' @param replicates Number of bootstrap replicates
+#' @param multicore If analyses should be run using multiple cores
+#' @param priors Informative priors or not on the slope and intercept
+#' @param errorsD47 If FALSE, ClumpedPredictions_no_errors is used.
+
+predictTcBayes <- function(calibrationData, 
+                           data, 
+                           generations, 
+                           hasMaterial = TRUE, 
+                           bootDataset = TRUE, 
+                           onlyMedian = FALSE, 
+                           replicates = 1000, 
+                           multicore = TRUE, 
+                           priors = 'Informative',
+                           errorsD47 = TRUE){
+  
+  single_rep <<- function(i){
+    
+    errors<-data
+    
+    if(bootDataset){calibrationData <- calibrationData[sample(1:nrow(calibrationData),nrow(calibrationData), replace = T),] }
+    
+    if(errorsD47){
+      
+      predictionsWithinBayesian<-ClumpedPredictions_errors(calibrationData=calibrationData, 
+                                                                            hasMaterial = hasMaterial,
+                                                                            D47Pred=errors[,1],
+                                                                            D47Prederror=errors[,2],
+                                                                            materialsPred=errors[,3],
+                                                                            n.iter= generations,
+                                                                            priors=priors)
+    }else{
+      
+      predictionsWithinBayesian<-ClumpedPredictions_no_errors(calibrationData=calibrationData, 
+                                                                      hasMaterial = hasMaterial,
+                                                                      D47Pred=errors[,1],
+                                                                      D47Prederror=errors[,2],
+                                                                      materialsPred=errors[,3],
+                                                                      n.iter= generations,
+                                                                      priors=priors)
+    }
+    predsComplete<-if(hasMaterial){
+      
+      BLM3Data <- data.frame(predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary)[-1,]
+      
+      fullProp<-
+        cbind.data.frame(model='BLM3_fit',errors,mean=BLM3Data[,c(1)],
+                         lwr=BLM3Data[,c(3)],
+                         upr=BLM3Data[,c(7)])
+      
+      colnames(fullProp)<-c('model', 'D47', 'D47error','Material', "n" ,'Tc', 'lwr', 'upr')
+      fullProp
+      
+    }else{
+      
+      BLM1Data <- data.frame(predictionsWithinBayesian$BLM1_fit$BUGSoutput$summary)[-1,]
+      BLM1_fit_NoErrorsData <- predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[-1,]
+      
+      fullProp<-  rbind(
+        cbind.data.frame(model='BLM1_fit', errors, mean=BLM1Data[,c(1)],
+                         lwr=BLM1Data[,c(3)],
+                         upr=BLM1Data[,c(7)]
+        ),
+        cbind.data.frame(model='BLM1_fit_NoErrors',errors,mean=BLM1_fit_NoErrorsData[,c(1)],
+                         lwr=BLM1_fit_NoErrorsData[,c(3)],
+                         upr=BLM1_fit_NoErrorsData[,c(7)])  ) 
+      
+      colnames(fullProp)<-c('model', 'D47', 'D47error',"Material", "n", 'Tc', 'lwr', 'upr')
+      fullProp
+    }
+    row.names(predsComplete) <-NULL
+    predsComplete
+  }
+  
+  if(bootDataset){
+    
+    # Find out how many cores there are
+    ncores = parallel::detectCores()
+    
+    # Use all available cores
+    tot =if( multicore ){ 
+      pbmclapply(1:replicates, mc.cores = ncores, single_rep) } else {
+        lapply(1:replicates, single_rep)
+      }
+    tot <- do.call(rbind,tot)
+    
+    if(onlyMedian){
+      dat <- ddply(tot,~model+D47error+D47+Material,summarise, mean=mean(Tc), lwr= quantile(Tc, 0.025), upr= quantile(Tc, 0.975), n=n[1])
+      dat<-dat[,c(1,3,2,4:8)]
+      names(dat)[5] <- "Tc"
+      dat$Tc <- sqrt(10^6/dat$Tc)-273.15
+      dat$lwr <- sqrt(10^6/dat$lwr)-273.15
+      dat$upr <- sqrt(10^6/dat$upr)-273.15
+      dat$se <- (dat$lwr - dat$upr) / 3.92
+      dat$sd <- dat$se * sqrt(dat$n)
+      dat[,c(1:5,9)]
+    }else{
+      dat <- ddply(tot,~model+D47+D47error+Material,summarise, mean=mean(Tc), lwr= mean(lwr), upr= mean(upr), n=n[1] )
+      dat<-dat[,c(1,3,2,4:8)]
+      names(dat)[5] <- "Tc"
+      dat$Tc <- sqrt(10^6/dat$Tc)-273.15
+      dat$lwr <- sqrt(10^6/dat$lwr)-273.15
+      dat$upr <- sqrt(10^6/dat$upr)-273.15
+      dat$se <- (dat$lwr - dat$upr) / 3.92
+      dat$sd <- dat$se * sqrt(dat$n)
+      dat[,c(1:5,9)]
+    }
+    
+  }else{
+    single_rep()
+  }
+  
+}

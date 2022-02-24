@@ -90,6 +90,7 @@ server <- function(input, output, session) {
     )
   }) 
   
+
   modresult <- eventReactive(input$runmods, {
     
     if ('all' %in% input$calibrationdata) {
@@ -128,6 +129,13 @@ server <- function(input, output, session) {
     if("Bayesian mixed w errors" %in% names(wb3) == TRUE)
     {removeWorksheet(wb3, "Bayesian mixed w errors")}
     
+    lmcals <<- NULL
+    lminversecals <<- NULL
+    yorkcals <<- NULL
+    demingcals <<- NULL
+    bayeslincals <<- NULL
+    bayesmixedcals <<- NULL
+    
     
     calData <<- NULL
     calData <<- calibrationData()
@@ -149,13 +157,7 @@ server <- function(input, output, session) {
     minLim <- ifelse(input$range[1]==0, min(calData$Temperature),input$range[1])
     maxLim <- ifelse(input$range[2]==0, max(calData$Temperature),input$range[2])
     
-    #minLim <- ifelse(input$MinLim==0, min(calData$Temperature),input$MinLim)
-    #maxLim <- ifelse(input$MaxLim==0, max(calData$Temperature),input$MaxLim)
-    
-    # For future implementation:
-   # if(input$uncertainties == "usedaeron") { # Placeholder for Daeron et al. uncertainties
-  #    calData$TempError <<- 1
-  #  }
+
     
     if(input$scale == TRUE) {
       calData$Temperature <<- scale(calData$Temperature)
@@ -164,12 +166,7 @@ server <- function(input, output, session) {
       calData$D47error <<- scale(calData$D47error)
     }
     
-    lmcals <<- NULL
-    lminversecals <<- NULL
-    yorkcals <<- NULL
-    demingcals <<- NULL
-    bayeslincals <<- NULL
-    bayesmixedcals <<- NULL
+
     
     if(input$simulateLM_measured == FALSE &
        input$simulateLM_inverseweights == FALSE &
@@ -200,10 +197,15 @@ server <- function(input, output, session) {
         if(input$simulateBLMM_measuredMaterial == FALSE) {
         }
         
+        totalModels <- c(input$simulateLM_measured, input$simulateLM_inverseweights, input$simulateYork_measured,
+                         input$simulateDeming, input$simulateBLM_measuredMaterial, input$simulateBLMM_measuredMaterial)
+        TotProgress <- length(which(totalModels==T))
+        
         if(input$simulateLM_measured != FALSE) {
-          sink(file = "linmodtext.txt", type = "output")
+          sink(file = "out/linmodtext.txt", type = "output")
           lmcals <<- simulateLM_measured(calData, replicates = replicates, samples = samples)
           sink()
+          incProgress(1/TotProgress, detail='...Done fitting the OLS...')
           
           lmci <<- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
           lmcalci <- as.data.frame(lmci)
@@ -230,7 +232,7 @@ server <- function(input, output, session) {
             lmfig <- lmfig %>% 
               add_ribbons(data = lmcalci,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#ffd166'),
@@ -242,8 +244,8 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = lmcalci,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate',
+                        y = ~mean_est,
+                        name = 'Mean estimate',
                         line = list(color = "black", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -260,7 +262,7 @@ server <- function(input, output, session) {
           addWorksheet(wb, "Linear regression CI") # Add a blank sheet 
           
           lmcalci2 <- lmcalci
-          names(lmcalci2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(lmcalci2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
           writeData(wb, sheet = "Linear regression", lmcals) # Write regression data
           writeData(wb, sheet = "Linear regression CI", lmcalci2)
@@ -274,16 +276,17 @@ server <- function(input, output, session) {
 
           output$lmcal <- renderPrint({
             do.call(rbind.data.frame,apply(lmcals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4), `SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Mean= round(mean(x), 4), `SE`=round(sd(x)/sqrt(length(x)),7))
             }))
           })
           
         }
         
         if(input$simulateLM_inverseweights != FALSE) {
-          sink(file = "inverselinmodtext.txt", type = "output")
+          sink(file = "out/inverselinmodtext.txt", type = "output")
           lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates, samples = samples)
           sink()
+          incProgress(1/TotProgress, detail='...Done fitting weighted OLS...')
           
           lminverseci <- RegressionSingleCI(data = lminversecals, from = minLim, to = maxLim)
           lminversecalci <- as.data.frame(lminverseci)
@@ -309,7 +312,7 @@ server <- function(input, output, session) {
                           "<extra></extra>")) %>%
               add_ribbons(data = lminversecalci,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#ffd166'),
@@ -321,8 +324,8 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = lminversecalci,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate',
+                        y = ~mean_est,
+                        name = 'Mean estimate',
                         line = list(color = "black", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -339,7 +342,7 @@ server <- function(input, output, session) {
           addWorksheet(wb, "Inverse linear regression CI") # Add a blank sheet 
           
           lminversecalci2 <- lminversecalci
-          names(lminversecalci2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(lminversecalci2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
           writeData(wb, sheet = "Inverse linear regression", lminversecals) # Write regression data
           writeData(wb, sheet = "Inverse linear regression CI", lminversecalci2)
@@ -350,16 +353,17 @@ server <- function(input, output, session) {
           
           output$lminversecal <- renderPrint({
             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
             }))
           })
           
         }
         
         if(input$simulateYork_measured != FALSE) {
-          sink(file = "yorkmodtext.txt", type = "output")
+          sink(file = "out/yorkmodtext.txt", type = "output")
           yorkcals <<- simulateYork_measured(calData, replicates = replicates, samples = samples)
           sink()
+          incProgress(1/TotProgress, detail='...Done fitting York regression...')
           
           yorkci <- RegressionSingleCI(data = yorkcals, from = minLim, to = maxLim)
           yorkcalci <- as.data.frame(yorkci)
@@ -385,7 +389,7 @@ server <- function(input, output, session) {
                           "<extra></extra>")) %>%
               add_ribbons(data = yorkcalci,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#ffd166'),
@@ -397,8 +401,8 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = yorkcalci,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate',
+                        y = ~mean_est,
+                        name = 'Mean estimate',
                         line = list(color = "black", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -415,7 +419,7 @@ server <- function(input, output, session) {
           addWorksheet(wb, "York regression CI") # Add a blank sheet 
           
           yorkcalci2 <- yorkcalci
-          names(yorkcalci2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(yorkcalci2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
           writeData(wb, sheet = "York regression", yorkcals) # Write regression data
           writeData(wb, sheet = "York regression CI", yorkcalci2)
@@ -423,16 +427,17 @@ server <- function(input, output, session) {
           cat("\nYork regression complete")
           output$york <- renderPrint({
             do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
             }))
           })
           
         }
         
         if(input$simulateDeming != FALSE) {
-          sink(file = "demingmodtext.txt", type = "output")
+          sink(file = "out/demingmodtext.txt", type = "output")
           demingcals <<- simulateDeming(calData, replicates = replicates, samples = samples, multicore=multicore)
           sink()
+          incProgress(1/TotProgress, detail='...Done fitting Deming regression model...')
           
           demingci <- RegressionSingleCI(data = demingcals, from = minLim, to = maxLim)
           demingcalci <- as.data.frame(demingci)
@@ -458,7 +463,7 @@ server <- function(input, output, session) {
                           "<extra></extra>")) %>%
               add_ribbons(data = demingcalci,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#ffd166'),
@@ -470,8 +475,8 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = demingcalci,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate',
+                        y = ~mean_est,
+                        name = 'Mean estimate',
                         line = list(color = "black", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -488,7 +493,7 @@ server <- function(input, output, session) {
           addWorksheet(wb, "Deming regression CI") # Add a blank sheet 
           
           demingcalci2 <- demingcalci
-          names(demingcalci2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(demingcalci2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
           writeData(wb, sheet = "Deming regression", demingcals) # Write regression data
           writeData(wb, sheet = "Deming regression CI", demingcalci2)
@@ -496,7 +501,7 @@ server <- function(input, output, session) {
           cat("\nDeming regression complete")
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
             }))
           })
           
@@ -504,7 +509,7 @@ server <- function(input, output, session) {
         
         #     checkboxInput("linear", "Linear model", FALSE),
         if(input$simulateBLM_measuredMaterial != FALSE) {
-          sink(file = "Bayeslinmodtext.txt", type = "output")
+          sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- simulateBLM_measuredMaterial(calData, 
                                                         replicates = replicates, 
                                                         isMixed=F, 
@@ -513,6 +518,7 @@ server <- function(input, output, session) {
                                                         samples = samples,
                                                         multicore = multicore)
           sink()
+          incProgress(1/TotProgress, detail='...Done fitting the Bayesian linear regression model...')
           
           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = minLim, to = maxLim)
           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
@@ -540,7 +546,7 @@ server <- function(input, output, session) {
                           "<extra></extra>")) %>%
               add_ribbons(data = bayeslincalcinoerror,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#ffd166'),
@@ -552,15 +558,15 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslincalcinoerror,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate - no error',
+                        y = ~mean_est,
+                        name = 'Mean estimate - no error',
                         line = list(color = "black", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_ribbons(data = bayeslincalciwitherror,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#446455'),
@@ -572,8 +578,8 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslincalciwitherror,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate - with error',
+                        y = ~mean_est,
+                        name = 'Mean estimate - with error',
                         line = list(color = "#446455", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -592,10 +598,10 @@ server <- function(input, output, session) {
           addWorksheet(wb, "Bayesian model with errors CI") # Add a blank sheet 
           
           bayeslincalcinoerror2 <- bayeslincalcinoerror
-          names(bayeslincalcinoerror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(bayeslincalcinoerror2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
           bayeslincalciwitherror2 <- bayeslincalciwitherror
-          names(bayeslincalciwitherror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(bayeslincalciwitherror2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
 
           writeData(wb, sheet = "Bayesian model no errors", bayeslincals$BLM_Measured_no_errors) # Write regression data
@@ -637,7 +643,7 @@ server <- function(input, output, session) {
           output$blinnoerr <- renderPrint({
             
             do.call(rbind.data.frame,apply(bayeslincals$BLM_Measured_no_errors, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
             }))
             
           })
@@ -645,7 +651,7 @@ server <- function(input, output, session) {
           output$blinwerr <- renderPrint({
             
             do.call(rbind.data.frame,apply(bayeslincals$BLM_Measured_errors, 2, function(x){
-              cbind.data.frame(Median= round(median(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7), `Lower 95% CI`=round(quantile(x, 0.025), 4),  `Upper 95% CI`=round(quantile(x, 0.975), 4))
+              cbind.data.frame(Mean=round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
             }))
             
           })
@@ -659,8 +665,7 @@ server <- function(input, output, session) {
         if(input$simulateBLMM_measuredMaterial != FALSE) { #length(unique(calData$Material)) >= 2 &
           calData$MaterialName <<- calData$Material
           calData$Material <<- as.factor(as.numeric(as.factor(calData$Material)))
-          
-          sink(file = "Bayesmixmodtext.txt", type = "output")
+          sink(file = "out/Bayesmixmodtext.txt", type = "output")
           bayesmixedcals <<- simulateBLM_measuredMaterial(data=calData, 
                                                          replicates = replicates, 
                                                          isMixed = T, 
@@ -669,6 +674,7 @@ server <- function(input, output, session) {
                                                          samples = samples,
                                                          multicore = multicore)
           sink()
+          incProgress(1/TotProgress, detail='...Done fitting the Bayesian linear mixed regression model...')
           
           bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = minLim, to = maxLim)
           bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
@@ -677,7 +683,7 @@ server <- function(input, output, session) {
           addWorksheet(wb, "Bayesian mixed w errors CI") # Add a blank sheet 
           
           bayeslmmincalciwitherror2 <- bayeslmmincalciwitherror
-          names(bayeslmmincalciwitherror2) <- c("10^6/T^2", "D47_median_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
+          names(bayeslmmincalciwitherror2) <- c("10^6/T^2", "D47_mean_est",	"D47_ci_lower_est",	"D47_ci_upper_est")
           
           writeData(wb, sheet = "Bayesian mixed w errors", bayesmixedcals$BLMM_Measured_errors) # Write regression data
           writeData(wb, sheet = "Bayesian mixed w errors CI", bayeslmmincalciwitherror2)
@@ -714,7 +720,7 @@ server <- function(input, output, session) {
                           "<extra></extra>")) %>%
               add_ribbons(data = bayeslmmincalciwitherror,
                           x = ~x,
-                          y = ~median_est,
+                          y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
                           line = list(color = '#446455'),
@@ -726,8 +732,8 @@ server <- function(input, output, session) {
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslmmincalciwitherror,
                         x = ~x,
-                        y = ~median_est,
-                        name = 'Median estimate - with error',
+                        y = ~mean_est,
+                        name = 'Mean estimate - with error',
                         line = list(color = "#446455", dash = 'dash'),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -752,15 +758,11 @@ server <- function(input, output, session) {
           
           output$blinmwerr <- renderPrint(
             ddply(bayesmixedcals$BLMM_Measured_errors, .( material), 
-                  function(x) cbind.data.frame('median (I)'=round(median(x$intercept),4),
-                                               'SE (I)'=round(sd(x$slope)/sqrt(length(x$intercept)),7),
-                            'Lower 95% CI (I)'=round(quantile(x$intercept, c(0.025)),4),
-                            'Upper 95% CI (I)'=round(quantile(x$intercept, c(0.975)),4),
+                  function(x) cbind.data.frame('Mean (Intercept)'=round(mean(x$intercept),4),
+                                               'SE (Intercept)'=round(sd(x$slope)/sqrt(length(x$intercept)),7),
                             
-                            'median (S)'=round(median(x$slope),4),
-                            'SE (S)'=round(sd(x$slope)/sqrt(length(x$slope)),7),
-                            'lwr (S)'=round(quantile(x$slope, c(0.025)),4),
-                            'upr (S)'=round(quantile(x$slope, c(0.975)),4))
+                            'Mean (Slope)'=round(mean(x$slope),4),
+                            'SE (Slope)'=round(sd(x$slope)/sqrt(length(x$slope)),7))
             )
         ) 
 
@@ -892,9 +894,8 @@ server <- function(input, output, session) {
     output$contents2 <- renderTable({
       recsummary <- reconstructionData() %>%
         summarize(
-          "Unique samples" = length(unique(reconstructionData()$Sample.Name)),
+          "Unique samples" = length(unique(reconstructionData()$Sample)),
           "Total replicates" = sum(reconstructionData()$N),
-          "Mineralogies" = length(unique(reconstructionData()$Mineralogy)),
           "Materials" = length(unique(reconstructionData()$Material))
         )
       return(recsummary)
@@ -954,52 +955,43 @@ server <- function(input, output, session) {
       if(input$confirm == FALSE) { print(noquote("Please confirm that your reference frames match")) }
       if(input$confirm == TRUE) {
         
+        
+        totalModelsRecs <- c(input$simulateLM_measuredRec, input$simulateLM_inverseweightsRec, input$simulateYork_measuredRec,
+                         input$simulateDemingRec, input$simulateBLM_measuredMaterialRec, input$simulateBLMM_measuredMaterialRec)
+        totalModelsRecs <- length(which(totalModelsRecs==T))
+        
+        
         withProgress(message = 'Running selected reconstructions, please wait', {
           
           # Misc options
           
-          classicPredictions <- input$classicPreds
+          AccountErrorDataset <- input$AccountErrorDataset
           
-          recData_byS <- recData
-          
-        
           if(input$simulateBLM_measuredMaterialRec == TRUE){
             
-            if(is.null(bayeslincals) & classicPredictions) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
+            if(is.null(bayeslincals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
               
             ##This function runs only Bayesian predictions
             ##(Only Bayesian simple linear with error for now)
-            sink("bayespredictions.txt", type = "output")
+            sink("out/bayespredictions.txt", type = "output")
             
             ##Linear models
-            infTempBayesianCLinear <- if(classicPredictions){ 
-              
-             cpreds<- predictTcBayes(calibrationData=calData,
-                                     data=cbind(recData_byS$D47,
-                                                ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error),
-                                                as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
+            infTempBayesianCLinear <- predictTcBayes(calibrationData=calData,
+                                     data=cbind(recData$D47,
+                                                ifelse(recData$D47error==0,0.00001,recData$D47error),
+                                                as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
+                                                nobs=recData$N),
                                      generations=ngenerationsBayes,
                                      hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
-                                     errorsD47=F)
-             
-            }else{
-              
-              cpreds<- predictTcBayes(calibrationData=calData,
-                              data=cbind(recData_byS$D47,
-                              ifelse(recData_byS$D47error==0,0.00001,recData_byS$D47error),
-                              as.numeric(as.factor(ifelse(is.na(recData_byS$Material), 1,recData_byS$Material)))),
-                              generations=ngenerationsBayes,
-                              hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
-                             errorsD47=T)
-
-              
-            }
+                                     errorsD47=AccountErrorDataset)
             
           sink()
+          incProgress(1/totalModelsRecs, detail='...Done fitting the Bayesian linear models...')
+          
           infTempBayesian_werrors<- infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit",]
 
           df0<-infTempBayesian_werrors[,-c(1,4)]
-          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
+          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
           rownames(df0) <- NULL
           
           output$BpredictionsErrors <- renderTable({
@@ -1007,7 +999,7 @@ server <- function(input, output, session) {
             df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
             df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
             df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
-            df0$`SE (1SD) Temperature (°C)` <- formatC(df0$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
+            df0$`1SD Temperature (°C)` <- formatC(df0$`1SD Temperature (°C)`, digits = 7, format = "f")
             head(df0)
           },
             caption = "Bayesian predictions (BLM_errors)",
@@ -1024,7 +1016,7 @@ server <- function(input, output, session) {
           ##Without errors
           infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit_NoErrors",]
           df0.1<-infTempBayesian[,-c(1,4)]
-          names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
+          names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
           rownames(df0.1) <- NULL
           
           output$Bpredictions <- renderTable({
@@ -1032,7 +1024,7 @@ server <- function(input, output, session) {
             df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
             df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
             df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
-            df0.1$`SE (1SD) Temperature (°C)` <- formatC(df0.1$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
+            df0.1$`1SD Temperature (°C)` <- formatC(df0.1$`1SD Temperature (°C)`, digits = 7, format = "f")
             head(df0.1)
           },
             caption = "Bayesian predictions (BLM without errors)",
@@ -1045,33 +1037,78 @@ server <- function(input, output, session) {
           
           addWorksheet(wb2, "Bayesian linear model") # Add a blank sheet
           writeData(wb2, sheet = "Bayesian linear model", df0.1)
+          print(noquote("Bayesian linear models complete"))
           
           }
           }
           
+
           
-          # Run prediction function
-          # Need to use a sample-based dataset
+          if(input$simulateBLMM_measuredMaterialRec == TRUE){
+            if(is.null(bayesmixedcals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
+            
+            
+             
+            ## Mixed model
+              sink("out/bayespredictionsMixed.txt", type = "output")
+              
+              infTempBayesianCMixed <-predictTcBayes(calibrationData=calData,
+                                        data=cbind(recData$D47,
+                                                   ifelse(recData$D47error==0,0.00001,recData$D47error),
+                                                   as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
+                                                   nobs=recData$N),
+                                        generations=ngenerationsBayes,
+                                        hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
+                                        errorsD47=AccountErrorDataset)
+              sink()
+              incProgress(1/totalModelsRecs, detail='...Done fitting the Bayesian linear mixed models...')
+              
+              df0.2<-infTempBayesianCMixed[,-1]
+              names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
+              rownames(df0.2) <- NULL
+              
+              output$BpredictionsBLMM <- renderTable({
+                
+                df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
+                df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
+                df0.2$`1SD Temperature (°C)` <- formatC(df0.2$`1SD Temperature (°C)`, digits = 7, format = "f")
+                head(df0.2)
+              },
+              caption = "Bayesian predictions under a Bayesian linear mixed model",
+              caption.placement = getOption("xtable.caption.placement", "top"),
+              rownames = FALSE,
+              spacing = "m",
+              align = "c"
+              )
+              
+              addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
+              writeData(wb2, sheet = "Bayesian linear mixed model", df0.2)
+              print(noquote("Bayesian linear mixed model complete"))
+              
+          
+            }
+              }
           
           
           if( input$simulateLM_measuredRec == TRUE ) {
             
-            if(is.null(lmcals) & classicPredictions) { print(noquote("Please run the calibration step for the linear model first")) }else{
+            if(is.null(lmcals)) { print(noquote("Please run the calibration step for linear models first")) }else{
               
-            
+              sink("out/LMpredictions.txt", type = "output")
+              
             calData$T2 <<- calData$Temperature
-            
-            lmrec <<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='lm', replicates=replicates, bootDataset=!classicPredictions)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='lm', replicates=replicates, bootDataset=!classicPredictions)
-                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+
+            lmrec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
+                a <- predictTc(calData, targety=recData$D47[x], model='lm', replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='lm', replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
-            
-            
+            sink()
             df1 <- lmrec
             
             
-            names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
+            names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df1) <- NULL
             
            
@@ -1080,7 +1117,7 @@ server <- function(input, output, session) {
               df1$`Δ47 (‰)` <- formatC(df1$`Δ47 (‰)`, digits = 3, format = "f")
               df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 4, format = "f")
               df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 1, format = "f")
-              df1$`SE (1SD) Temperature (°C)` <- formatC(df1$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
+              df1$`1SD Temperature (°C)` <- formatC(df1$`1SD Temperature (°C)`, digits = 7, format = "f")
               head(df1)
             },
               caption = "Linear model",
@@ -1093,31 +1130,38 @@ server <- function(input, output, session) {
             addWorksheet(wb2, "Linear") # Add a blank sheet
             writeData(wb2, sheet = "Linear", df1) # Write reconstruction data
             print(noquote("Linear reconstruction complete"))
+            
+          
             }
-          }
+            }
+          
           
           #Inverse weighted linear model 
           if( input$simulateLM_inverseweightsRec == TRUE ) {
-            
-            if(is.null(lminversecals) & classicPredictions) { print(noquote("Please run the calibration step for the weighted linear model first")) }else{
+            if(is.null(lminversecals)) { print(noquote("Please run the calibration step for weighted OLS models first")) }else{
+              
+            sink("out/wLMpredictions.txt", type = "output")
               
             calData$T2 <<- calData$Temperature
             
-            lminverserec <<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='wlm', replicates=replicates, bootDataset=!classicPredictions)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='wlm', replicates=replicates, bootDataset=!classicPredictions)
-                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+            lminverserec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
+                a <- predictTc(calData, targety=recData$D47[x], model='wlm', replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='wlm', replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 } ))
-              
+              sink()
+            incProgress(1/totalModelsRecs, detail='...Done fitting the weighted OLS...')
+            
+            
               colnames(lminverserec)[3] <- 'Tc'
-              lminverserec$D47se <- recData_byS$D47error
+              lminverserec$D47se <- recData$D47error
               lminverserec[,c("D47",'D47se', "Tc", "se")]
             
               
             lminverserecwun <- lminverserec
             df3<-lminverserecwun
             
-            names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
+            names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df3) <- NULL
             
             
@@ -1127,7 +1171,7 @@ server <- function(input, output, session) {
               df3$`Δ47 (‰)` <- formatC(df3$`Δ47 (‰)`, digits = 3, format = "f")
               df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 4, format = "f")
               df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 1, format = "f")
-              df3$`SE (1SD) Temperature (°C)` <- formatC(df3$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
+              df3$`1SD Temperature (°C)` <- formatC(df3$`1SD Temperature (°C)`, digits = 7, format = "f")
               head(df3)
             },
               caption = "Inverse weighted linear model",
@@ -1142,27 +1186,35 @@ server <- function(input, output, session) {
             writeData(wb2, sheet = "Inverse linear", df3) # Write reconstruction data
             print(noquote("Inverse weighted linear reconstruction complete"))
             
+            
+          
             }
-          }
+            }
           
           # York regression
           if( input$simulateYork_measuredRec == TRUE ) {
+            if(is.null(yorkcals)) { print(noquote("Please run the calibration step for York models first")) }else{
+              
+              sink("out/Yorkpredictions.txt", type = "output")
+              
             calData$T2 <<- calData$Temperature
-            if(is.null(yorkcals) & classicPredictions) { print(noquote("Please run the calibration step for the York linear model first")) }else{
-              
-            yorkrec <<-   do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='York', replicates=replicates, bootDataset=!classicPredictions)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='York', replicates=replicates, bootDataset=!classicPredictions)
-                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+
+            yorkrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
+                a <- predictTc(calData, targety=recData$D47[x], model='York', replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='York', replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
-              
+              sink()
+            incProgress(1/totalModelsRecs, detail='...Done fitting the York regression...')
+            
+            
               colnames(yorkrec)[3] <- 'Tc'
-              yorkrec$D47se <- recData_byS$D47error
+              yorkrec$D47se <- recData$D47error
               yorkrec[,c("D47",'D47se', "Tc", "se")]
             
             
             df5 <- yorkrec
-            names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
+            names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df5) <- NULL
             
             
@@ -1171,7 +1223,7 @@ server <- function(input, output, session) {
               df5$`Δ47 (‰)` <- formatC(df5$`Δ47 (‰)`, digits = 3, format = "f")
               df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 4, format = "f")
               df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 1, format = "f")
-              df5$`SE (1SD) Temperature (°C)` <- formatC(df5$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
+              df5$`1SD Temperature (°C)` <- formatC(df5$`1SD Temperature (°C)`, digits = 7, format = "f")
               head(df5)
             },
               caption = "York regression",
@@ -1185,32 +1237,36 @@ server <- function(input, output, session) {
             addWorksheet(wb2, "York") # Add a blank sheet
             writeData(wb2, sheet = "York", df5) # Write reconstruction data
             print(noquote("York reconstruction complete"))
-            
+
+          
             }
-          }
+            }
           
           # Deming regression
           if( input$simulateDemingRec == TRUE ) {
+            if(is.null(demingcals) ) { print(noquote("Please run the calibration step for Deming models first")) }else{
+              
+              sink("out/Demingpredictions.txt", type = "output")
+              
             calData$T2 <<- calData$Temperature
-            if(is.null(demingcals) & classicPredictions) { print(noquote("Please run the calibration step for the York linear model first")) }else{
-              
-            demingrec <<-
-              
-              demingrec<-  do.call(rbind,lapply(1:nrow(recData_byS), function(x){
-                a <- predictTclassic(calData, targety=recData_byS$D47[x], model='Deming', replicates=replicates, bootDataset=!classicPredictions)
-                b <- predictTclassic(calData, targety=recData_byS$D47[x]+recData_byS$D47error[x], model='Deming', replicates=replicates, bootDataset=!classicPredictions)
-                cbind.data.frame("D47"=recData_byS$D47[x],'D47se'=recData_byS$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+
+            demingrec <<- do.call(rbind,lapply(1:nrow(recData), function(x){
+                a <- predictTc(calData, targety=recData$D47[x], model='Deming', replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='Deming', replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 
                 } ))
+            sink()
+            incProgress(1/totalModelsRecs, detail='...Done fitting the Deming regression...')
             
             
               colnames(demingrec)[3] <- 'Tc'
-              demingrec$D47se <- recData_byS$D47error
+              demingrec$D47se <- recData$D47error
               demingrec[,c("D47",'D47se', "Tc", "se")]
             
 
             df7 <- demingrec
-            names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (1SD) Temperature (°C)")
+            names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df7) <- NULL
 
             output$demingrecswun <- renderTable({
@@ -1218,7 +1274,7 @@ server <- function(input, output, session) {
               df7$`Δ47 (‰)` <- formatC(df7$`Δ47 (‰)`, digits = 3, format = "f")
               df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 4, format = "f")
               df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 1, format = "f")
-              df7$`SE (1SD) Temperature (°C)` <- formatC(df7$`SE (1SD) Temperature (°C)`, digits = 7, format = "f")
+              df7$`1SD Temperature (°C)` <- formatC(df7$`1SD Temperature (°C)`, digits = 7, format = "f")
               head(df7)
             },
               caption = "Deming regression",
@@ -1234,8 +1290,10 @@ server <- function(input, output, session) {
             writeData(wb2, sheet = "Deming", df7) # Write reconstruction data
             print(noquote("Deming reconstruction complete"))
             
+            
+          
             }
-          }
+            }
 
         })
       } 
