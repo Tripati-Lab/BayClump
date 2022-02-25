@@ -1,15 +1,15 @@
-#' This function generate temperature predictions (in 10^6/T2) based on a 
-#' calibration dataset and target D47. Note that this alternative function
-#' propagates uncertainty around the target D47.
-#' 
-#' @param calibrationData The calibration dataset
-#' @param hasMaterial Whether only a mixed model should be run
-#' @param n.iter number of MCMC iterations
-#' @param burninFrac burnin fraction (0-1)
-#' @param D47Pred the target D47
-#' @param D47Prederror error in the target D47
-#' @param materialsPred Material of the target D47
-#' @param priors Informative priors or not on the slope and intercept
+#" This function generate temperature predictions (in 10^6/T2) based on a 
+#" calibration dataset and target D47. Note that this alternative function
+#" propagates uncertainty around the target D47.
+#" 
+#" @param calibrationData The calibration dataset
+#" @param hasMaterial Whether only a mixed model should be run
+#" @param n.iter number of MCMC iterations
+#" @param burninFrac burnin fraction (0-1)
+#" @param D47Pred the target D47
+#" @param D47Prederror error in the target D47
+#" @param materialsPred Material of the target D47
+#" @param priors Informative priors or not on the slope and intercept
 
 ClumpedPredictions_errors <- function(calibrationData, 
                                     hasMaterial=FALSE, 
@@ -18,13 +18,13 @@ ClumpedPredictions_errors <- function(calibrationData,
                                     D47Pred,
                                     D47Prederror,
                                     materialsPred,
-                                    priors='Informative'){
+                                    priors="Informative"){
   
-  if(priors == 'Informative'){
-    alphaBLM1='dnorm(0.231,0.065)' 
-    betaBLM1= 'dnorm(0.039,0.004)'}else{
-      alphaBLM1='dnorm(0, 0.01)' 
-      betaBLM1= 'dnorm(0, 0.01)'
+  if(priors == "Informative"){
+    alphaBLM1="dnorm(0.231,0.065)" 
+    betaBLM1= "dnorm(0.039,0.004)"}else{
+      alphaBLM1="dnorm(0, 0.01)" 
+      betaBLM1= "dnorm(0, 0.01)"
     }
   
   
@@ -49,7 +49,7 @@ ClumpedPredictions_errors <- function(calibrationData,
     }
     
       # prediction
-  mux2 ~ dnorm(7, 0.0001)
+  mux2 ~ dnorm(11, 0.0001)
   taux2 ~ dgamma(0.01, 0.01)
 
   for(i in 1:N2){ 
@@ -76,7 +76,7 @@ BLM1_NoErrors<-paste("model{
   }
   
   # prediction
-  mux2 ~ dnorm(7, 0.0001)
+  mux2 ~ dnorm(11, 0.0001)
   taux2 ~ dgamma(0.01, 0.01)
 
   for(i in 1:N2){ 
@@ -139,7 +139,7 @@ BLM3<-paste(" model{
   conditionalR2 <- (varRandom + varFixed) / (varFixed + varRandom + varResidual) 
 
     # prediction
-  mux2 ~ dnorm(7, 0.0001)
+  mux2 ~ dnorm(11, 0.0001)
   taux2 ~ dgamma(0.01, 0.01)
 
   for(i in 1:N2){ 
@@ -172,7 +172,7 @@ BLM3<-paste(" model{
       
     BLM1_fit_NoErrors <- BLM3_fit
     
-    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
+    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
     
     LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
@@ -201,37 +201,37 @@ BLM3<-paste(" model{
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
     
-    CompleteModelFit<-list('BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
+    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors)
   }
-  attr(CompleteModelFit, 'data') <- calibrationData 
+  attr(CompleteModelFit, "data") <- calibrationData 
   return(CompleteModelFit)
 }
 
-#' This function generate temperature predictions (in 10^6/T2) based on a 
-#' calibration dataset and target D47. Note that this alternative function
-#' does not propagates uncertainty around the target D47.
-#' 
-#' @param calibrationData The calibration dataset
-#' @param hasMaterial Whether only a mixed model should be run
-#' @param n.iter number of MCMC iterations
-#' @param burninFrac burnin fraction (0-1)
-#' @param D47Pred the target D47
-#' @param D47Prederror error in the target D47
-#' @param materialsPred Material of the target D47
-#' @param priors Informative priors or not on the slope and intercept
+#" This function generate temperature predictions (in 10^6/T2) based on a 
+#" calibration dataset and target D47. Note that this alternative function
+#" does not propagates uncertainty around the target D47.
+#" 
+#" @param calibrationData The calibration dataset
+#" @param hasMaterial Whether only a mixed model should be run
+#" @param n.iter number of MCMC iterations
+#" @param burninFrac burnin fraction (0-1)
+#" @param D47Pred the target D47
+#" @param D47Prederror error in the target D47
+#" @param materialsPred Material of the target D47
+#" @param priors Informative priors or not on the slope and intercept
 
 ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE, 
                                                      n.iter= 20000, burninFrac=0.5,
                                                      D47Pred,
                                                      D47Prederror,
                                                      materialsPred,
-                                                     priors='Informative'){
+                                                     priors="Informative"){
   
-  if(priors == 'Informative'){
-    alphaBLM1='dnorm(0.231,0.065)' 
-    betaBLM1= 'dnorm(0.039,0.004)'}else{
-      alphaBLM1='dnorm(0, 0.01)' 
-      betaBLM1= 'dnorm(0, 0.01)'
+  if(priors == "Informative"){
+    alphaBLM1="dnorm(0.231,0.065)" 
+    betaBLM1= "dnorm(0.039,0.004)"}else{
+      alphaBLM1="dnorm(0, 0.01)" 
+      betaBLM1= "dnorm(0, 0.01)"
     }
   
   
@@ -256,7 +256,7 @@ ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE,
     }
     
       # prediction
-  mux2 ~ dnorm(7, 0.0001)
+  mux2 ~ dnorm(11, 0.0001)
   taux2 ~ dgamma(0.01, 0.01)
 
   for(i in 1:N2){ 
@@ -284,7 +284,7 @@ ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE,
   }
   
   # prediction
-  mux2 ~ dnorm(7, 0.0001)
+  mux2 ~ dnorm(11, 0.0001)
   taux2 ~ dgamma(0.01, 0.01)
 
   for(i in 1:N2){ 
@@ -348,7 +348,7 @@ ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE,
   conditionalR2 <- (varRandom + varFixed) / (varFixed + varRandom + varResidual) 
 
     # prediction
-  mux2 ~ dnorm(7, 0.0001)
+  mux2 ~ dnorm(11, 0.0001)
   taux2 ~ dgamma(0.01, 0.01)
 
   for(i in 1:N2){ 
@@ -383,7 +383,7 @@ ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE,
     
     BLM1_fit_NoErrors <- BLM3_fit
     
-    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
+    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
     
     LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
@@ -414,27 +414,27 @@ ClumpedPredictions_no_errors <- function(calibrationData, hasMaterial=FALSE,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
     
-    CompleteModelFit<-list('BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
+    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors)
   }
-  attr(CompleteModelFit, 'data') <- calibrationData 
+  attr(CompleteModelFit, "data") <- calibrationData 
   return(CompleteModelFit)
 }
 
 
-#' This function generate temperature predictions (in 10^6/T2) based on a 
-#' calibration dataset and target D47. Note that this alternative function
-#' does not propagates uncertainty around the target D47.
-#' 
-#' @param calibrationData The calibration dataset
-#' @param data The data on the target D47 including four columns (D47, error in D47, Material, and n)
-#' @param generations number of MCMC iterations
-#' @param hasMaterial Whether only a mixed model should be run
-#' @param bootDataset Whether we should conduct bootstrapping in the calibration dataset
-#' @param onlyMedian Whether we should only use point estimates across replicates to calculate uncertainty
-#' @param replicates Number of bootstrap replicates
-#' @param multicore If analyses should be run using multiple cores
-#' @param priors Informative priors or not on the slope and intercept
-#' @param errorsD47 If FALSE, ClumpedPredictions_no_errors is used.
+#" This function generate temperature predictions (in 10^6/T2) based on a 
+#" calibration dataset and target D47. Note that this alternative function
+#" does not propagates uncertainty around the target D47.
+#" 
+#" @param calibrationData The calibration dataset
+#" @param data The data on the target D47 including four columns (D47, error in D47, Material, and n)
+#" @param generations number of MCMC iterations
+#" @param hasMaterial Whether only a mixed model should be run
+#" @param bootDataset Whether we should conduct bootstrapping in the calibration dataset
+#" @param onlyMedian Whether we should only use point estimates across replicates to calculate uncertainty
+#" @param replicates Number of bootstrap replicates
+#" @param multicore If analyses should be run using multiple cores
+#" @param priors Informative priors or not on the slope and intercept
+#" @param errorsD47 If FALSE, ClumpedPredictions_no_errors is used.
 
 predictTcBayes <- function(calibrationData, 
                            data, 
@@ -444,7 +444,7 @@ predictTcBayes <- function(calibrationData,
                            onlyMedian = FALSE, 
                            replicates = 1000, 
                            multicore = TRUE, 
-                           priors = 'Informative',
+                           priors = "Informative",
                            errorsD47 = TRUE){
   
   single_rep <<- function(i){
@@ -472,16 +472,19 @@ predictTcBayes <- function(calibrationData,
                                                                       n.iter= generations,
                                                                       priors=priors)
     }
+    
     predsComplete<-if(hasMaterial){
       
       BLM3Data <- data.frame(predictionsWithinBayesian$BLM3_fit$BUGSoutput$summary)[-1,]
       
       fullProp<-
-        cbind.data.frame(model='BLM3_fit',errors,mean=BLM3Data[,c(1)],
+        cbind.data.frame(model="BLM3_fit",errors,mean=BLM3Data[,c(1)],
                          lwr=BLM3Data[,c(3)],
                          upr=BLM3Data[,c(7)])
       
-      colnames(fullProp)<-c('model', 'D47', 'D47error','Material', "n" ,'Tc', 'lwr', 'upr')
+      colnames(fullProp)<-c("model", "D47", "D47error","Material", "n" ,"Tc", "lwr", "upr")
+      
+      attr(fullProp, "PosteriorOne") <- predictionsWithinBayesian$BLM3_fit$BUGSoutput$sims.matrix
       fullProp
       
     }else{
@@ -490,15 +493,20 @@ predictTcBayes <- function(calibrationData,
       BLM1_fit_NoErrorsData <- predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$summary[-1,]
       
       fullProp<-  rbind(
-        cbind.data.frame(model='BLM1_fit', errors, mean=BLM1Data[,c(1)],
+        cbind.data.frame(model="BLM1_fit", errors, mean=BLM1Data[,c(1)],
                          lwr=BLM1Data[,c(3)],
                          upr=BLM1Data[,c(7)]
         ),
-        cbind.data.frame(model='BLM1_fit_NoErrors',errors,mean=BLM1_fit_NoErrorsData[,c(1)],
+        cbind.data.frame(model="BLM1_fit_NoErrors",errors,mean=BLM1_fit_NoErrorsData[,c(1)],
                          lwr=BLM1_fit_NoErrorsData[,c(3)],
                          upr=BLM1_fit_NoErrorsData[,c(7)])  ) 
       
-      colnames(fullProp)<-c('model', 'D47', 'D47error',"Material", "n", 'Tc', 'lwr', 'upr')
+      colnames(fullProp)<-c("model", "D47", "D47error","Material", "n", "Tc", "lwr", "upr")
+      
+      attr(fullProp, "PosteriorOne") <- list(BLM1_fit=predictionsWithinBayesian$BLM1_fit$BUGSoutput$sims.matrix,
+                                             BLM1_fit_NoErrors=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$sims.matrix)
+      fullProp
+      
       fullProp
     }
     row.names(predsComplete) <-NULL
@@ -515,6 +523,9 @@ predictTcBayes <- function(calibrationData,
       mclapply(1:replicates, mc.cores = ncores, single_rep) } else {
         lapply(1:replicates, single_rep)
       }
+    
+    post <- attr(tot[[1]], "PosteriorOne")
+    
     tot <- do.call(rbind,tot)
     
     if(onlyMedian){
@@ -526,7 +537,11 @@ predictTcBayes <- function(calibrationData,
       dat$upr <- sqrt(10^6/dat$upr)-273.15
       dat$se <- (dat$lwr - dat$upr) / 3.92
       dat$sd <- dat$se * sqrt(dat$n)
-      dat[,c(1:5,9)]
+      to_ret <- dat[,c(1:5,9)]
+      
+      attr(to_ret, "PosteriorOne") <- post
+      to_ret
+      
     }else{
       dat <- ddply(tot,~model+D47+D47error+Material,summarise, mean=mean(Tc), lwr= mean(lwr), upr= mean(upr), n=n[1] )
       dat<-dat[,c(1,3,2,4:8)]
@@ -536,7 +551,9 @@ predictTcBayes <- function(calibrationData,
       dat$upr <- sqrt(10^6/dat$upr)-273.15
       dat$se <- (dat$lwr - dat$upr) / 3.92
       dat$sd <- dat$se * sqrt(dat$n)
-      dat[,c(1:5,9)]
+      to_ret <- dat[,c(1:5,9)]
+      attr(to_ret, "PosteriorOne") <- post
+      to_ret
     }
     
   }else{
@@ -544,3 +561,37 @@ predictTcBayes <- function(calibrationData,
   }
   
 }
+
+
+#" Generate a dataset reflecting the priors used to run the analyses
+#" 
+#" @param prior Informative or not
+#" @param n number of observations to simulate
+
+
+generatePriorReconstructions <- function(prior, n=1000){
+  
+  if(prior == "Informative"){
+    params <- cbind.data.frame(parameter=c("alpha", "beta"),
+                               mean=c(0.231,0.039), 
+                               sd=c(0.065,0.004))
+    params
+  } else {
+    params <- cbind.data.frame(parameter=c("alpha", "beta"),
+                               mean=c(0,0.01), 
+                               sd=c(0,0.01))
+    params
+  }
+  x <- rnorm(n, 11,0.0001)
+  xC <- sqrt(10^6/x)-273.15
+  
+  data <- cbind.data.frame(alpha=rnorm(n, params[1,2], params[1,3]), 
+                           beta=rnorm(n, params[2,2], params[2,3]),
+                           x,
+                           xC)
+  attr(data, "priors") <-  prior
+  attr(data, "params") <-  params
+  data
+}
+
+

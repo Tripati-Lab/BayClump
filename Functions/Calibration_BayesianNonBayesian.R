@@ -1,14 +1,14 @@
-#' This function generate temperature predictions (in 10^6/T2) based on a 
-#' calibration dataset and target D47. Note that this alternative function
-#' propagates uncertainty around the target D47.
-#' 
-#' @param calibrationData The calibration dataset
-#' @param hasMaterial Whether only a mixed model should be run
-#' @param n.iter number of MCMC iterations
-#' @param burninFrac burnin fraction (0-1)
-#' @param priors Informative priors or not on the slope and intercept
-#' @param useInits whether we should use inits to the run
-#' @param D47error the column in calibrationData containing the uncertainty in D47
+#" This function generate temperature predictions (in 10^6/T2) based on a 
+#" calibration dataset and target D47. Note that this alternative function
+#" propagates uncertainty around the target D47.
+#" 
+#" @param calibrationData The calibration dataset
+#" @param hasMaterial Whether only a mixed model should be run
+#" @param n.iter number of MCMC iterations
+#" @param burninFrac burnin fraction (0-1)
+#" @param priors Informative priors or not on the slope and intercept
+#" @param useInits whether we should use inits to the run
+#" @param D47error the column in calibrationData containing the uncertainty in D47
 
 
 fitClumpedRegressions <<- function(calibrationData, 
@@ -17,14 +17,14 @@ fitClumpedRegressions <<- function(calibrationData,
                                 burninFrac = 0.5,
                                 priors = "Informative",
                                 useInits = TRUE, 
-                                D47error = 'D47error'){
+                                D47error = "D47error"){
   
   
-  if(priors == 'Informative'){
-    alphaBLM1 = 'dnorm(0.231,0.065)' 
-    betaBLM1 = 'dnorm(0.039,0.004)'}else{
-      alphaBLM1 = 'dnorm(0, 0.01)' 
-      betaBLM1 = 'dnorm(0, 0.01)'
+  if(priors == "Informative"){
+    alphaBLM1 = "dnorm(0.231,0.065)" 
+    betaBLM1 = "dnorm(0.039,0.004)"}else{
+      alphaBLM1 = "dnorm(0, 0.01)" 
+      betaBLM1 = "dnorm(0, 0.01)"
     }
   
   
@@ -122,7 +122,7 @@ fitClumpedRegressions <<- function(calibrationData,
   ##If mixed
   if(hasMaterial == T){
     
-    Y= NULL#IsoplotR::york(cbind(calibrationData[,c('Temperature','TempError','D47', 'D47error')]))
+    Y= NULL#IsoplotR::york(cbind(calibrationData[,c("Temperature","TempError","D47", "D47error")]))
     M0=NULL#lm(D47 ~ Temperature, calibrationData)
     M1=NULL#lm(D47 ~ Temperature+Material, calibrationData)
     M2=NULL#lm(D47 ~ Temperature*Material, calibrationData)
@@ -152,11 +152,11 @@ fitClumpedRegressions <<- function(calibrationData,
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData, hasMaterial = T),
                                   getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData, hasMaterial = T))
     
-    BLM3_fitR2<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep('conditional',row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
+    BLM3_fitR2<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep("conditional",row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
     colnames(BLM3_fitR2)<-names(R2sComplete)
     R2sComplete<-rbind(R2sComplete,BLM3_fitR2)
     row.names(R2sComplete)<-NULL
-    BLM3_fitR2M<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep('marginal',row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
+    BLM3_fitR2M<-t(as.data.frame(BLM3_fit$BUGSoutput$summary[grep("marginal",row.names(BLM3_fit$BUGSoutput$summary)),c(5,3,7)]))
     colnames(BLM3_fitR2M)<-names(R2sComplete)
     row.names(BLM3_fitR2M)<-NULL
     R2sComplete<-rbind(R2sComplete,BLM3_fitR2M)
@@ -166,7 +166,7 @@ fitClumpedRegressions <<- function(calibrationData,
     DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC,  BLM3_fit$BUGSoutput$DIC)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
     
-    CompleteModelFit<-list('Y'=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
+    CompleteModelFit<-list("Y"=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
   }else{
     
     
@@ -198,7 +198,7 @@ fitClumpedRegressions <<- function(calibrationData,
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    Y=NULL#IsoplotR::york(calibrationData[,c('Temperature','TempError','D47','D47error')])
+    Y=NULL#IsoplotR::york(calibrationData[,c("Temperature","TempError","D47","D47error")])
     M0=NULL#lm(D47 ~ Temperature, calibrationData)
     
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
@@ -207,23 +207,23 @@ fitClumpedRegressions <<- function(calibrationData,
     DICs<-c(BLM1_fit$BUGSoutput$DIC, BLM1_fit_NoErrors$BUGSoutput$DIC)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors")
     
-    CompleteModelFit<-list('Y'=Y,'M0'=M0,'BLM1_fit'=BLM1_fit,'BLM1_fit_NoErrors'=BLM1_fit_NoErrors)
+    CompleteModelFit<-list("Y"=Y,"M0"=M0,"BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors)
   }
   
-  attr(CompleteModelFit, 'data') <- calibrationData 
-  attr(CompleteModelFit, 'R2s') <- R2sComplete 
-  attr(CompleteModelFit, 'DICs') <- DICs 
+  attr(CompleteModelFit, "data") <- calibrationData 
+  attr(CompleteModelFit, "R2s") <- R2sComplete 
+  attr(CompleteModelFit, "DICs") <- DICs 
   
   return(CompleteModelFit)
 }
 
 
-#' Bootstrap York regression models from a calibration dataset
-#' 
-#' @param data The calibration dataset
-#' @param replicates Number of bootstrap replicates
-#' @param samples Number of samples per replicate
-#' @param D47error The column in data containing the errors in D47
+#" Bootstrap York regression models from a calibration dataset
+#" 
+#" @param data The calibration dataset
+#" @param replicates Number of bootstrap replicates
+#" @param samples Number of samples per replicate
+#" @param D47error The column in data containing the errors in D47
 
 simulateYork_measured <<- function(data, 
                                    replicates, 
@@ -234,17 +234,17 @@ simulateYork_measured <<- function(data,
     dataSub$y_SE <- dataSub[,D47error]
     dataSub$x_SE <- abs(dataSub$TempError)
     Reg <- york(cbind.data.frame(dataSub$Temperature, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
-    cbind.data.frame('intercept'=Reg$a[1],'slope'=Reg$b[1])
+    cbind.data.frame("intercept"=Reg$a[1],"slope"=Reg$b[1])
   }))
 }
 
 
-#' Bootstrap an OLS regression models from a calibration dataset
-#' 
-#' @param data The calibration dataset
-#' @param replicates Number of bootstrap replicates
-#' @param samples Number of samples per replicate
-#' @param D47error The column in data containing the errors in D47
+#" Bootstrap an OLS regression models from a calibration dataset
+#" 
+#" @param data The calibration dataset
+#" @param replicates Number of bootstrap replicates
+#" @param samples Number of samples per replicate
+#" @param D47error The column in data containing the errors in D47
 
 simulateLM_measured <<- function(data, 
                                replicates, 
@@ -256,25 +256,25 @@ simulateLM_measured <<- function(data,
     dataSub$y_SE<-dataSub[,D47error]
     dataSub$x_SE<-dataSub$TempError
     Reg<-summary(lm(D47 ~ Temperature,  dataSub))
-    res<-cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
-    attr(res, 'R2') <- Reg$r.squared
+    res<-cbind.data.frame("intercept"=Reg$coefficients[1,1],"slope"=Reg$coefficients[2,1])
+    attr(res, "R2") <- Reg$r.squared
     res
   })
   
   R2s<-unlist(lapply(a, function(x) attributes(x)$R2))
   R2s<-data.frame(median=median(R2s), lwr=quantile(R2s, 0.025), upr=quantile(R2s, 0.975))
   a<-do.call(rbind,a)
-  attr(a, 'R2') <- R2s
+  attr(a, "R2") <- R2s
   return(a)
 }
 
 
-#' Bootstrap a weighted OLS regression models from a calibration dataset
-#' 
-#' @param data The calibration dataset
-#' @param replicates Number of bootstrap replicates
-#' @param samples Number of samples per replicate
-#' @param D47error The column in data containing the errors in D47
+#" Bootstrap a weighted OLS regression models from a calibration dataset
+#" 
+#" @param data The calibration dataset
+#" @param replicates Number of bootstrap replicates
+#" @param samples Number of samples per replicate
+#" @param D47error The column in data containing the errors in D47
 
 
 simulateLM_inverseweights <<- function(data, 
@@ -288,25 +288,25 @@ simulateLM_inverseweights <<- function(data,
     Reg0<-lm(D47 ~ Temperature,  dataSub)
     wt <- 1 / lm(abs(Reg0$residuals) ~ Reg0$fitted.values)$fitted.values^2
     Reg<-summary(lm(D47 ~ Temperature,  dataSub, weights = wt))
-    res<-cbind.data.frame('intercept'=Reg$coefficients[1,1],'slope'=Reg$coefficients[2,1])
-    attr(res, 'R2') <- Reg$r.squared
+    res<-cbind.data.frame("intercept"=Reg$coefficients[1,1],"slope"=Reg$coefficients[2,1])
+    attr(res, "R2") <- Reg$r.squared
     res
   })
   
   R2s<-unlist(lapply(a, function(x) attributes(x)$R2))
   R2s<-data.frame(median=median(R2s), lwr=quantile(R2s, 0.025), upr=quantile(R2s, 0.975))
   a<-do.call(rbind,a)
-  attr(a, 'R2') <- R2s
+  attr(a, "R2") <- R2s
   return(a)
 }
 
 
-#' Bootstrap Deming regression models from a calibration dataset
-#' 
-#' @param data The calibration dataset
-#' @param replicates Number of bootstrap replicates
-#' @param samples Number of samples per replicate
-#' @param D47error The column in data containing the errors in D47
+#" Bootstrap Deming regression models from a calibration dataset
+#" 
+#" @param data The calibration dataset
+#" @param replicates Number of bootstrap replicates
+#" @param samples Number of samples per replicate
+#" @param D47error The column in data containing the errors in D47
 
 
 simulateDeming <<- function(data, 
@@ -323,7 +323,7 @@ simulateDeming <<- function(data,
     dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
     dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
     Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
-    cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
+    cbind.data.frame("intercept"=Reg$coefficients[1],"slope"=Reg$coefficients[2])
   }))
   
   }else{
@@ -332,23 +332,23 @@ simulateDeming <<- function(data,
       dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
       dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
       Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
-      cbind.data.frame('intercept'=Reg$coefficients[1],'slope'=Reg$coefficients[2])
+      cbind.data.frame("intercept"=Reg$coefficients[1],"slope"=Reg$coefficients[2])
     }))
   }
   
 }
 
 
-#' Bootstrap Bayesian regression models from a calibration dataset
-#' 
-#' @param data The calibration dataset
-#' @param replicates Number of bootstrap replicates
-#' @param samples Number of samples per replicate
-#' @param generations number of MCMC generations
-#' @param isMixed should we run only the mixed model?
-#' @param priors Informative priors or not?
-#' @param multicore run the analyses using multiple cores?
-#' @param D47error The column in data containing the errors in D47
+#" Bootstrap Bayesian regression models from a calibration dataset
+#" 
+#" @param data The calibration dataset
+#" @param replicates Number of bootstrap replicates
+#" @param samples Number of samples per replicate
+#" @param generations number of MCMC generations
+#" @param isMixed should we run only the mixed model?
+#" @param priors Informative priors or not?
+#" @param multicore run the analyses using multiple cores?
+#" @param D47error The column in data containing the errors in D47
 
 
 simulateBLM_measuredMaterial <<- function(data, 
@@ -382,12 +382,14 @@ simulateBLM_measuredMaterial <<- function(data,
     
     if(isMixed == FALSE){
       to_ret<-list(
-        cbind.data.frame('intercept'=Reg$BLM1_fit$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
-        cbind.data.frame('intercept'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],'slope'=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]))
-      attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
-      attr(to_ret, 'DICs') <- attr(Reg, "DICs") 
-      attr(to_ret, 'Conv') <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput$summary, 
+        cbind.data.frame("intercept"=Reg$BLM1_fit$BUGSoutput$summary[1,1],"slope"=Reg$BLM1_fit$BUGSoutput$summary[2,1]),
+        cbind.data.frame("intercept"=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[1,1],"slope"=Reg$BLM1_fit_NoErrors$BUGSoutput$summary[2,1]))
+      attr(to_ret, "R2s") <- attr(Reg, "R2s") 
+      attr(to_ret, "DICs") <- attr(Reg, "DICs") 
+      attr(to_ret, "Conv") <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput$summary, 
                                    BLM1_fit_NoErrors= Reg$BLM1_fit_NoErrors$BUGSoutput$summary)
+      attr(to_ret, "PosteriorOne") <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput$sims.matrix, BLM1_fit_NoErrors=Reg$BLM1_fit_NoErrors$BUGSoutput$sims.matrix)
+      
       to_ret
     }else{
       
@@ -396,14 +398,16 @@ simulateBLM_measuredMaterial <<- function(data,
       to_ret<-list(
         NA,
         NA,
-        cbind.data.frame('intercept'=Reg$BLM3_fit$BUGSoutput$summary[c(1:nmaterials),1],'slope'=Reg$BLM3_fit$BUGSoutput$summary[c((nmaterials+1):c(nmaterials+nmaterials)),1], 
-                         'material'=unique(dataSub$Material )))
-      attr(to_ret, 'R2s') <- attr(Reg, "R2s") 
-      attr(to_ret, 'DICs') <- attr(Reg, "DICs") 
-      attr(to_ret, 'Conv') <- list(#BLM1_fit=Reg$BLM1_fit$BUGSoutput$summary, 
+        cbind.data.frame("intercept"=Reg$BLM3_fit$BUGSoutput$summary[c(1:nmaterials),1],"slope"=Reg$BLM3_fit$BUGSoutput$summary[c((nmaterials+1):c(nmaterials+nmaterials)),1], 
+                         "material"=unique(dataSub$Material )))
+      attr(to_ret, "R2s") <- attr(Reg, "R2s") 
+      attr(to_ret, "DICs") <- attr(Reg, "DICs") 
+      attr(to_ret, "Conv") <- list(#BLM1_fit=Reg$BLM1_fit$BUGSoutput$summary, 
                                    #BLM1_fit_NoErrors= Reg$BLM1_fit_NoErrors$BUGSoutput$summary,
                                    BLM3_fit=Reg$BLM3_fit$BUGSoutput$summary
       )
+      attr(to_ret, "PosteriorOne") <- Reg$BLM3_fit$BUGSoutput$sims.matrix
+      
       to_ret
     }
     
@@ -420,14 +424,14 @@ simulateBLM_measuredMaterial <<- function(data,
   
   if(isMixed == FALSE){
     
-    to_ret<-list('BLM_Measured_errors'=
+    to_ret<-list("BLM_Measured_errors"=
            do.call(rbind,lapply(tot, function(x) x[[1]])),
-         'BLM_Measured_no_errors'=do.call(rbind,lapply(tot, function(x) x[[2]]))
+         "BLM_Measured_no_errors"=do.call(rbind,lapply(tot, function(x) x[[2]]))
     )
     
     rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
     rs2<-aggregate(rs2[, 1:3], list(rs2$model), median)
-    attr(to_ret, 'R2s') <- rs2
+    attr(to_ret, "R2s") <- rs2
     
     DICs<-lapply(tot, function(x) attr(x, "DICs") )
     
@@ -436,11 +440,11 @@ simulateBLM_measuredMaterial <<- function(data,
       cbind.data.frame(median=median(a), lwr=quantile(a, 0.025), upr=quantile(a, 0.975), model=names(a[1]))
       }))
 
-    attr(to_ret, 'DICs') <- DICs
+    attr(to_ret, "DICs") <- DICs
     
     Conv<-lapply(tot, function(x) attr(x, "Conv") )
-    attr(to_ret, 'Conv') <- Conv
-    
+    attr(to_ret, "Conv") <- Conv
+    attr(to_ret, "PosteriorOne") <- attr(tot[[1]], "PosteriorOne")
     
     to_ret
   }else{
@@ -450,10 +454,10 @@ simulateBLM_measuredMaterial <<- function(data,
     BLMMFin<-do.call(rbind,targetlist)
     #BLMMFin<-BLMMFin[grep("[",row.names(BLMMFin), fixed = T),]
     
-    to_ret<-list('BLM_Measured_errors'=
+    to_ret<-list("BLM_Measured_errors"=
            do.call(rbind,lapply(tot, function(x) x[[1]])),
-         'BLM_Measured_no_errors'=do.call(rbind,lapply(tot, function(x) x[[2]])),
-         'BLMM_Measured_errors'= BLMMFin
+         "BLM_Measured_no_errors"=do.call(rbind,lapply(tot, function(x) x[[2]])),
+         "BLMM_Measured_errors"= BLMMFin
     )
     rs2<-do.call(rbind,lapply(tot, function(x) attr(x, "R2s") ))
     rs21<-aggregate(rs2[, 1:3], list(rs2$class,rs2$model), median)
@@ -462,7 +466,7 @@ simulateBLM_measuredMaterial <<- function(data,
     rs21$lwr<-rs22
     rs21$upr<-rs23
     
-    attr(to_ret, 'R2s') <- rs21
+    attr(to_ret, "R2s") <- rs21
     
     DICs<-lapply(tot, function(x) attr(x, "DICs") )
     
@@ -470,10 +474,11 @@ simulateBLM_measuredMaterial <<- function(data,
       a<-unlist(lapply(seq_along(DICs), function(y){ DICs[[y]][x] }))
       cbind.data.frame(median=median(a), lwr=quantile(a, 0.025), upr=quantile(a, 0.975), model=names(a[1]))
     }))
-    attr(to_ret, 'DICs') <- DICs
+    attr(to_ret, "DICs") <- DICs
     
     Conv<-lapply(tot, function(x) attr(x, "Conv") )
-    attr(to_ret, 'Conv') <- Conv
+    attr(to_ret, "Conv") <- Conv
+    attr(to_ret, "PosteriorOne") <- attr(tot[[1]], "PosteriorOne")
     
     to_ret
   }
@@ -481,11 +486,11 @@ simulateBLM_measuredMaterial <<- function(data,
 }
 
 
-#' Estimate the R2 for Bayesian models
-#' 
-#' @param model The model (from R2jags)
-#' @param calibrationData the calibration dataset used to fit the model
-#' @param hasMaterial Is it the mixed model?
+#" Estimate the R2 for Bayesian models
+#" 
+#" @param model The model (from R2jags)
+#" @param calibrationData the calibration dataset used to fit the model
+#" @param hasMaterial Is it the mixed model?
 
 getR2Bayesian <<- function(model, 
                            calibrationData, 
@@ -508,8 +513,8 @@ getR2Bayesian <<- function(model,
     mcmc <- model$BUGSoutput$sims.matrix
     Xmat = model.matrix( ~ Temperature, calibrationData)
     coefs = as.data.frame(mcmc[,-ncol(mcmc) ])
-    new <- rowSums(coefs[,grep('alpha', names(coefs)), drop=FALSE])
-    new2 <- rowSums(coefs[,grep('beta', names(coefs)), drop=FALSE])
+    new <- rowSums(coefs[,grep("alpha", names(coefs)), drop=FALSE])
+    new2 <- rowSums(coefs[,grep("beta", names(coefs)), drop=FALSE])
     coefs<-cbind(new,new2)
     fit = coefs %*% t(Xmat)
     resid = sweep(fit, 2, calibrationData$D47, "-")
@@ -526,14 +531,14 @@ getR2Bayesian <<- function(model,
 }
 
 
-#' This function is used to generate CI estimates at given intervals. It is currently
-#' used for plotting in BayClump.
-#' 
-#' @param data A data.frame with two columns labeled slope and intercept. 
-#' This should be the result of bootstrapping a given calibration set.
-#' @param from the lower limit in x
-#' @param to the upper limit in x
-#' @param length.out the number of breaks
+#" This function is used to generate CI estimates at given intervals. It is currently
+#" used for plotting in BayClump.
+#" 
+#" @param data A data.frame with two columns labeled slope and intercept. 
+#" This should be the result of bootstrapping a given calibration set.
+#" @param from the lower limit in x
+#" @param to the upper limit in x
+#" @param length.out the number of breaks
 
 
 RegressionSingleCI<-function(data, from, to, length.out=100){
@@ -563,4 +568,31 @@ RegressionSingleCI<-function(data, from, to, length.out=100){
   return(list(uncertaintyModels))
   
 }
+
+#" Generate a dataset reflecting the priors used to run the analyses
+#" 
+#" @param prior Informative or not
+#" @param n number of observations to simulate
+
+generatePriorDistCalibration <- function(prior, n=1000){
+  if(prior == "Informative"){
+    params <- cbind.data.frame(parameter=c("alpha", "beta"),
+                               mean=c(0.231,0.039), 
+                               sd=c(0.065,0.004))
+    params
+    } else {
+      params <- cbind.data.frame(parameter=c("alpha", "beta"),
+                                 mean=c(0,0.01), 
+                                 sd=c(0,0.01))
+      params
+    }
+  
+  data <- cbind.data.frame(alpha=rnorm(n, params[1,2], params[1,3]), 
+                   beta=rnorm(n, params[2,2], params[2,3]))
+  attr(data, "priors") <-  prior
+  attr(data, "params") <-  params
+  data
+}
+
+
 

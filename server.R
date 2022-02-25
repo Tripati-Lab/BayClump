@@ -34,18 +34,20 @@ server <- function(input, output, session) {
     }
   )
   
+  
+  
   calibrationData = reactive({
     switch(input$calset,
-           'model1' = return(Petersen),
-           'model2' = return(Anderson),
-           'model1and2' = return(PetersenAnderson),
-           'mycal' = reactiveValues({
+           "model1" = return(Petersen),
+           "model2" = return(Anderson),
+           "model1and2" = return(PetersenAnderson),
+           "mycal" = reactiveValues({
              req(input$calibrationdata)
              n_rows = length(count.fields(input$calibrationdata$datapath))
              df_out = read.csv(input$calibrationdata$datapath)
              return(df_out)
            }),
-           'all' = reactiveValues({
+           "all" = reactiveValues({
              req(input$calibrationdata)
              n_rows = length(count.fields(input$calibrationdata$datapath))
              df_out = read.csv(input$calibrationdata$datapath)
@@ -62,6 +64,14 @@ server <- function(input, output, session) {
   #For convergence
   if(exists("wb3")) rm(wb3) # Delete any existing workbook in preparation for new results
   wb3 <- createWorkbook("Bayesian output") # Prepare a workbook for calibration outputs
+  
+  
+  if(exists("wb4")) rm(wb4) # Delete any existing workbook in preparation for new results
+  wb4 <- createWorkbook("Bayesian posterior output") # Prepare a workbook for calibration outputs
+  
+  #For convergence
+  if(exists("wb5")) rm(wb5) # Delete any existing workbook in preparation for new results
+  wb5 <- createWorkbook("Bayesian reconstruction posterior output") # Prepare a workbook for calibration outputs
   
   
   observeEvent(calibrationData(),{
@@ -81,7 +91,6 @@ server <- function(input, output, session) {
           "Total samples" = length(calibrationData()$Sample.Name),
           "Unique samples" = length(unique(calibrationData()$Sample.Name)),
           "Total replicates" = sum(calibrationData()$N),
-          #"Mineralogies" = length(unique(calibrationData()$Mineralogy)),
           "Materials" = length(unique(calibrationData()$Material))
         )
       return(calsummary)
@@ -91,9 +100,17 @@ server <- function(input, output, session) {
   }) 
   
 
-  modresult <- eventReactive(input$runmods, {
+  toListen <- reactive({
+    list(input$runmods,
+         input$priors, 
+         input$multicore,
+         input$generations
+         )
+  })
+  
+  modresult <- eventReactive(toListen() , {
     
-    if ('all' %in% input$calibrationdata) {
+    if ("all" %in% input$calibrationdata) {
       print(noquote("Please upload calibration data first"))
     } 
     
@@ -104,7 +121,54 @@ server <- function(input, output, session) {
     ngenerationsBayes <<- input$generations
     ngenerationsBayesianPredictions <<- input$generations
 
-    # Remove existing worksheets from wb on 'run' click, if any
+    ##Download priors (calibration; not reactive...)
+    if(exists("wb6")) rm(wb6)
+    wb6 <- createWorkbook("Priors - Calibration")
+    if("Settings" %in% names(wb6) == TRUE) 
+    {removeWorksheet(wb6, "Settings")}
+    if("Distributions" %in% names(wb6) == TRUE) 
+    {removeWorksheet(wb6, "Distributions") }
+    pd <- generatePriorDistCalibration(prior = priors)
+    addWorksheet(wb6, "Settings") # Add a blank sheet
+    writeData(wb6, sheet = "Settings", attr(pd, "params")) # Write regression data
+    addWorksheet(wb6, "Distributions") # Add a blank sheet
+    writeData(wb6, sheet = "Distributions", pd) # Write regression data
+    
+    output$downloadPriorsCalibration <- downloadHandler(
+      filename = function() { 
+        paste("Priors_calibration_", Sys.time(), ".xlsx", sep="")
+      },
+      content = function(file) {
+        saveWorkbook(wb6, file, overwrite = TRUE)
+      }
+    )
+    
+    ##Download priors (reconstructions)
+    if(exists("wb7")) rm(wb7)
+    wb7 <- createWorkbook("Priors - Reconstruction")
+    if("Settings" %in% names(wb7) == TRUE) 
+    {removeWorksheet(wb7, "Settings")}
+    if("Distributions" %in% names(wb7) == TRUE) 
+    {removeWorksheet(wb7, "Distributions") }
+    pd <- generatePriorReconstructions(prior = priors)
+    addWorksheet(wb7, "Settings") # Add a blank sheet
+    writeData(wb7, sheet = "Settings", attr(pd, "params")) # Write regression data
+    addWorksheet(wb7, "Distributions") # Add a blank sheet
+    writeData(wb7, sheet = "Distributions", pd) # Write regression data
+    
+    output$downloadPriorsReconstruction <- downloadHandler(
+      filename = function() { 
+        paste("Priors_reconstruction_", Sys.time(), ".xlsx", sep="")
+      },
+      content = function(file) {
+        saveWorkbook(wb7, file, overwrite = TRUE)
+      }
+    )
+    
+    
+    
+    
+    # Remove existing worksheets from wb on "run" click, if any
     if("Linear regression" %in% names(wb) == TRUE) 
     {removeWorksheet(wb, "Linear regression") & removeWorksheet(wb, "Linear regression CI")}
     if("Inverse linear regression" %in% names(wb) == TRUE) 
@@ -128,6 +192,16 @@ server <- function(input, output, session) {
     {removeWorksheet(wb3, "Bayesian model with errors") }
     if("Bayesian mixed w errors" %in% names(wb3) == TRUE)
     {removeWorksheet(wb3, "Bayesian mixed w errors")}
+    
+    ##Also for the Bayesian posterior sheet
+    if("Bayesian model no errors" %in% names(wb4) == TRUE) 
+    {removeWorksheet(wb4, "Bayesian model no errors")}
+    if("Bayesian model with errors" %in% names(wb4) == TRUE) 
+    {removeWorksheet(wb4, "Bayesian model with errors") }
+    if("Bayesian mixed w errors" %in% names(wb4) == TRUE)
+    {removeWorksheet(wb4, "Bayesian mixed w errors")}
+    
+
     
     lmcals <<- NULL
     lminversecals <<- NULL
@@ -182,7 +256,7 @@ server <- function(input, output, session) {
        input$simulateBLM_measuredMaterial != FALSE |
        input$simulateBLMM_measuredMaterial != FALSE) {
       
-      withProgress(message = 'Running selected models, please wait', {
+      withProgress(message = "Running selected models, please wait", {
         
         if(input$simulateLM_measured == FALSE) {
         }
@@ -205,7 +279,7 @@ server <- function(input, output, session) {
           sink(file = "out/linmodtext.txt", type = "output")
           lmcals <<- simulateLM_measured(calData, replicates = replicates, samples = samples)
           sink()
-          incProgress(1/TotProgress, detail='...Done fitting the OLS...')
+          incProgress(1/TotProgress, detail="...Done fitting the OLS...")
           
           lmci <<- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
           lmcalci <- as.data.frame(lmci)
@@ -216,9 +290,9 @@ server <- function(input, output, session) {
             lmfig <- lmfig %>%
               add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
-                        type = 'scatter', 
-                        mode = 'markers', 
-                        marker = list(color = 'black'),
+                        type = "scatter", 
+                        mode = "markers", 
+                        marker = list(color = "black"),
                         opacity = 0.5,
                         name = "Raw data",
                         text = as.character(calibrationData()$Sample.Name),
@@ -235,25 +309,25 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#ffd166'),
-                          fillcolor = '#ffd166',
+                          line = list(color = "#ffd166"),
+                          fillcolor = "#ffd166",
                           opacity = 0.5,
-                          name = '95% CI',
+                          name = "95% CI",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = lmcalci,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate',
-                        line = list(color = "black", dash = 'dash'),
+                        name = "Mean estimate",
+                        line = list(color = "black", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>"))
-            lmfig <- lmfig %>% layout(title = '<b> Linear calibration model </b>',
-                                      legend=list(title=list(text='Legend')),
-                                      xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
-                                      yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            lmfig <- lmfig %>% layout(title = "<b> Linear calibration model </b>",
+                                      legend=list(title=list(text="Legend")),
+                                      xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)", hoverformat = ".1f"), 
+                                      yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
             
             return(lmfig)
           })
@@ -286,7 +360,7 @@ server <- function(input, output, session) {
           sink(file = "out/inverselinmodtext.txt", type = "output")
           lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates, samples = samples)
           sink()
-          incProgress(1/TotProgress, detail='...Done fitting weighted OLS...')
+          incProgress(1/TotProgress, detail="...Done fitting weighted OLS...")
           
           lminverseci <- RegressionSingleCI(data = lminversecals, from = minLim, to = maxLim)
           lminversecalci <- as.data.frame(lminverseci)
@@ -297,11 +371,11 @@ server <- function(input, output, session) {
             lminversefig <- lminversefig %>% 
               add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
-                        type = 'scatter', 
-                        mode = 'markers', 
-                        marker = list(color = 'black'),
+                        type = "scatter", 
+                        mode = "markers", 
+                        marker = list(color = "black"),
                         opacity = 0.5,
-                        name = 'Raw data',
+                        name = "Raw data",
                         text = as.character(calibrationData()$Sample.Name),
                         hovertemplate = paste(
                           "<b>Sample: %{text}</b><br><br>",
@@ -315,25 +389,25 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#ffd166'),
-                          fillcolor = '#ffd166',
+                          line = list(color = "#ffd166"),
+                          fillcolor = "#ffd166",
                           opacity = 0.5,
-                          name = '95% CI',
+                          name = "95% CI",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = lminversecalci,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate',
-                        line = list(color = "black", dash = 'dash'),
+                        name = "Mean estimate",
+                        line = list(color = "black", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>"))
-            lminversefig <- lminversefig %>% layout(title = '<b> Inverse linear calibration model </b>',
-                                                    legend=list(title=list(text='Legend')),
-                                                    xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
-                                                    yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            lminversefig <- lminversefig %>% layout(title = "<b> Inverse linear calibration model </b>",
+                                                    legend=list(title=list(text="Legend")),
+                                                    xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)", hoverformat = ".1f"), 
+                                                    yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
             
             return(lminversefig)
           })
@@ -363,7 +437,7 @@ server <- function(input, output, session) {
           sink(file = "out/yorkmodtext.txt", type = "output")
           yorkcals <<- simulateYork_measured(calData, replicates = replicates, samples = samples)
           sink()
-          incProgress(1/TotProgress, detail='...Done fitting York regression...')
+          incProgress(1/TotProgress, detail="...Done fitting York regression...")
           
           yorkci <- RegressionSingleCI(data = yorkcals, from = minLim, to = maxLim)
           yorkcalci <- as.data.frame(yorkci)
@@ -374,11 +448,11 @@ server <- function(input, output, session) {
             yorkfig <- yorkfig %>% 
               add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
-                        type = 'scatter', 
-                        mode = 'markers', 
-                        marker = list(color = 'black'),
+                        type = "scatter", 
+                        mode = "markers", 
+                        marker = list(color = "black"),
                         opacity = 0.5,
-                        name = 'Raw data',
+                        name = "Raw data",
                         text = as.character(calibrationData()$Sample.Name),
                         hovertemplate = paste(
                           "<b>Sample: %{text}</b><br><br>",
@@ -392,25 +466,25 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#ffd166'),
-                          fillcolor = '#ffd166',
+                          line = list(color = "#ffd166"),
+                          fillcolor = "#ffd166",
                           opacity = 0.5,
-                          name = '95% CI',
+                          name = "95% CI",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = yorkcalci,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate',
-                        line = list(color = "black", dash = 'dash'),
+                        name = "Mean estimate",
+                        line = list(color = "black", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>"))
-            yorkfig <- yorkfig %>% layout(title = '<b> York calibration model </b>',
-                                          legend=list(title=list(text='Legend')),
-                                          xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
-                                          yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            yorkfig <- yorkfig %>% layout(title = "<b> York calibration model </b>",
+                                          legend=list(title=list(text="Legend")),
+                                          xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)", hoverformat = ".1f"), 
+                                          yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
             
             return(yorkfig)
           })
@@ -437,7 +511,7 @@ server <- function(input, output, session) {
           sink(file = "out/demingmodtext.txt", type = "output")
           demingcals <<- simulateDeming(calData, replicates = replicates, samples = samples, multicore=multicore)
           sink()
-          incProgress(1/TotProgress, detail='...Done fitting Deming regression model...')
+          incProgress(1/TotProgress, detail="...Done fitting Deming regression model...")
           
           demingci <- RegressionSingleCI(data = demingcals, from = minLim, to = maxLim)
           demingcalci <- as.data.frame(demingci)
@@ -448,11 +522,11 @@ server <- function(input, output, session) {
             demingfig <- demingfig %>% 
               add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
-                        type = 'scatter', 
-                        mode = 'markers', 
-                        marker = list(color = 'black'),
+                        type = "scatter", 
+                        mode = "markers", 
+                        marker = list(color = "black"),
                         opacity = 0.5,
-                        name = 'Raw data',
+                        name = "Raw data",
                         text = as.character(calibrationData()$Sample.Name),
                         hovertemplate = paste(
                           "<b>Sample: %{text}</b><br><br>",
@@ -466,25 +540,25 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#ffd166'),
-                          fillcolor = '#ffd166',
+                          line = list(color = "#ffd166"),
+                          fillcolor = "#ffd166",
                           opacity = 0.5,
-                          name = '95% CI',
+                          name = "95% CI",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = demingcalci,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate',
-                        line = list(color = "black", dash = 'dash'),
+                        name = "Mean estimate",
+                        line = list(color = "black", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>"))
-            demingfig <- demingfig %>% layout(title = '<b> Deming calibration model </b>',
-                                              legend=list(title=list(text='Legend')),
-                                              xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
-                                              yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            demingfig <- demingfig %>% layout(title = "<b> Deming calibration model </b>",
+                                              legend=list(title=list(text="Legend")),
+                                              xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)", hoverformat = ".1f"), 
+                                              yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
             
             return(demingfig)
           })
@@ -512,13 +586,13 @@ server <- function(input, output, session) {
           sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- simulateBLM_measuredMaterial(calData, 
                                                         replicates = replicates, 
-                                                        isMixed=F, 
+                                                        isMixed=FALSE, 
                                                         generations=ngenerationsBayes,
                                                         priors = priors, 
                                                         samples = samples,
                                                         multicore = multicore)
           sink()
-          incProgress(1/TotProgress, detail='...Done fitting the Bayesian linear regression model...')
+          incProgress(1/TotProgress, detail="...Done fitting the Bayesian linear regression model...")
           
           bayeslincinoerror <- RegressionSingleCI(data = bayeslincals$BLM_Measured_no_errors, from = minLim, to = maxLim)
           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
@@ -531,11 +605,11 @@ server <- function(input, output, session) {
             bayeslinfig <- bayeslinfig %>% 
               add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
-                        type = 'scatter', 
-                        mode = 'markers', 
-                        marker = list(color = 'black'),
+                        type = "scatter", 
+                        mode = "markers", 
+                        marker = list(color = "black"),
                         opacity = 0.5,
-                        name = 'Raw data',
+                        name = "Raw data",
                         text = as.character(calibrationData()$Sample.Name),
                         hovertemplate = paste(
                           "<b>Sample: %{text}</b><br><br>",
@@ -549,18 +623,18 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#ffd166'),
-                          fillcolor = '#ffd166',
+                          line = list(color = "#ffd166"),
+                          fillcolor = "#ffd166",
                           opacity = 0.5,
-                          name = '95% CI - no error',
+                          name = "95% CI - no error",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslincalcinoerror,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate - no error',
-                        line = list(color = "black", dash = 'dash'),
+                        name = "Mean estimate - no error",
+                        line = list(color = "black", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
@@ -569,25 +643,25 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#446455'),
-                          fillcolor = '#446455',
+                          line = list(color = "#446455"),
+                          fillcolor = "#446455",
                           opacity = 0.5,
-                          name = '95% CI - with error',
+                          name = "95% CI - with error",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslincalciwitherror,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate - with error',
-                        line = list(color = "#446455", dash = 'dash'),
+                        name = "Mean estimate - with error",
+                        line = list(color = "#446455", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>"))
-            bayeslinfig <- bayeslinfig %>% layout(title = '<b> Bayesian linear calibration model </b>',
-                                                  legend=list(title=list(text='Legend')),
-                                                  xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
-                                                  yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            bayeslinfig <- bayeslinfig %>% layout(title = "<b> Bayesian linear calibration model </b>",
+                                                  legend=list(title=list(text="Legend")),
+                                                  xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)", hoverformat = ".1f"), 
+                                                  yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
             
             return(bayeslinfig)
           })
@@ -626,6 +700,12 @@ server <- function(input, output, session) {
           writeData(wb3, sheet = "Bayesian model no errors", conv_BLM) # Write regression data
           writeData(wb3, sheet = "Bayesian model with errors", conv_BLM_errors) # Write regression data
           
+          ##For the posterior sheet
+          
+          addWorksheet(wb4, "Bayesian model no errors") # Add a blank sheet
+          addWorksheet(wb4, "Bayesian model with errors") # Add a blank sheet
+          writeData(wb4, sheet = "Bayesian model no errors", attr(bayeslincals, "PosteriorOne")[[2]]) # Write regression data
+          writeData(wb4, sheet = "Bayesian model with errors", attr(bayeslincals, "PosteriorOne")[[1]]) # Write regression data
           
           #print(noquote("Bayesian linear model complete"))
           
@@ -674,7 +754,7 @@ server <- function(input, output, session) {
                                                          samples = samples,
                                                          multicore = multicore)
           sink()
-          incProgress(1/TotProgress, detail='...Done fitting the Bayesian linear mixed regression model...')
+          incProgress(1/TotProgress, detail="...Done fitting the Bayesian linear mixed regression model...")
           
           bayeslmminciwitherror <- RegressionSingleCI(data = bayesmixedcals$BLMM_Measured_errors, from = minLim, to = maxLim)
           bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
@@ -696,8 +776,9 @@ server <- function(input, output, session) {
           
           addWorksheet(wb3, "Bayesian mixed w errors") # Add a blank sheet
           writeData(wb3, sheet = "Bayesian mixed w errors", conv_BLMM) # Write regression data
-
           
+          addWorksheet(wb4, "Bayesian mixed w errors") # Add a blank sheet
+          writeData(wb4, sheet = "Bayesian mixed w errors", attr(bayesmixedcals, "PosteriorOne")) # Write regression data
           
           output$bayesmixedcalibration <- renderPlotly({
             bayesmixedfig <- plot_ly(data = calibrationData()
@@ -705,11 +786,11 @@ server <- function(input, output, session) {
             bayesmixedfig <- bayesmixedfig %>% 
               add_trace(x = ~calibrationData()$Temperature, 
                         y = ~D47,
-                        type = 'scatter', 
-                        mode = 'markers', 
-                        marker = list(color = 'black'),
+                        type = "scatter", 
+                        mode = "markers", 
+                        marker = list(color = "black"),
                         opacity = 0.5,
-                        name = 'Raw data',
+                        name = "Raw data",
                         text = as.character(calibrationData()$Sample.Name),
                         hovertemplate = paste(
                           "<b>Sample: %{text}</b><br><br>",
@@ -723,25 +804,25 @@ server <- function(input, output, session) {
                           y = ~mean_est,
                           ymin = ~ci_lower_est,
                           ymax = ~ci_upper_est,
-                          line = list(color = '#446455'),
-                          fillcolor = '#446455',
+                          line = list(color = "#446455"),
+                          fillcolor = "#446455",
                           opacity = 0.5,
-                          name = '95% CI - with error',
+                          name = "95% CI - with error",
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslmmincalciwitherror,
                         x = ~x,
                         y = ~mean_est,
-                        name = 'Mean estimate - with error',
-                        line = list(color = "#446455", dash = 'dash'),
+                        name = "Mean estimate - with error",
+                        line = list(color = "#446455", dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>"))
-            bayesmixedfig <- bayesmixedfig %>% layout(title = '<b> Bayesian mixed model </b>',
-                                                  legend=list(title=list(text='Legend')),
-                                                  xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)', hoverformat = '.1f'), 
-                                                  yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+            bayesmixedfig <- bayesmixedfig %>% layout(title = "<b> Bayesian mixed model </b>",
+                                                  legend=list(title=list(text="Legend")),
+                                                  xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)", hoverformat = ".1f"), 
+                                                  yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
             
             return(bayesmixedfig)
           })
@@ -758,11 +839,11 @@ server <- function(input, output, session) {
           
           output$blinmwerr <- renderPrint(
             ddply(bayesmixedcals$BLMM_Measured_errors, .( material), 
-                  function(x) cbind.data.frame('Mean (Intercept)'=round(mean(x$intercept),4),
-                                               'SE (Intercept)'=round(sd(x$slope)/sqrt(length(x$intercept)),7),
+                  function(x) cbind.data.frame("Mean (Intercept)"=round(mean(x$intercept),4),
+                                               "SE (Intercept)"=round(sd(x$slope)/sqrt(length(x$intercept)),7),
                             
-                            'Mean (Slope)'=round(mean(x$slope),4),
-                            'SE (Slope)'=round(sd(x$slope)/sqrt(length(x$slope)),7))
+                            "Mean (Slope)"=round(mean(x$slope),4),
+                            "SE (Slope)"=round(sd(x$slope)/sqrt(length(x$slope)),7))
             )
         ) 
 
@@ -800,6 +881,15 @@ server <- function(input, output, session) {
     }
   )
   
+  output$downloadPosteriorCalibration <- downloadHandler(
+    filename = function() { 
+      paste("Bayesian_posterior_output_", Sys.time(), ".xlsx", sep="")
+    },
+    
+    content = function(file) {
+      saveWorkbook(wb4, file, overwrite = TRUE)
+    }
+  )
   
   
   ########################### Example code
@@ -818,14 +908,14 @@ server <- function(input, output, session) {
       rawcalfig <- plot_ly(calibrationData(), 
                            x = ~Temperature, 
                            y = ~D47, 
-                           type = 'scatter', 
-                           mode = 'lines+markers', 
+                           type = "scatter", 
+                           mode = "lines+markers", 
                            linetype = ~as.factor(Material), 
                            color = ~as.factor(Mineralogy),
                            colors = viridis_pal(option = "D", end = 0.9)(minlength),
                            opacity = 0.6,
-                           error_y = ~list(array = ~D47error, color = '#000000'),
-                           error_x = ~list(array = ~TempError, color = '#000000'),
+                           error_y = ~list(array = ~D47error, color = "#000000"),
+                           error_x = ~list(array = ~TempError, color = "#000000"),
                            text = as.character(calibrationData()$Sample.Name),
                            hovertemplate = paste(
                              "<b>Sample: %{text}</b><br><br>",
@@ -834,10 +924,10 @@ server <- function(input, output, session) {
                              "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
                              "Type: ", as.character(calibrationData()$Material),
                              "<extra></extra>"))
-      rawcalfig <- rawcalfig %>% layout(title = '<b> Raw calibration data from user input </b>',
-                                        legend=list(title=list(text='Material and mineralogy')),
-                                        xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)'), 
-                                        yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+      rawcalfig <- rawcalfig %>% layout(title = "<b> Raw calibration data from user input </b>",
+                                        legend=list(title=list(text="Material and mineralogy")),
+                                        xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)"), 
+                                        yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
       
       return(rawcalfig)
     })
@@ -846,14 +936,14 @@ server <- function(input, output, session) {
         rawcalfig <- plot_ly(calibrationData(), 
                              x = ~Temperature, 
                              y = ~D47, 
-                             type = 'scatter', 
-                             mode = 'lines+markers', 
+                             type = "scatter", 
+                             mode = "lines+markers", 
                              linetype = ~as.factor(Material), 
                              color = ~as.factor(Material),
                              colors = viridis_pal(option = "D", end = 0.9)(length(unique(calibrationData()$Material))),
                              opacity = 0.6,
-                             error_y = ~list(array = ~D47error, color = '#000000'),
-                             error_x = ~list(array = ~TempError, color = '#000000'),
+                             error_y = ~list(array = ~D47error, color = "#000000"),
+                             error_x = ~list(array = ~TempError, color = "#000000"),
                              text = as.character(calibrationData()$Sample.Name),
                              hovertemplate = paste(
                                "<b>Sample: %{text}</b><br><br>",
@@ -861,10 +951,10 @@ server <- function(input, output, session) {
                                "Δ<sub>47</sub> (‰): %{y}<br>",
                                "Type: ", as.character(calibrationData()$Material),
                                "<extra></extra>"))
-        rawcalfig <- rawcalfig %>% layout(title = '<b> Raw calibration data from user input </b>',
-                                          legend=list(title=list(text='Material')),
-                                          xaxis = list(title = 'Temperature (10<sup>6</sup>/T<sup>2</sup>)'), 
-                                          yaxis = list(title = 'Δ<sub>47</sub> (‰)', hoverformat = '.3f'))
+        rawcalfig <- rawcalfig %>% layout(title = "<b> Raw calibration data from user input </b>",
+                                          legend=list(title=list(text="Material")),
+                                          xaxis = list(title = "Temperature (10<sup>6</sup>/T<sup>2</sup>)"), 
+                                          yaxis = list(title = "Δ<sub>47</sub> (‰)", hoverformat = ".3f"))
         
         return(rawcalfig)
       })
@@ -914,7 +1004,7 @@ server <- function(input, output, session) {
       
       hasMaterial <- ifelse( is.na(reconstructionData()$Material), FALSE, TRUE )
       
-      # Remove existing worksheets from wb2 on 'run' click, if any
+      # Remove existing worksheets from wb2 on "run" click, if any
       if("Linear" %in% names(wb2) == TRUE) 
       {removeWorksheet(wb2, "Linear")}
       if("Linear w no uncertainty" %in% names(wb2) == TRUE) 
@@ -952,6 +1042,15 @@ server <- function(input, output, session) {
       if("Bayesian linear mixed model" %in% names(wb2) == TRUE)
       {removeWorksheet(wb2, "Bayesian linear mixed model")}
       
+      
+      ##Also for the Bayesian posterior sheet
+      if("Bayesian model no errors" %in% names(wb5) == TRUE) 
+      {removeWorksheet(wb5, "Bayesian model no errors")}
+      if("Bayesian model with errors" %in% names(wb5) == TRUE) 
+      {removeWorksheet(wb5, "Bayesian model with errors") }
+      if("Bayesian mixed w errors" %in% names(wb5) == TRUE)
+      {removeWorksheet(wb5, "Bayesian mixed w errors")}
+      
       if(input$confirm == FALSE) { print(noquote("Please confirm that your reference frames match")) }
       if(input$confirm == TRUE) {
         
@@ -961,7 +1060,7 @@ server <- function(input, output, session) {
         totalModelsRecs <- length(which(totalModelsRecs==T))
         
         
-        withProgress(message = 'Running selected reconstructions, please wait', {
+        withProgress(message = "Running selected reconstructions, please wait", {
           
           # Misc options
           
@@ -986,7 +1085,7 @@ server <- function(input, output, session) {
                                      errorsD47=AccountErrorDataset)
             
           sink()
-          incProgress(1/totalModelsRecs, detail='...Done fitting the Bayesian linear models...')
+          incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear models...")
           
           infTempBayesian_werrors<- infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit",]
 
@@ -1039,6 +1138,15 @@ server <- function(input, output, session) {
           writeData(wb2, sheet = "Bayesian linear model", df0.1)
           print(noquote("Bayesian linear models complete"))
           
+          
+          attr(infTempBayesianCLinear, "PosteriorOne")[[2]]
+          
+          addWorksheet(wb5, "Bayesian model no errors") # Add a blank sheet
+          addWorksheet(wb5, "Bayesian model with errors") # Add a blank sheet
+          writeData(wb5, sheet = "Bayesian model no errors", attr(infTempBayesianCLinear, "PosteriorOne")[[2]]) # Write regression data
+          writeData(wb5, sheet = "Bayesian model with errors", attr(infTempBayesianCLinear, "PosteriorOne")[[1]]) # Write regression data
+          
+
           }
           }
           
@@ -1061,7 +1169,7 @@ server <- function(input, output, session) {
                                         hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
                                         errorsD47=AccountErrorDataset)
               sink()
-              incProgress(1/totalModelsRecs, detail='...Done fitting the Bayesian linear mixed models...')
+              incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear mixed models...")
               
               df0.2<-infTempBayesianCMixed[,-1]
               names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
@@ -1084,6 +1192,10 @@ server <- function(input, output, session) {
               
               addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
               writeData(wb2, sheet = "Bayesian linear mixed model", df0.2)
+              
+              addWorksheet(wb5, "Bayesian linear mixed model") # Add a blank sheet
+              writeData(wb5, sheet = "Bayesian linear mixed model", attr(infTempBayesianCMixed, "PosteriorOne")) # Write regression data
+              
               print(noquote("Bayesian linear mixed model complete"))
               
           
@@ -1100,9 +1212,9 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             lmrec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model='lm', replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='lm', replicates=replicates, bootDataset=AccountErrorDataset)
-                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+                a <- predictTc(calData, targety=recData$D47[x], model="lm", replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="lm", replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
             sink()
             df1 <- lmrec
@@ -1145,17 +1257,17 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
             
             lminverserec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model='wlm', replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='wlm', replicates=replicates, bootDataset=AccountErrorDataset)
-                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+                a <- predictTc(calData, targety=recData$D47[x], model="wlm", replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="wlm", replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 } ))
               sink()
-            incProgress(1/totalModelsRecs, detail='...Done fitting the weighted OLS...')
+            incProgress(1/totalModelsRecs, detail="...Done fitting the weighted OLS...")
             
             
-              colnames(lminverserec)[3] <- 'Tc'
+              colnames(lminverserec)[3] <- "Tc"
               lminverserec$D47se <- recData$D47error
-              lminverserec[,c("D47",'D47se', "Tc", "se")]
+              lminverserec[,c("D47","D47se", "Tc", "se")]
             
               
             lminverserecwun <- lminverserec
@@ -1200,17 +1312,17 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             yorkrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model='York', replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='York', replicates=replicates, bootDataset=AccountErrorDataset)
-                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+                a <- predictTc(calData, targety=recData$D47[x], model="York", replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="York", replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
               sink()
-            incProgress(1/totalModelsRecs, detail='...Done fitting the York regression...')
+            incProgress(1/totalModelsRecs, detail="...Done fitting the York regression...")
             
             
-              colnames(yorkrec)[3] <- 'Tc'
+              colnames(yorkrec)[3] <- "Tc"
               yorkrec$D47se <- recData$D47error
-              yorkrec[,c("D47",'D47se', "Tc", "se")]
+              yorkrec[,c("D47","D47se", "Tc", "se")]
             
             
             df5 <- yorkrec
@@ -1251,18 +1363,18 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             demingrec <<- do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model='Deming', replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model='Deming', replicates=replicates, bootDataset=AccountErrorDataset)
-                cbind.data.frame("D47"=recData$D47[x],'D47se'=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
+                a <- predictTc(calData, targety=recData$D47[x], model="Deming", replicates=replicates, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="Deming", replicates=replicates, bootDataset=AccountErrorDataset)
+                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 
                 } ))
             sink()
-            incProgress(1/totalModelsRecs, detail='...Done fitting the Deming regression...')
+            incProgress(1/totalModelsRecs, detail="...Done fitting the Deming regression...")
             
             
-              colnames(demingrec)[3] <- 'Tc'
+              colnames(demingrec)[3] <- "Tc"
               demingrec$D47se <- recData$D47error
-              demingrec[,c("D47",'D47se', "Tc", "se")]
+              demingrec[,c("D47","D47se", "Tc", "se")]
             
 
             df7 <- demingrec
@@ -1312,6 +1424,16 @@ server <- function(input, output, session) {
     
     content = function(file) {
       saveWorkbook(wb2, file, overwrite = TRUE)
+    }
+  )
+  
+  output$downloadreconstructionsPosterior <- downloadHandler(
+    filename = function() { 
+      paste("Reconstruction_posterior_output_", Sys.time(), ".xlsx", sep="")
+    },
+    
+    content = function(file) {
+      saveWorkbook(wb5, file, overwrite = TRUE)
     }
   )
   

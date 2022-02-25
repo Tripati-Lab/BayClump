@@ -144,8 +144,9 @@ body <- dashboardBody(
                   
                   # Download all calibration data
                   downloadButton("downloadcalibrations", label = "Download full calibration output"),
-                  downloadButton("downloadBayesian", label = "Download raw results for Bayesian models")
-                  
+                  downloadButton("downloadBayesian", label = "Download raw results for Bayesian models"),
+                  downloadButton("downloadPosteriorCalibration", label = "Download posterior one Bayesian replicate"),
+                  downloadButton("downloadPriorsCalibration", label = "Download priors")
               )
             )
     ),
@@ -237,7 +238,10 @@ body <- dashboardBody(
                          ),
                          verbatimTextOutput("recresults"),
                          # Download all reconstruction data
-                         downloadButton("downloadreconstructions", label = "Download full reconstruction output with confidence intervals")
+                         downloadButton("downloadreconstructions", label = "Download reconstruction output"),
+                         downloadButton("downloadreconstructionsPosterior", label = "Download posterior reconstruction output"),
+                         downloadButton("downloadPriorsReconstruction", label = "Download priors")
+                         
                   )
               ),
               box(width = 7,
