@@ -103,8 +103,6 @@ server <- function(input, output, session) {
   toListen <- reactive({
     list(input$runmods,
          input$priors, 
-         input$multicore,
-         input$generations
          )
   })
   
