@@ -24,4 +24,4 @@ yorkmodtext.txt
 Yorkpredictions.txt
 Bayesmixmodtext
 *.bib
-out/
+!out/.gitkeep 
