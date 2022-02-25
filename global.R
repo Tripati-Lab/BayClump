@@ -21,6 +21,7 @@ library(deming)
 library(shinyBS)
 library(ggridges)
 library(ggpubr)
+library(parallel)
 library(openxlsx)
 library(bib2df)
 
