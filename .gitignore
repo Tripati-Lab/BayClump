@@ -24,3 +24,4 @@ yorkmodtext.txt
 Yorkpredictions.txt
 Bayesmixmodtext
 *.bib
+out/
