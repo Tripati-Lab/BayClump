@@ -1080,7 +1080,7 @@ server <- function(input, output, session) {
                                                 as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
                                                 nobs=recData$N),
                                      generations=ngenerationsBayes,
-                                     hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
+                                     hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = 100, multicore = multicore, priors=priors,
                                      errorsD47=AccountErrorDataset)
             
           sink()
@@ -1165,7 +1165,7 @@ server <- function(input, output, session) {
                                                    as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
                                                    nobs=recData$N),
                                         generations=ngenerationsBayes,
-                                        hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = replicates, multicore = multicore, priors=priors,
+                                        hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 100, multicore = multicore, priors=priors,
                                         errorsD47=AccountErrorDataset)
               sink()
               incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear mixed models...")

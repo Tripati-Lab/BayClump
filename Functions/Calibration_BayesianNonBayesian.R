@@ -227,7 +227,7 @@ fitClumpedRegressions <<- function(calibrationData,
 
 simulateYork_measured <<- function(data, 
                                    replicates, 
-                                   samples, 
+                                   samples = NULL, 
                                    D47error = "D47error"){
   do.call(rbind,lapply(1:replicates, function(x){
     dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
@@ -248,7 +248,7 @@ simulateYork_measured <<- function(data,
 
 simulateLM_measured <<- function(data, 
                                replicates, 
-                               samples, 
+                               samples = NULL, 
                                D47error="D47error"){
   
   a<-lapply(1:replicates, function(x){
@@ -279,7 +279,7 @@ simulateLM_measured <<- function(data,
 
 simulateLM_inverseweights <<- function(data, 
                                      replicates, 
-                                     samples, 
+                                     samples = NULL, 
                                      D47error="D47error"){
   a<-lapply(1:replicates, function(x){
     dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
@@ -311,7 +311,7 @@ simulateLM_inverseweights <<- function(data,
 
 simulateDeming <<- function(data, 
                           replicates, 
-                          samples, 
+                          samples = NULL, 
                           D47error="D47error", 
                           multicore=TRUE){
   
@@ -353,7 +353,7 @@ simulateDeming <<- function(data,
 
 simulateBLM_measuredMaterial <<- function(data, 
                                         replicates, 
-                                        samples, 
+                                        samples = NULL, 
                                         generations=20000, 
                                         isMixed=FALSE,
                                         priors = "Informative", 
