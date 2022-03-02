@@ -216,6 +216,8 @@ body <- dashboardBody(
                          
                          # Summary stats panel
                          tableOutput("contents2"),
+                         numericInput("replicationRec", label = "Number of bootstrap replicates for every model", 
+                                      100, min = 2, max = 10000),
                          tags$b("Models to run:"),
                          checkboxInput("simulateLM_measuredRec", "Linear model", FALSE),
                          checkboxInput("simulateLM_inverseweightsRec", "Inverse weighted linear model", FALSE),
@@ -223,10 +225,8 @@ body <- dashboardBody(
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("simulateBLM_measuredMaterialRec", "Bayesian simple linear model", FALSE),
                          checkboxInput("simulateBLMM_measuredMaterialRec", "Bayesian mixed model", FALSE),
-                         tags$b("Click to confirm:"),
-                         checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame"),
-                         tags$b("For help choosing appropriate reconstruction options, see the User Manual"),
-                         checkboxInput("AccountErrorDataset", "Account for regression parameter uncertainty?"),
+                         tags$b("Factor in parameter uncertainty?"),
+                         checkboxInput("AccountErrorDataset", "Yes"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),

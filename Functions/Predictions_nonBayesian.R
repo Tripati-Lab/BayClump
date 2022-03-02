@@ -28,7 +28,7 @@ predictTc <<- function(calData,
     mod <<- lm(D47 ~ T2, calData[sample(1:nrow(calData), nrow(calData), replace = T),])
     estimate <<- investr::invest(mod, y0 = targety,
            interval = "percentile", 
-           nsim = replicates, seed = 3, 
+           nsim = 1, seed = 3, 
            extendInt="yes", progress=F, 
            lower=-100,
            upper=100)
@@ -58,7 +58,7 @@ predictTc <<- function(calData,
         mod<<-lm(D47 ~ T2,  ds, weights = wt)
         estimate <<- investr::invest(mod, y0 = targety,
                                      interval = "percentile", 
-                                     nsim = replicates, seed = 3, 
+                                     nsim = 1, seed = 3, 
                                      extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
@@ -94,7 +94,7 @@ predictTc <<- function(calData,
                             algorithm = "port") 
         estimate <<- investr::invest(fit1, y0 = targety,
                                      interval = "percentile", 
-                                     nsim = replicates, seed = 3, 
+                                     nsim = 1, seed = 3, 
                                      extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)
@@ -138,7 +138,7 @@ predictTc <<- function(calData,
         
         estimate <<- investr::invest(fit1, y0 = targety,
                                      interval = "percentile", 
-                                     nsim = replicates, seed = 3, 
+                                     nsim = 1, seed = 3, 
                                      extendInt="yes", progress=F, 
                                      lower=-100,
                                      upper=100)

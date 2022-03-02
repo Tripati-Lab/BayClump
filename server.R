@@ -101,10 +101,7 @@ server <- function(input, output, session) {
   
 
   toListen <- reactive({
-    list(input$runmods,
-         input$priors, 
-         input$multicore
-         )
+    list(input$runmods)
   })
   
   modresult <- eventReactive(toListen() , {
@@ -995,6 +992,8 @@ server <- function(input, output, session) {
   
   recresult <- eventReactive(input$runrec, {
     
+    replicatesRec <<- input$replicationRec
+
     if(is.null(input$reconstructiondata)) {print(noquote("Please upload reconstruction data first"))}
     if(!is.null(input$reconstructiondata)) {
       
@@ -1050,10 +1049,9 @@ server <- function(input, output, session) {
       if("Bayesian mixed w errors" %in% names(wb5) == TRUE)
       {removeWorksheet(wb5, "Bayesian mixed w errors")}
       
-      if(input$confirm == FALSE) { print(noquote("Please confirm that your reference frames match")) }
-      if(input$confirm == TRUE) {
-        
-        
+      if("Bayesian linear mixed model" %in% names(wb5) == TRUE)
+      {removeWorksheet(wb5, "Bayesian linear mixed model")}
+      
         totalModelsRecs <- c(input$simulateLM_measuredRec, input$simulateLM_inverseweightsRec, input$simulateYork_measuredRec,
                          input$simulateDemingRec, input$simulateBLM_measuredMaterialRec, input$simulateBLMM_measuredMaterialRec)
         totalModelsRecs <- length(which(totalModelsRecs==T))
@@ -1065,144 +1063,8 @@ server <- function(input, output, session) {
           
           AccountErrorDataset <- input$AccountErrorDataset
           
-          if(input$simulateBLM_measuredMaterialRec == TRUE){
-            
-            if(is.null(bayeslincals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
-              
-            ##This function runs only Bayesian predictions
-            ##(Only Bayesian simple linear with error for now)
-            sink("out/bayespredictions.txt", type = "output")
-            
-            ##Linear models
-            infTempBayesianCLinear <- predictTcBayes(calibrationData=calData,
-                                     data=cbind(recData$D47,
-                                                ifelse(recData$D47error==0,0.00001,recData$D47error),
-                                                as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
-                                                nobs=recData$N),
-                                     generations=ngenerationsBayes,
-                                     hasMaterial=F, bootDataset=T, onlyMedian=T, replicates = 100, multicore = multicore, priors=priors,
-                                     errorsD47=AccountErrorDataset)
-            
-          sink()
-          incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear models...")
-          
-          infTempBayesian_werrors<- infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit",]
-
-          df0<-infTempBayesian_werrors[,-c(1,4)]
-          names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
-          rownames(df0) <- NULL
-          
-          output$BpredictionsErrors <- renderTable({
-            
-            df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
-            df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
-            df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
-            df0$`1SD Temperature (°C)` <- formatC(df0$`1SD Temperature (°C)`, digits = 7, format = "f")
-            head(df0)
-          },
-            caption = "Bayesian predictions (BLM_errors)",
-            caption.placement = getOption("xtable.caption.placement", "top"),
-          rownames = FALSE,
-          spacing = "m",
-          align = "c"
-            
-          )
-          
-          addWorksheet(wb2, "Bayesian linear model, errors") # Add a blank sheet
-          writeData(wb2, sheet = "Bayesian linear model, errors", df0)
-          
-          ##Without errors
-          infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit_NoErrors",]
-          df0.1<-infTempBayesian[,-c(1,4)]
-          names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
-          rownames(df0.1) <- NULL
-          
-          output$Bpredictions <- renderTable({
-            
-            df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
-            df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
-            df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
-            df0.1$`1SD Temperature (°C)` <- formatC(df0.1$`1SD Temperature (°C)`, digits = 7, format = "f")
-            head(df0.1)
-          },
-            caption = "Bayesian predictions (BLM without errors)",
-            caption.placement = getOption("xtable.caption.placement", "top"),
-          rownames = FALSE,
-          spacing = "m",
-          align = "c"
-            
-          )
-          
-          addWorksheet(wb2, "Bayesian linear model") # Add a blank sheet
-          writeData(wb2, sheet = "Bayesian linear model", df0.1)
-          print(noquote("Bayesian linear models complete"))
-          
-          
-          attr(infTempBayesianCLinear, "PosteriorOne")[[2]]
-          
-          addWorksheet(wb5, "Bayesian model no errors") # Add a blank sheet
-          addWorksheet(wb5, "Bayesian model with errors") # Add a blank sheet
-          writeData(wb5, sheet = "Bayesian model no errors", attr(infTempBayesianCLinear, "PosteriorOne")[[2]]) # Write regression data
-          writeData(wb5, sheet = "Bayesian model with errors", attr(infTempBayesianCLinear, "PosteriorOne")[[1]]) # Write regression data
-          
-
-          }
-          }
-          
-
-          
-          if(input$simulateBLMM_measuredMaterialRec == TRUE){
-            if(is.null(bayesmixedcals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
-            
-            
-             
-            ## Mixed model
-              sink("out/bayespredictionsMixed.txt", type = "output")
-              
-              infTempBayesianCMixed <-predictTcBayes(calibrationData=calData,
-                                        data=cbind(recData$D47,
-                                                   ifelse(recData$D47error==0,0.00001,recData$D47error),
-                                                   as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
-                                                   nobs=recData$N),
-                                        generations=ngenerationsBayes,
-                                        hasMaterial=T, bootDataset=T, onlyMedian=T, replicates = 100, multicore = multicore, priors=priors,
-                                        errorsD47=AccountErrorDataset)
-              sink()
-              incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear mixed models...")
-              
-              df0.2<-infTempBayesianCMixed[,-1]
-              names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
-              rownames(df0.2) <- NULL
-              
-              output$BpredictionsBLMM <- renderTable({
-                
-                df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
-                df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
-                df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
-                df0.2$`1SD Temperature (°C)` <- formatC(df0.2$`1SD Temperature (°C)`, digits = 7, format = "f")
-                head(df0.2)
-              },
-              caption = "Bayesian predictions under a Bayesian linear mixed model",
-              caption.placement = getOption("xtable.caption.placement", "top"),
-              rownames = FALSE,
-              spacing = "m",
-              align = "c"
-              )
-              
-              addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
-              writeData(wb2, sheet = "Bayesian linear mixed model", df0.2)
-              
-              addWorksheet(wb5, "Bayesian linear mixed model") # Add a blank sheet
-              writeData(wb5, sheet = "Bayesian linear mixed model", attr(infTempBayesianCMixed, "PosteriorOne")) # Write regression data
-              
-              print(noquote("Bayesian linear mixed model complete"))
-              
-          
-            }
-              }
-          
-          
-          if( input$simulateLM_measuredRec == TRUE ) {
+          #OLS
+          if( input$simulateLM_measuredRec) {
             
             if(is.null(lmcals)) { print(noquote("Please run the calibration step for linear models first")) }else{
               
@@ -1211,8 +1073,8 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             lmrec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model="lm", replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="lm", replicates=replicates, bootDataset=AccountErrorDataset)
+                a <- predictTc(calData, targety=recData$D47[x], model="lm", replicates=replicatesRec, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="lm", replicates=replicatesRec, bootDataset=AccountErrorDataset)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
             sink()
@@ -1246,9 +1108,8 @@ server <- function(input, output, session) {
             }
             }
           
-          
           #Inverse weighted linear model 
-          if( input$simulateLM_inverseweightsRec == TRUE ) {
+          if( input$simulateLM_inverseweightsRec ) {
             if(is.null(lminversecals)) { print(noquote("Please run the calibration step for weighted OLS models first")) }else{
               
             sink("out/wLMpredictions.txt", type = "output")
@@ -1256,8 +1117,8 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
             
             lminverserec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model="wlm", replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="wlm", replicates=replicates, bootDataset=AccountErrorDataset)
+                a <- predictTc(calData, targety=recData$D47[x], model="wlm", replicates=replicatesRec, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="wlm", replicates=replicatesRec, bootDataset=AccountErrorDataset)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 } ))
               sink()
@@ -1303,7 +1164,7 @@ server <- function(input, output, session) {
             }
           
           # York regression
-          if( input$simulateYork_measuredRec == TRUE ) {
+          if( input$simulateYork_measuredRec) {
             if(is.null(yorkcals)) { print(noquote("Please run the calibration step for York models first")) }else{
               
               sink("out/Yorkpredictions.txt", type = "output")
@@ -1311,8 +1172,8 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             yorkrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model="York", replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="York", replicates=replicates, bootDataset=AccountErrorDataset)
+                a <- predictTc(calData, targety=recData$D47[x], model="York", replicates=replicatesRec, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="York", replicates=replicatesRec, bootDataset=AccountErrorDataset)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
               sink()
@@ -1354,7 +1215,7 @@ server <- function(input, output, session) {
             }
           
           # Deming regression
-          if( input$simulateDemingRec == TRUE ) {
+          if( input$simulateDemingRec) {
             if(is.null(demingcals) ) { print(noquote("Please run the calibration step for Deming models first")) }else{
               
               sink("out/Demingpredictions.txt", type = "output")
@@ -1362,8 +1223,8 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             demingrec <<- do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTc(calData, targety=recData$D47[x], model="Deming", replicates=replicates, bootDataset=AccountErrorDataset)
-                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="Deming", replicates=replicates, bootDataset=AccountErrorDataset)
+                a <- predictTc(calData, targety=recData$D47[x], model="Deming", replicates=replicatesRec, bootDataset=AccountErrorDataset)
+                b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], model="Deming", replicates=replicatesRec, bootDataset=AccountErrorDataset)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 
                 } ))
@@ -1406,8 +1267,144 @@ server <- function(input, output, session) {
             }
             }
 
+          #BML
+          if(input$simulateBLM_measuredMaterialRec){
+            
+            if(is.null(bayeslincals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
+              
+              ##This function runs only Bayesian predictions
+              ##(Only Bayesian simple linear with error for now)
+              sink("out/bayespredictions.txt", type = "output")
+              
+              ##Linear models
+              infTempBayesianCLinear <- predictTcBayes(calibrationData=calData,
+                                                       data=cbind(recData$D47,
+                                                                  ifelse(recData$D47error==0,0.00001,recData$D47error),
+                                                                  as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
+                                                                  nobs=recData$N),
+                                                       generations=ngenerationsBayes,
+                                                       hasMaterial=F, bootDataset=AccountErrorDataset, onlyMedian=T, replicates = replicatesRec, multicore = multicore, priors=priors)
+              
+              sink()
+              incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear models...")
+              
+              infTempBayesian_werrors<- infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit",]
+              
+              df0<-infTempBayesian_werrors[,-c(1,4)]
+              names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+              rownames(df0) <- NULL
+              
+              output$BpredictionsErrors <- renderTable({
+                
+                df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
+                df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
+                df0$`1SD Temperature (°C)` <- formatC(df0$`1SD Temperature (°C)`, digits = 7, format = "f")
+                head(df0)
+              },
+              caption = "Bayesian predictions (BLM_errors)",
+              caption.placement = getOption("xtable.caption.placement", "top"),
+              rownames = FALSE,
+              spacing = "m",
+              align = "c"
+              
+              )
+              
+              addWorksheet(wb2, "Bayesian linear model, errors") # Add a blank sheet
+              writeData(wb2, sheet = "Bayesian linear model, errors", df0)
+              
+              ##Without errors
+              infTempBayesian<-infTempBayesianCLinear[infTempBayesianCLinear[,1]=="BLM1_fit_NoErrors",]
+              df0.1<-infTempBayesian[,-c(1,4)]
+              names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+              rownames(df0.1) <- NULL
+              
+              output$Bpredictions <- renderTable({
+                
+                df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
+                df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
+                df0.1$`1SD Temperature (°C)` <- formatC(df0.1$`1SD Temperature (°C)`, digits = 7, format = "f")
+                head(df0.1)
+              },
+              caption = "Bayesian predictions (BLM without errors)",
+              caption.placement = getOption("xtable.caption.placement", "top"),
+              rownames = FALSE,
+              spacing = "m",
+              align = "c"
+              
+              )
+              
+              addWorksheet(wb2, "Bayesian linear model") # Add a blank sheet
+              writeData(wb2, sheet = "Bayesian linear model", df0.1)
+              print(noquote("Bayesian linear models complete"))
+              
+              
+              attr(infTempBayesianCLinear, "PosteriorOne")[[2]]
+              
+              addWorksheet(wb5, "Bayesian model no errors") # Add a blank sheet
+              addWorksheet(wb5, "Bayesian model with errors") # Add a blank sheet
+              writeData(wb5, sheet = "Bayesian model no errors", attr(infTempBayesianCLinear, "PosteriorOne")[[2]]) # Write regression data
+              writeData(wb5, sheet = "Bayesian model with errors", attr(infTempBayesianCLinear, "PosteriorOne")[[1]]) # Write regression data
+              
+              
+            }
+          }
+          
+          
+          #Mixed model
+          if(input$simulateBLMM_measuredMaterialRec){
+            if(is.null(bayesmixedcals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
+              
+              
+              
+              ## Mixed model
+              sink("out/bayespredictionsMixed.txt", type = "output")
+              
+              infTempBayesianCMixed <-predictTcBayes(calibrationData=calData,
+                                                     data=cbind(recData$D47,
+                                                                ifelse(recData$D47error==0,0.00001,recData$D47error),
+                                                                as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
+                                                                nobs=recData$N),
+                                                     generations=ngenerationsBayes,
+                                                     hasMaterial=T, bootDataset=AccountErrorDataset, onlyMedian=T, replicates = replicatesRec, multicore = multicore, priors=priors)
+              sink()
+              incProgress(1/totalModelsRecs, detail="...Done fitting the Bayesian linear mixed models...")
+              
+              df0.2<-infTempBayesianCMixed[,-1]
+              names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
+              rownames(df0.2) <- NULL
+              
+              output$BpredictionsBLMM <- renderTable({
+                
+                df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
+                df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
+                df0.2$`1SD Temperature (°C)` <- formatC(df0.2$`1SD Temperature (°C)`, digits = 7, format = "f")
+                head(df0.2)
+              },
+              caption = "Bayesian predictions under a Bayesian linear mixed model",
+              caption.placement = getOption("xtable.caption.placement", "top"),
+              rownames = FALSE,
+              spacing = "m",
+              align = "c"
+              )
+              
+              addWorksheet(wb2, "Bayesian linear mixed model") # Add a blank sheet
+              writeData(wb2, sheet = "Bayesian linear mixed model", df0.2)
+              
+              addWorksheet(wb5, "Bayesian linear mixed model") # Add a blank sheet
+              writeData(wb5, sheet = "Bayesian linear mixed model", attr(infTempBayesianCMixed, "PosteriorOne")) # Write regression data
+              
+              print(noquote("Bayesian linear mixed model complete"))
+              
+              
+            }
+          }
+          
+          
         })
-      } 
+      
     }
   })
   
