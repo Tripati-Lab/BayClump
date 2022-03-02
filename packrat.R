@@ -7,7 +7,6 @@ packrat::init("~/Documents/Research/UCLA/Tripati lab/Bayesian calibrations/BayCl
 ## Later on, install some package
 ## It will be installed in ~/path/to/your/project/packrat/lib
 install.packages("shiny")
-install.packages("coda")
 install.packages("shinydashboard")
 install.packages("plyr")
 install.packages("dplyr")
@@ -33,7 +32,8 @@ install.packages("pbmcapply")
 install.packages("openxlsx")
 install.packages("devtools")
 install.packages("bib2df")
-install.packages("loo")
+#install.packages("loo")
+#install.packages("coda")
 
 ## Take a snapshot of installed packages
 packrat::snapshot()

@@ -158,14 +158,21 @@ fitClumpedRegressions <<- function(calibrationData,
     }}else{NULL}
     
     BLM3_fit <- jags(data = ANCOVA2_Data, #inits = inits,
-                     parameters = c("alpha","beta","conditionalR2", "marginalR2","zloglik"), 
+                     parameters = c("alpha","beta","conditionalR2", "marginalR2"), 
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    tmatrix <- as.mcmc(BLM3_fit)
-    tmatrix <-do.call(rbind, tmatrix)
-    tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
-    aM<-waic(tmatrix)
+    aM <- mean(jags.samples(BLM3_fit$model, 
+                                  c("WAIC"), 
+                                  type = "mean", 
+                                  n.iter = n.iter,
+                                  n.burnin = n.iter*burninFrac,
+                                  n.thin = 1)[[1]])
+    
+    #tmatrix <- as.mcmc(BLM3_fit)
+    #tmatrix <-do.call(rbind, tmatrix)
+    #tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
+    #aM<-waic(tmatrix)
     
     #Avoid running the other models when running the mixed model
     BLM1_fit<- BLM3_fit
@@ -185,7 +192,7 @@ fitClumpedRegressions <<- function(calibrationData,
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit","BLM3_fit")
     R2sComplete$class<-c("Conditional", "Conditional", "Conditional","Marginal")
     
-    DICs<-c(aM$estimates[3,1], aM$estimates[3,1],  aM$estimates[3,1])
+    DICs<-c(aM,aM,  aM)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
     
     CompleteModelFit<-list("Y"=Y,"M0"=M0,"M1"=M1,"M2"=M2,"BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
@@ -211,24 +218,39 @@ fitClumpedRegressions <<- function(calibrationData,
     }}else{NULL}
     
     BLM1_fit <- jags(data = LM_Data, #inits = inits,
-                     parameters = c("alpha","beta", "tau","zloglik"),
+                     parameters = c("alpha","beta", "tau"),
                      model = textConnection(BLM1), n.chains = 3, 
                      n.iter = n.iter, n.burnin = n.iter*burninFrac)
     
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
-                              parameters = c("alpha","beta", "tau","zloglik"),
+                              parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    tmatrix <- as.mcmc(BLM1_fit)
-    tmatrix <-do.call(rbind, tmatrix)
-    tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
-    aMErrors <-waic(tmatrix)
     
-    tmatrix <- as.mcmc(BLM1_fit_NoErrors)
-    tmatrix <-do.call(rbind, tmatrix)
-    tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
-    aMNoErrors<-waic(tmatrix)
+    aMErrors <- mean(jags.samples(BLM1_fit$model, 
+                               c("WAIC"), 
+                               type = "mean", 
+                               n.iter = n.iter,
+                               n.burnin = n.iter*burninFrac,
+                               n.thin = 1)[[1]])
+    
+    aMNoErrors <- mean(jags.samples(BLM1_fit_NoErrors$model, 
+                             c("WAIC"), 
+                             type = "mean", 
+                             n.iter = n.iter,
+                             n.burnin = n.iter*burninFrac,
+                             n.thin = 1)[[1]])
+    
+    #tmatrix <- as.mcmc(BLM1_fit)
+    #tmatrix <-do.call(rbind, tmatrix)
+    #tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
+    #aMErrors <-waic(tmatrix)
+    
+    #tmatrix <- as.mcmc(BLM1_fit_NoErrors)
+    #tmatrix <-do.call(rbind, tmatrix)
+    #tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
+    #aMNoErrors<-waic(tmatrix)
     
     Y=NULL#IsoplotR::york(calibrationData[,c("Temperature","TempError","D47","D47error")])
     M0=NULL#lm(D47 ~ Temperature, calibrationData)
@@ -236,7 +258,7 @@ fitClumpedRegressions <<- function(calibrationData,
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
                                   getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData))
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors")
-    DICs<-c(aMErrors$estimates[3,1], aMNoErrors$estimates[3,1])
+    DICs<-c(aMErrors, aMNoErrors)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors")
     
     CompleteModelFit<-list("Y"=Y,"M0"=M0,"BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors)
