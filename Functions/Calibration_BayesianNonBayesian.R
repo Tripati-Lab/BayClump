@@ -135,15 +135,15 @@ fitClumpedRegressions <<- function(calibrationData,
 }")
   
   
-  
+  Y= NULL#IsoplotR::york(cbind(calibrationData[,c("Temperature","TempError","D47", "D47error")]))
+  M0=NULL#lm(D47 ~ Temperature, calibrationData)
+  M1=NULL#lm(D47 ~ Temperature+Material, calibrationData)
+  M2=NULL#lm(D47 ~ Temperature*Material, calibrationData)
   
   ##If mixed
   if(hasMaterial == T){
     
-    Y= NULL#IsoplotR::york(cbind(calibrationData[,c("Temperature","TempError","D47", "D47error")]))
-    M0=NULL#lm(D47 ~ Temperature, calibrationData)
-    M1=NULL#lm(D47 ~ Temperature+Material, calibrationData)
-    M2=NULL#lm(D47 ~ Temperature*Material, calibrationData)
+
     
     ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
                          errx1 = abs(calibrationData$TempError), erry = calibrationData[,D47error], 
@@ -162,19 +162,8 @@ fitClumpedRegressions <<- function(calibrationData,
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    aM <- mean(jags.samples(BLM3_fit$model, 
-                                  c("WAIC"), 
-                                  type = "mean", 
-                                  n.iter = n.iter,
-                                  n.burnin = n.iter*burninFrac,
-                                  n.thin = 1)[[1]])
+    aM <- sum(dic.samples(BLM3_fit$model, n.iter=n.iter, thin = 1, "pD")$deviance) 
     
-    #tmatrix <- as.mcmc(BLM3_fit)
-    #tmatrix <-do.call(rbind, tmatrix)
-    #tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
-    #aM<-waic(tmatrix)
-    
-    #Avoid running the other models when running the mixed model
     BLM1_fit<- BLM3_fit
     BLM1_fit_NoErrors <- BLM3_fit
     
@@ -228,40 +217,17 @@ fitClumpedRegressions <<- function(calibrationData,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
     
-    aMErrors <- mean(jags.samples(BLM1_fit$model, 
-                               c("WAIC"), 
-                               type = "mean", 
-                               n.iter = n.iter,
-                               n.burnin = n.iter*burninFrac,
-                               n.thin = 1)[[1]])
+    aMErrors <- sum(dic.samples(BLM1_fit$model, n.iter=n.iter, thin = 1, "pD")$deviance) 
     
-    aMNoErrors <- mean(jags.samples(BLM1_fit_NoErrors$model, 
-                             c("WAIC"), 
-                             type = "mean", 
-                             n.iter = n.iter,
-                             n.burnin = n.iter*burninFrac,
-                             n.thin = 1)[[1]])
-    
-    #tmatrix <- as.mcmc(BLM1_fit)
-    #tmatrix <-do.call(rbind, tmatrix)
-    #tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
-    #aMErrors <-waic(tmatrix)
-    
-    #tmatrix <- as.mcmc(BLM1_fit_NoErrors)
-    #tmatrix <-do.call(rbind, tmatrix)
-    #tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
-    #aMNoErrors<-waic(tmatrix)
-    
-    Y=NULL#IsoplotR::york(calibrationData[,c("Temperature","TempError","D47","D47error")])
-    M0=NULL#lm(D47 ~ Temperature, calibrationData)
-    
+    aMNoErrors <- sum(dic.samples(BLM1_fit_NoErrors$model, n.iter=n.iter, thin = 1, "pD")$deviance)
+
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
                                   getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData))
     R2sComplete$model<-c("BLM1_fit", "BLM1_fit_NoErrors")
     DICs<-c(aMErrors, aMNoErrors)
     names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors")
     
-    CompleteModelFit<-list("Y"=Y,"M0"=M0,"BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors)
+    CompleteModelFit<-list("Y"=NULL,"M0"=M0,"BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors)
   }
   
   attr(CompleteModelFit, "data") <- calibrationData 
