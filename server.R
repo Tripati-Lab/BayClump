@@ -707,11 +707,11 @@ server <- function(input, output, session) {
           
           cat( paste0("\nBayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
                                " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
-                      "\n   *waic=", round(attr(bayeslincals,"DICs")[1,1],4),
+                      "\n   *wAIC=", round(attr(bayeslincals,"DICs")[1,1],4),
                       " (95% CI, ",round(attr(bayeslincals,"DICs")[1,2],4),"-",round(attr(bayeslincals,"DICs")[1,3],4),")",
                       "\n *without errors\n   *R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
                                " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")",
-                      "\n   *waic=", round(attr(bayeslincals,"DICs")[2,1],4),
+                      "\n   *wAIC=", round(attr(bayeslincals,"DICs")[2,1],4),
                       " (95% CI, ",round(attr(bayeslincals,"DICs")[2,2],4),"-",round(attr(bayeslincals,"DICs")[2,3],4),")"
           )
           )
@@ -824,7 +824,7 @@ server <- function(input, output, session) {
                       " (95% CI, ",round(attr(bayesmixedcals,"R2s")[3,4],4),"-",round(attr(bayesmixedcals,"R2s")[3,5],4),")",
                       "\n *R^2 (marginal)=", round(attr(bayesmixedcals,"R2s")[4,3],4),
                       " (95% CI, ",round(attr(bayesmixedcals,"R2s")[4,4],4),"-",round(attr(bayesmixedcals,"R2s")[4,5],4),")",
-                      "\n *waic=", round(attr(bayesmixedcals,"DIC")[3,1],4),
+                      "\n *wAIC=", round(attr(bayesmixedcals,"DIC")[3,1],4),
                       " (95% CI, ",round(attr(bayesmixedcals,"DIC")[3,2],4),"-",round(attr(bayesmixedcals,"DIC")[3,3],4),")"
           )
           )
