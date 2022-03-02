@@ -25,6 +25,7 @@ library(parallel)
 library(openxlsx)
 library(bib2df)
 library(loo)
+library(coda)
 
 # Create automatic bibliography containing loaded packages and their dependencies
 bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, verbose = TRUE)

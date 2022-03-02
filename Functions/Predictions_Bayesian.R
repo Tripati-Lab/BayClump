@@ -258,7 +258,7 @@ predictTcBayes <- function(calibrationData,
       
       colnames(fullProp)<-c("model", "D47", "D47error","Material", "n" ,"Tc", "lwr", "upr")
       
-      attr(fullProp, "PosteriorOne") <- predictionsWithinBayesian$BLM3_fit$BUGSoutput$sims.matrix
+      attr(fullProp, "PosteriorOne") <- do.call(rbind, as.mcmc(predictionsWithinBayesian$BLM3_fit))
       fullProp
       
     }else{
@@ -277,8 +277,8 @@ predictTcBayes <- function(calibrationData,
       
       colnames(fullProp)<-c("model", "D47", "D47error","Material", "n", "Tc", "lwr", "upr")
       
-      attr(fullProp, "PosteriorOne") <- list(BLM1_fit=predictionsWithinBayesian$BLM1_fit$BUGSoutput$sims.matrix,
-                                             BLM1_fit_NoErrors=predictionsWithinBayesian$BLM1_fit_NoErrors$BUGSoutput$sims.matrix)
+      attr(fullProp, "PosteriorOne") <- list(BLM1_fit=do.call(rbind, as.mcmc(predictionsWithinBayesian$BLM1_fit)),
+                                             BLM1_fit_NoErrors=do.call(rbind, as.mcmc(predictionsWithinBayesian$BLM1_fit_NoErrors)))
       fullProp
       
       fullProp

@@ -162,7 +162,8 @@ fitClumpedRegressions <<- function(calibrationData,
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    tmatrix <- BLM3_fit$BUGSoutput$sims.matrix
+    tmatrix <- as.mcmc(BLM3_fit)
+    tmatrix <-do.call(rbind, tmatrix)
     tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
     aM<-waic(tmatrix)
     
@@ -219,11 +220,13 @@ fitClumpedRegressions <<- function(calibrationData,
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter,  n.burnin = n.iter*burninFrac)
     
-    tmatrix <- BLM1_fit$BUGSoutput$sims.matrix
+    tmatrix <- as.mcmc(BLM1_fit)
+    tmatrix <-do.call(rbind, tmatrix)
     tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
     aMErrors <-waic(tmatrix)
     
-    tmatrix <- BLM1_fit_NoErrors$BUGSoutput$sims.matrix
+    tmatrix <- as.mcmc(BLM1_fit_NoErrors)
+    tmatrix <-do.call(rbind, tmatrix)
     tmatrix <- tmatrix[grep("zloglik", colnames(tmatrix)),]
     aMNoErrors<-waic(tmatrix)
     
@@ -417,7 +420,7 @@ simulateBLM_measuredMaterial <<- function(data,
       attr(to_ret, "DICs") <- attr(Reg, "DICs") 
       attr(to_ret, "Conv") <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput$summary, 
                                    BLM1_fit_NoErrors= Reg$BLM1_fit_NoErrors$BUGSoutput$summary)
-      attr(to_ret, "PosteriorOne") <- list(BLM1_fit=Reg$BLM1_fit$BUGSoutput$sims.matrix, BLM1_fit_NoErrors=Reg$BLM1_fit_NoErrors$BUGSoutput$sims.matrix)
+      attr(to_ret, "PosteriorOne") <- list(BLM1_fit=do.call(rbind, as.mcmc(Reg$BLM1_fit)), BLM1_fit_NoErrors= do.call(rbind, as.mcmc(Reg$BLM1_fit_NoErrors)))
       
       to_ret
     }else{
@@ -435,7 +438,7 @@ simulateBLM_measuredMaterial <<- function(data,
                                    #BLM1_fit_NoErrors= Reg$BLM1_fit_NoErrors$BUGSoutput$summary,
                                    BLM3_fit=Reg$BLM3_fit$BUGSoutput$summary
       )
-      attr(to_ret, "PosteriorOne") <- Reg$BLM3_fit$BUGSoutput$sims.matrix
+      attr(to_ret, "PosteriorOne") <- do.call(rbind, as.mcmc(Reg$BLM3_fit))
       
       to_ret
     }
