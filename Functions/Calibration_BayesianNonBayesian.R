@@ -35,7 +35,7 @@ fitClumpedRegressions <<- function(calibrationData,
               "beta ~ ", betaBLM1," \n ", 
               "
     sigma <- 1/sqrt(tau)                              
-    tau ~ dgamma(0.1, 0.1)                                
+    tau ~ dunif(0, 100)                               
     
     for (i in 1:N){
         x[i] ~ dnorm(11,0.01)
@@ -62,7 +62,7 @@ fitClumpedRegressions <<- function(calibrationData,
                        "beta ~ ", betaBLM1," \n ",
                        "
   sigma2 <- 1 / tau
-  tau ~ dgamma(0.01, 0.01)   
+  tau ~ dunif(0, 100)   
   
   # calibration
   for(i in 1:N){   
@@ -88,7 +88,7 @@ fitClumpedRegressions <<- function(calibrationData,
               " }
               
     # Gamma prior for standard deviation
-    tau ~ dgamma(0.1, 0.1) # precision
+    tau ~ dunif(0, 100)   # precision
     sigma <- 1 / sqrt(tau) # standard deviation
 
     # Diffuse normal priors for true x
