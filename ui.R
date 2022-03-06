@@ -81,13 +81,13 @@ body <- dashboardBody(
               box(width = 4,
                   title = "Step 2: Select Models", solidHeader = TRUE,
                   column(12, "For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual",
-                         numericInput("replication", label = "Number of bootstrap replicates for every model", 
-                                      1000, min = 2, max = 10000),
+                         numericInput("replication", label = "Number of bootstrap replicates for non-Bayesian models", 
+                                      100, min = 2, max = 10000),
                         sliderInput("range", label = HTML(paste0("Range for temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
                                     min = 0, max = 30, value = c(1, 14)),
                         numericInput("generations", label = "Number of iterations for Bayesian models", 
                                      20000, min = 1000, max = 1000000),
-                        checkboxInput("multicore", "Multicore", TRUE),
+                        checkboxInput("multicore", "Multicore for Deming regression?", FALSE),
                          uiOutput("myList"),
                          selectInput("priors", label = "Bayesian priors", 
                                     choices = c("Informative", "Diffuse"), selected = "Informative"),
@@ -95,12 +95,8 @@ body <- dashboardBody(
                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measured", "York regression", FALSE),
                          checkboxInput("simulateDeming", "Deming regression", FALSE),
-                         checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear model", FALSE),
-                         checkboxInput("simulateBLMM_measuredMaterial", "Bayesian mixed model", FALSE),
-                         bsTooltip('simulateBLM_measuredMaterial', "Running Bayesian models can take a few minutes. Please be patient.",
-                                   placement = "bottom", trigger = "hover",
-                                   options = NULL),
-                         bsTooltip('simulateBLMM_measuredMaterial', "Running Bayesian models can take a few minutes. Please be patient.",
+                         checkboxInput("BayesianCalibrations", "Bayesian linear models", FALSE),
+                         bsTooltip('BayesianCalibrations', "Running Bayesian models can take a few minutes. Please be patient.",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
                          
@@ -200,6 +196,8 @@ body <- dashboardBody(
     ),
     
     
+    
+    
     #Reconstruction tab
     tabItem(tabName = "reconstruction",
             fluidRow(
@@ -216,17 +214,15 @@ body <- dashboardBody(
                          
                          # Summary stats panel
                          tableOutput("contents2"),
-                         numericInput("replicationRec", label = "Number of bootstrap replicates for every model", 
-                                      100, min = 2, max = 10000),
+                         uiOutput("myList2"),
                          tags$b("Models to run:"),
                          checkboxInput("simulateLM_measuredRec", "Linear model", FALSE),
                          checkboxInput("simulateLM_inverseweightsRec", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
-                         checkboxInput("simulateBLM_measuredMaterialRec", "Bayesian simple linear model", FALSE),
-                         checkboxInput("simulateBLMM_measuredMaterialRec", "Bayesian mixed model", FALSE),
-                         tags$b("Factor in parameter uncertainty?"),
-                         checkboxInput("AccountErrorDataset", "Yes"),
+                         checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
+                         tags$b("Use the classic calibration approach?"),
+                         checkboxInput("ClassicRec", "Yes"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
