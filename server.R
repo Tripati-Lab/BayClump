@@ -1255,7 +1255,7 @@ server <- function(input, output, session) {
 
             if(!ClassicRec){
               
-              yorkrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
+              demingrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
                 a<-predictTcInvest(calData=calData, 
                                    targety=recData$D47[x],
                                    targetyError=recData$D47error[x],
@@ -1328,8 +1328,8 @@ server <- function(input, output, session) {
 
               infTempBayesian_werrors <- infTempBayesian$BLM1_fit
               infTempBayesian_werrors <- summary(as.mcmc(infTempBayesian_werrors))$statistics
-              infTempBayesian_werrors <- cbind.data.frame(recData, infTempBayesian_werrors)
-              df0<-infTempBayesian_werrors[,c(5,6,7,10)]
+              infTempBayesian_werrors <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
+              df0<-infTempBayesian_werrors[,c(1,2,3,5)]
               
               names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
@@ -1353,8 +1353,8 @@ server <- function(input, output, session) {
               ##Without errors
               infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
               infTempBayesianNE <- summary(as.mcmc(infTempBayesianNE))$statistics
-              infTempBayesianNE <- cbind.data.frame(recData, infTempBayesianNE)
-              df0.1<-infTempBayesianNE[,c(5,6,7,10)]
+              infTempBayesianNE <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
+              df0.1<-infTempBayesianNE[,c(1:3,5)]
               
               names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
@@ -1378,8 +1378,8 @@ server <- function(input, output, session) {
               
               infTempBayesianMixed <- infTempBayesian$BLM3
               infTempBayesianMixed <- summary(as.mcmc(infTempBayesianMixed))$statistics
-              infTempBayesianMixed <- cbind.data.frame(recData, infTempBayesianMixed)
-              df0.2<-infTempBayesianMixed[,c(5,6,3,7,10)]
+              infTempBayesianMixed <- cbind.data.frame(recData$D47, recData$D47error, recData$Material, infTempBayesianMixed)
+              df0.2<-infTempBayesianMixed[,c(1:4,6)]
               
               names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
