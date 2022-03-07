@@ -32,7 +32,7 @@ BLM1<-paste("model{
     for(i in 1:N){ 
     x[i] ~ dnorm(11, 0.0001)
     y[i] ~ dnorm(mu2[i], tau)
-    x2[i] <- sqrt((beta * 10^6) / (y[i] - alpha)) - 273.15
+    x2[i] <- sqrt(( beta[typePred[i]] * 10^6) / (y[i] - alpha[typePred[i]])) - 273.15
     mu2[i] <- alpha[typePred[i]]  + beta[typePred[i]] * x[i]
     y2[i] ~ dnorm(y[i], pow(y2err[i],-2))
   }
@@ -43,6 +43,7 @@ BLM1<-paste("model{
   nsamp <- if(is.null(nsamp)){nrow(postBLM)}else{nsamp}
   
   postPredBLM1 <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(i){
+    tryCatch({
     LM_No_error_Data <- list(
       N=length(D47Pred),
       y2=D47Pred,
@@ -57,10 +58,12 @@ BLM1<-paste("model{
                               model = textConnection(BLM1), n.chains = 3,
                               n.iter = 20000)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
+  }, error=function(e){})
   }))
   
   postBLM<- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit))
   postPredBLM2 <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(i){
+    tryCatch({
     LM_No_error_Data <- list(
       N=length(D47Pred),
       y2=D47Pred,
@@ -75,11 +78,12 @@ BLM1<-paste("model{
                               model = textConnection(BLM1), n.chains = 3,
                               n.iter = 20000)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
+    }, error=function(e){})
   }))
   
   postBLMM<- do.call(rbind, as.mcmc(bayeslincals$BLM3_fit))
   postPredBLMM <- do.call(rbind,lapply(sample(1:nrow(postBLMM), nsamp), function(i){
-    
+    tryCatch({
     LM_No_error_Data <- list(
       N=length(D47Pred),
       y2=D47Pred,
@@ -96,6 +100,7 @@ BLM1<-paste("model{
                               model = textConnection(BLMM), n.chains = 3,
                               n.iter = 20000)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
+    }, error=function(e){})
   }))
   
   CompleteModelFit<-list("BLM1_fit"=postPredBLM1,"BLM1_fit_NoErrors"=postPredBLM2, "BLM3"=postPredBLMM)
