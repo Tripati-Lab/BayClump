@@ -46,7 +46,7 @@ BLM1<-paste("model{
                               model = textConnection(BLM1), n.chains = 3,
                               n.iter =  1000, n.burnin=0)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
-  }, error=function(e){})
+  }, error=function(e){c(NA,NA)})
   }))
   
   postBLM<- bayeslincals$BLM1_fit$BUGSoutput$sims.matrix
@@ -66,7 +66,7 @@ BLM1<-paste("model{
                               model = textConnection(BLM1), n.chains = 3,
                               n.iter =  1000, n.burnin=0)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
-    }, error=function(e){})
+    }, error=function(e){c(NA,NA)})
   }))
   
   postBLMM<- bayeslincals$BLM3_fit$BUGSoutput$sims.matrix
@@ -90,7 +90,7 @@ BLM1<-paste("model{
                                 model = textConnection(BLM1), n.chains = 3,
                                 n.iter =  1000, n.burnin=0)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
-    }, error=function(e){})
+    }, error=function(e){c(NA,NA)})
   }))
   
   CompleteModelFit<-list("BLM1_fit"=postPredBLM1,"BLM1_fit_NoErrors"=postPredBLM2, "BLM3"=postPredBLMM)
