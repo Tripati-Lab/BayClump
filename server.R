@@ -576,7 +576,8 @@ server <- function(input, output, session) {
           
           sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- fitClumpedRegressions(calibrationData=calData, 
-                                n.iter = ngenerationsBayes)
+                                                 priors = priors,
+                                                 n.iter = ngenerationsBayes)
           
           PostBLM1_fit_NoErrors <- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit_NoErrors))
           PostBLM1_fit <- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit))
@@ -1320,17 +1321,15 @@ server <- function(input, output, session) {
               infTempBayesian <- BayesianPredictions(bayeslincals=bayeslincals, 
                                                      D47Pred=recData$D47,
                                                      D47Prederror=ifelse(recData$D47error==0,0.00001,recData$D47error),
-                                                     materialsPred=as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
-                                                     nsamp = 100)
+                                                     materialsPred=as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material)))
+                                                     )
               
               
               sink()
 
               infTempBayesian_werrors <- infTempBayesian$BLM1_fit
-              infTempBayesian_werrors <- summary(as.mcmc(infTempBayesian_werrors))$statistics
-              infTempBayesian_werrors <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
-              df0<-infTempBayesian_werrors[,c(1,2,3,4)]
-              df0[,4] <- df0[,4]/sqrt(recData$N)
+              df0 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
+              df0[,4] <- df0[,4]*sqrt(recData$N)
               
               names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
@@ -1353,11 +1352,9 @@ server <- function(input, output, session) {
               
               ##Without errors
               infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
-              infTempBayesianNE <- summary(as.mcmc(infTempBayesianNE))$statistics
-              infTempBayesianNE <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
-              df0.1<-infTempBayesianNE[,c(1:4)]
-              df0.1[,4] <- df0.1[,4]/sqrt(recData$N)
-              
+              df0.1 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
+              df0.1[,4] <- df0.1[,4]*sqrt(recData$N)
+
               names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
               
@@ -1379,11 +1376,8 @@ server <- function(input, output, session) {
               
               
               infTempBayesianMixed <- infTempBayesian$BLM3
-              infTempBayesianMixed <- summary(as.mcmc(infTempBayesianMixed))$statistics
-              infTempBayesianMixed <- cbind.data.frame(recData$D47, recData$D47error, recData$Material, infTempBayesianMixed)
-              df0.2<-infTempBayesianMixed[,c(1:5)]
-              df0.2[,5] <- df0.2[,5]/sqrt(recData$N)
-              
+              df0.2 <- cbind.data.frame(recData$D47, recData$D47error, recData$Material,infTempBayesianMixed)
+              df0.2[,5] <- df0.2[,5]*sqrt(recData$N)
               
               names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
@@ -1414,9 +1408,9 @@ server <- function(input, output, session) {
               addWorksheet(wb5, "Bayesian model no errors") # Add a blank sheet
               addWorksheet(wb5, "Bayesian model with errors") # Add a blank sheet
               addWorksheet(wb5, "Bayesian linear mixed model") # Add a blank sheet
-              writeData(wb5, sheet = "Bayesian model no errors", cbind.data.frame(recData, t(infTempBayesian$BLM1_fit_NoErrors))) # Write regression data
-              writeData(wb5, sheet = "Bayesian model with errors", cbind.data.frame(recData, t(infTempBayesian$BLM1_fit))  ) # Write regression data
-              writeData(wb5, sheet = "Bayesian linear mixed model", cbind.data.frame(recData, t(infTempBayesian$BLM3))) # Write regression data
+              writeData(wb5, sheet = "Bayesian model no errors", cbind.data.frame(recData, (infTempBayesian$BLM1_fit_NoErrors))) # Write regression data
+              writeData(wb5, sheet = "Bayesian model with errors", cbind.data.frame(recData, (infTempBayesian$BLM1_fit))  ) # Write regression data
+              writeData(wb5, sheet = "Bayesian linear mixed model", cbind.data.frame(recData, (infTempBayesian$BLM3))) # Write regression data
               
 
               print(noquote("Bayesian linear reconstructions complete"))
