@@ -26,7 +26,6 @@ BLM1<-paste("model{
     y2[i] ~ dnorm(y[i], pow(y2err[i],-2))
   }
   x3 <- mean(x2)
-  x4 <- sd(x2)/sqrt(N)
 }")
   
   postBLM<- bayeslincals$BLM1_fit_NoErrors$BUGSoutput$sims.matrix
@@ -42,10 +41,10 @@ BLM1<-paste("model{
       )
     
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
-                              parameters = c("x3", "x4"),
+                              parameters = c("x3"),
                               model = textConnection(BLM1), n.chains = 3,
                               n.iter =  1000, n.burnin=0)
-    unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
+    unlist(c(BLM1_fit_NoErrors$BUGSoutput$mean[-1], BLM1_fit_NoErrors$BUGSoutput$sd[-1]))
   }, error=function(e){c(NA,NA)})
   }))
   
@@ -62,10 +61,10 @@ BLM1<-paste("model{
       )
     
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
-                              parameters = c("x3", "x4"),
+                              parameters = c("x3"),
                               model = textConnection(BLM1), n.chains = 3,
                               n.iter =  1000, n.burnin=0)
-    unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
+    unlist(c(BLM1_fit_NoErrors$BUGSoutput$mean[-1], BLM1_fit_NoErrors$BUGSoutput$sd[-1]))
     }, error=function(e){c(NA,NA)})
   }))
   
@@ -86,11 +85,11 @@ BLM1<-paste("model{
       )
     
       BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
-                                parameters = c("x3", "x4"),
+                                parameters = c("x3"),
                                 model = textConnection(BLM1), n.chains = 3,
                                 n.iter =  1000, n.burnin=0)
-    unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
-    }, error=function(e){c(NA,NA)})
+      unlist(c(BLM1_fit_NoErrors$BUGSoutput$mean[-1], BLM1_fit_NoErrors$BUGSoutput$sd[-1]))
+  }, error=function(e){c(NA,NA)})
   }))
   
   CompleteModelFit<-list("BLM1_fit"=postPredBLM1,"BLM1_fit_NoErrors"=postPredBLM2, "BLM3"=postPredBLMM)

@@ -13,7 +13,6 @@
 
 fitClumpedRegressions <<- function(calibrationData, 
                                 n.iter = 5000, 
-                                burninFrac = 0.5,
                                 priors = "Informative",
                                 D47error = "D47error"){
   
@@ -21,8 +20,8 @@ fitClumpedRegressions <<- function(calibrationData,
   if(priors == "Informative"){
     alphaBLM1 = "dnorm(0.231,0.065)" 
     betaBLM1 = "dnorm(0.039,0.004)"}else{
-      alphaBLM1 = "dnorm(0, 0.01)" 
-      betaBLM1 = "dnorm(0, 0.01)"
+      alphaBLM1 = "dnorm(0, 1e-3)" 
+      betaBLM1 = "dnorm(0, 1e-3)"
     }
   
   
@@ -32,8 +31,8 @@ fitClumpedRegressions <<- function(calibrationData,
     alpha ~ ", alphaBLM1," \n ",
               "beta ~ ", betaBLM1," \n ", 
               "
-    sigma <- 1/sqrt(tau)                              
-    tau ~ dunif(0, 100)                               
+    tau <- pow(sigma, -2) 
+    sigma ~ dunif(0, 100)                             
     
     for (i in 1:N){
         x[i] ~ dnorm(11,0.01)
@@ -59,9 +58,9 @@ fitClumpedRegressions <<- function(calibrationData,
                 alpha ~ ", alphaBLM1," \n ",
                        "beta ~ ", betaBLM1," \n ",
                        "
-  sigma2 <- 1 / tau
-  tau ~ dunif(0, 100)   
-  
+    tau <- pow(sigma, -2) 
+    sigma ~ dunif(0, 100)                             
+    
   # calibration
   for(i in 1:N){   
     y[i] ~ dnorm(mu[i], tau)
@@ -85,10 +84,10 @@ fitClumpedRegressions <<- function(calibrationData,
               " alpha[i] ~  ",alphaBLM1 ," \n ",
               " }
               
-    # Gamma prior for standard deviation
-    tau ~ dunif(0, 100)   # precision
-    sigma <- 1 / sqrt(tau) # standard deviation
-
+    # Prior for standard deviation
+    tau <- pow(sigma, -2) 
+    sigma ~ dunif(0, 100)                             
+    
     # Diffuse normal priors for true x
     for (i in 1:N){
         x1[i] ~ dnorm(11,0.01)
@@ -146,21 +145,22 @@ fitClumpedRegressions <<- function(calibrationData,
     LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
                              N=nrow(calibrationData))
     
+    
     #Fit models
-    BLM3_fit <- jags(data = ANCOVA2_Data, #inits = inits,
+    BLM3_fit <- jags(data = ANCOVA2_Data,
                      parameters = c("alpha","beta","conditionalR2", "marginalR2", "tau"), 
                      model = textConnection(BLM3), n.chains = 3,
-                     n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+                     n.iter = n.iter)
 
-    BLM1_fit <- jags(data = LM_Data, #inits = inits,
+    BLM1_fit <- jags(data = LM_Data, 
                      parameters = c("alpha","beta", "tau"),
                      model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter, n.burnin = n.iter*burninFrac)
+                     n.iter = n.iter)
     
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data, 
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
-                              n.iter = n.iter,  n.burnin = n.iter*burninFrac)
+                              n.iter = n.iter)
     
     #Extract relevant descriptors
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
@@ -281,7 +281,7 @@ simulateDeming <<- function(data,
                           replicates, 
                           samples = NULL, 
                           D47error="D47error", 
-                          multicore=TRUE){
+                          multicore=FALSE){
   
   if(multicore){
   
@@ -295,7 +295,7 @@ simulateDeming <<- function(data,
   }))
   
   }else{
-    do.call(rbind,lapply(1:replicates, mc.cores = ncores, function(x){
+    do.call(rbind,lapply(1:replicates, function(x){
       dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
       dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
       dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
