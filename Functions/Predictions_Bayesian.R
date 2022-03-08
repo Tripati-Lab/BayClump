@@ -44,7 +44,7 @@ BLM1<-paste("model{
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
                               parameters = c("x3", "x4"),
                               model = textConnection(BLM1), n.chains = 3,
-                              n.iter =  20000, n.burnin=0)
+                              n.iter =  1000, n.burnin=0)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
   }, error=function(e){})
   }))
@@ -64,7 +64,7 @@ BLM1<-paste("model{
     BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
                               parameters = c("x3", "x4"),
                               model = textConnection(BLM1), n.chains = 3,
-                              n.iter =  20000, n.burnin=0)
+                              n.iter =  1000, n.burnin=0)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
     }, error=function(e){})
   }))
@@ -88,7 +88,7 @@ BLM1<-paste("model{
       BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
                                 parameters = c("x3", "x4"),
                                 model = textConnection(BLM1), n.chains = 3,
-                                n.iter =  20000, n.burnin=0)
+                                n.iter =  1000, n.burnin=0)
     unlist(BLM1_fit_NoErrors$BUGSoutput$mean[-1])
     }, error=function(e){})
   }))
