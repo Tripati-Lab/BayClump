@@ -81,29 +81,22 @@ body <- dashboardBody(
               box(width = 4,
                   title = "Step 2: Select Models", solidHeader = TRUE,
                   column(12, "For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual",
-                         #selectInput("replication", label = "Number of bootstrap replicates for every model", 
-                        #             choices = c("50", "100", "500", "1000"), selected = "100"),
-                        numericInput("replication", label = "Number of bootstrap replicates for every model", 
-                                      1000, min = 2, max = 10000),
-                        numericInput("MinLim", 
-                                     label = HTML(paste0("Lowest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
-                                     1, min = 0, max = 15),
-                        numericInput("MaxLim", 
-                                     label = HTML(paste0("Highest temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")), 
-                                     14, min = 0, max = 15),
+                         numericInput("replication", label = "Number of bootstrap replicates for non-Bayesian models", 
+                                      100, min = 2, max = 10000),
+                        sliderInput("range", label = HTML(paste0("Range for temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
+                                    min = 0, max = 30, value = c(1, 14)),
+                        numericInput("generations", label = "Number of iterations for Bayesian models", 
+                                     20000, min = 1000, max = 1000000),
+                        checkboxInput("multicore", "Multicore for Deming regression?", FALSE),
+                         uiOutput("myList"),
+                         selectInput("priors", label = "Bayesian priors", 
+                                    choices = c("Informative", "Diffuse"), selected = "Informative"),
                          checkboxInput("simulateLM_measured", "Linear model", FALSE),
                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measured", "York regression", FALSE),
                          checkboxInput("simulateDeming", "Deming regression", FALSE),
-                      #   selectInput("ngenerationsBayesian", label = "Number of generations for Bayesian models", 
-                      #               choices = c("1000", "5000", "10000", "20000"), selected = "10000"),
-                         checkboxInput("simulateBLM_measuredMaterial", "Bayesian simple linear model", FALSE),
-                         checkboxInput("simulateBLMM_measuredMaterial", "Bayesian mixed model", FALSE),
-                         
-                         bsTooltip('simulateBLM_measuredMaterial', "Running Bayesian models can take a few minutes. Please be patient.",
-                                   placement = "bottom", trigger = "hover",
-                                   options = NULL),
-                         bsTooltip('simulateBLMM_measuredMaterial', "Running Bayesian models can take a few minutes. Please be patient.",
+                         checkboxInput("BayesianCalibrations", "Bayesian linear models", FALSE),
+                         bsTooltip('BayesianCalibrations', "Running Bayesian models can take a few minutes. Please be patient.",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
                          
@@ -146,7 +139,10 @@ body <- dashboardBody(
                   ),
                   
                   # Download all calibration data
-                  downloadButton("downloadcalibrations", label = "Download full calibration output with confidence intervals")
+                  downloadButton("downloadcalibrations", label = "Download full calibration output"),
+                  downloadButton("downloadBayesian", label = "Download raw results for Bayesian models"),
+                  downloadButton("downloadPosteriorCalibration", label = "Download posterior one Bayesian replicate"),
+                  downloadButton("downloadPriorsCalibration", label = "Download priors")
               )
             )
     ),
@@ -200,12 +196,14 @@ body <- dashboardBody(
     ),
     
     
+    
+    
     #Reconstruction tab
     tabItem(tabName = "reconstruction",
             fluidRow(
               box(width = 5, 
                   title = "Step 1: Reconstruction setup", solidHeader = TRUE,
-                  column(12, tags$b("Calibration models are automatically transferred to this tab. If you have not yet run calibration models, please do so before proceeding."),
+                  column(12, tags$b("Parameters for the selected models are automatically transferred from the Calibration tab to this tab. If you are interested in running classic reconstructions, please calibrate the relevant models calibration before."),
                          tags$br(),
                          # Download templates
                          downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
@@ -216,10 +214,15 @@ body <- dashboardBody(
                          
                          # Summary stats panel
                          tableOutput("contents2"),
-                         tags$b("Click to confirm:"),
-                         checkboxInput("confirm", "My calibration data and reconstruction data are in the same reference frame"),
-                         tags$b("For help choosing appropriate reconstruction options, see the User Manual"),
-                         checkboxInput("bayesianPredictions", "Use Bayesian predictions (Implemented for Bayesian linear model with errors only)"),
+                         uiOutput("myList2"),
+                         tags$b("Models to run:"),
+                         checkboxInput("simulateLM_measuredRec", "Linear model", FALSE),
+                         checkboxInput("simulateLM_inverseweightsRec", "Inverse weighted linear model", FALSE),
+                         checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
+                         checkboxInput("simulateDemingRec", "Deming regression", FALSE),
+                         checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
+                         tags$b("Use the classic calibration approach?"),
+                         checkboxInput("ClassicRec", "Yes"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
@@ -231,26 +234,21 @@ body <- dashboardBody(
                          ),
                          verbatimTextOutput("recresults"),
                          # Download all reconstruction data
-                         downloadButton("downloadreconstructions", label = "Download full reconstruction output with confidence intervals")
+                         downloadButton("downloadreconstructions", label = "Download reconstruction output"),
+                         downloadButton("downloadreconstructionsPosterior", label = "Download posterior reconstruction output"),
+                         downloadButton("downloadPriorsReconstruction", label = "Download priors")
+                         
                   )
               ),
               box(width = 7,
                   title = "Step 2: Temperature reconstructions", solidHeader = TRUE,
                   column(12, "Truncated output from each selected model",
                          tableOutput("lmrecswun"),
-                         tableOutput("lmrecswoun"),
                          tableOutput("lminverserecswun"),
-                         tableOutput("lminverserecswoun"),
                          tableOutput("yorkrecswun"),
-                         tableOutput("yorkrecswoun"),
                          tableOutput("demingrecswun"),
-                         tableOutput("demingrecswoun"),
-                         tableOutput("bayesrecswunerr"),
-                         tableOutput("bayesrecswunnoerr"),
-                         tableOutput("bayesrecswounerr"),
-                         tableOutput("bayesrecswounnoerr"),
-                         tableOutput("BpredictionsErrors"),
                          tableOutput("Bpredictions"),
+                         tableOutput("BpredictionsErrors"),
                          tableOutput("BpredictionsBLMM")
                   )
               )

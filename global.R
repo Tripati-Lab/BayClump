@@ -3,7 +3,6 @@ if("tidyverse" %in% installed.packages() == TRUE) {remove.packages("tidyverse")}
 # To work in shinyapps.io, each package has be loaded individually instead of with lapply
 library(shiny)
 library(shinydashboard)
-library(isoreader)
 library(plyr)
 library(dplyr)
 library(xtable)
@@ -13,22 +12,20 @@ library(plotly)
 library(bibtex)
 library(readxl)
 library(lme4)
-library(rjags)
 library(R2jags)
 library(IsoplotR)
-library(chemCal)
 library(investr)
 library(DT)
 library(knitcitations)
-library(pbapply)
 library(deming)
 library(shinyBS)
 library(ggridges)
 library(ggpubr)
-library(pbmcapply)
+library(parallel)
 library(openxlsx)
-library(clumpedr)
 library(bib2df)
+#library(loo)
+#library(coda)
 
 # Create automatic bibliography containing loaded packages and their dependencies
 bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, verbose = TRUE)
@@ -37,8 +34,8 @@ bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, ve
 
 # Load necessary data
 
-BayClump_calibration_template <- read.csv("BayClump_calibration_template.csv")
-BayClump_reconstruction_template <- read.csv("BayClump_reconstruction_template.csv")
+BayClump_calibration_template <- read.csv("Data/BayClump_calibration_template.csv")
+BayClump_reconstruction_template <- read.csv("Data/BayClump_reconstruction_template.csv")
 Petersen <- read.csv("Data/SampleData.csv") # PETERSEN IN 10^6/T^2
 Anderson <- read.csv("Data/SampleData2.csv") # ANDERSON IN 10^6/T^2
 PetersenAnderson <- rbind(Petersen, Anderson)
