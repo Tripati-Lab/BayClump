@@ -14,8 +14,12 @@
 fitClumpedRegressions <<- function(calibrationData, 
                                 n.iter = 5000, 
                                 priors = "Informative",
-                                D47error = "D47error"){
+                                D47error = "D47error",
+                                samples=NULL){
   
+  samples <- if(is.null(samples)){nrow(calibrationData)}else{samples}
+  
+  calibrationData <- calibrationData[sample(1:nrow(calibrationData), samples), ]
   
   if(priors == "Informative"){
     alphaBLM1 = "dnorm(0.231,0.065)" 

@@ -577,7 +577,8 @@ server <- function(input, output, session) {
           sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- fitClumpedRegressions(calibrationData=calData, 
                                                  priors = priors,
-                                                 n.iter = ngenerationsBayes)
+                                                 n.iter = ngenerationsBayes,
+                                                 samples = samples)
           
           PostBLM1_fit_NoErrors <- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit_NoErrors))
           PostBLM1_fit <- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit))
