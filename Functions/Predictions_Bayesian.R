@@ -84,7 +84,7 @@ BLM1<-paste("model{
   postPredBLM2 <-aggregate(postPredBLM2[, 3:4], list(postPredBLM2$D47Pred, postPredBLM2$D47Prederror), mean)
   
   postBLMM<- bayeslincals$BLM3_fit$BUGSoutput$sims.matrix
-  postPredBLMM <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(i){
+  postPredBLMM <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(j){
   tryCatch({
     
     alphas=lapply(grep("alpha", colnames(postBLMM)), function(x) postBLMM[,x])
