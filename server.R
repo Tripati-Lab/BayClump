@@ -1328,10 +1328,9 @@ server <- function(input, output, session) {
               
               sink()
 
-              infTempBayesian_werrors <- infTempBayesian$BLM1_fit
+              infTempBayesian_werrors <- infTempBayesian$BLM1_fit[,3:4]
               df0 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
-              df0[,4] <- df0[,4]*sqrt(recData$N)
-              
+
               names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
               
@@ -1352,9 +1351,8 @@ server <- function(input, output, session) {
 
               
               ##Without errors
-              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
+              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors[,3:4]
               df0.1 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
-              df0.1[,4] <- df0.1[,4]*sqrt(recData$N)
 
               names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
@@ -1376,10 +1374,9 @@ server <- function(input, output, session) {
               )
               
               
-              infTempBayesianMixed <- infTempBayesian$BLM3
+              infTempBayesianMixed <- infTempBayesian$BLM3[,3:4]
               df0.2 <- cbind.data.frame(recData$D47, recData$D47error, recData$Material,infTempBayesianMixed)
-              df0.2[,5] <- df0.2[,5]*sqrt(recData$N)
-              
+
               names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
               
