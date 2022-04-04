@@ -33,9 +33,7 @@ server <- function(input, output, session) {
       write.csv(BayClump_calibration_template, file, row.names = FALSE)
     }
   )
-  
-  
-  
+
   calibrationData = reactive({
     switch(input$calset,
            "model1" = return(Petersen),
@@ -77,7 +75,7 @@ server <- function(input, output, session) {
   observeEvent(calibrationData(),{
   output$myList <-  renderUI({
     numericInput("samples", min = 3, max = nrow(calibrationData()), 
-                label = paste0("Number of observations per bootstrap sample, (max. recommended: ", nrow(calibrationData()) ,")" ), 
+                label = paste0("Number of observations per bootstrap sample (max. recommended: ", nrow(calibrationData()) ,")" ), 
                 value =  nrow(calibrationData()))
   })
   })
@@ -204,6 +202,7 @@ server <- function(input, output, session) {
     demingcals <<- NULL
     bayeslincals <<- NULL
 
+    # Calibration data
     
     calData <<- NULL
     calData <<- calibrationData()
@@ -225,8 +224,6 @@ server <- function(input, output, session) {
     minLim <- ifelse(input$range[1]==0, min(calData$Temperature),input$range[1])
     maxLim <- ifelse(input$range[2]==0, max(calData$Temperature),input$range[2])
     
-
-    
     if(input$scale == TRUE) {
       calData$Temperature <<- scale(calData$Temperature)
       calData$TempError <<- scale(calData$TempError)
@@ -234,20 +231,18 @@ server <- function(input, output, session) {
       calData$D47error <<- scale(calData$D47error)
     }
     
-
-    
     if(input$simulateLM_measured == FALSE &
        input$simulateLM_inverseweights == FALSE &
        input$simulateYork_measured == FALSE &
        input$simulateDeming == FALSE &
        input$BayesianCalibrations == FALSE) {print(noquote("Please select at least one model"))}
-    
+
     if(input$simulateLM_measured != FALSE |
        input$simulateLM_inverseweights != FALSE |
        input$simulateYork_measured != FALSE |
        input$simulateDeming != FALSE |
        input$BayesianCalibrations != FALSE) {
-      
+
       withProgress(message = "Running selected models, please wait", {
         
         if(input$simulateLM_measured == FALSE) {
@@ -1328,9 +1323,10 @@ server <- function(input, output, session) {
               
               sink()
 
-              infTempBayesian_werrors <- infTempBayesian$BLM1_fit[,3:4]
+              infTempBayesian_werrors <- infTempBayesian$BLM1_fit
               df0 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
-
+              df0[,4] <- df0[,4]*sqrt(recData$N)
+              
               names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
               
@@ -1351,8 +1347,9 @@ server <- function(input, output, session) {
 
               
               ##Without errors
-              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors[,3:4]
+              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
               df0.1 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
+              df0.1[,4] <- df0.1[,4]*sqrt(recData$N)
 
               names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
@@ -1374,9 +1371,10 @@ server <- function(input, output, session) {
               )
               
               
-              infTempBayesianMixed <- infTempBayesian$BLM3[,3:4]
+              infTempBayesianMixed <- infTempBayesian$BLM3
               df0.2 <- cbind.data.frame(recData$D47, recData$D47error, recData$Material,infTempBayesianMixed)
-
+              df0.2[,5] <- df0.2[,5]*sqrt(recData$N)
+              
               names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
               
@@ -1450,6 +1448,12 @@ server <- function(input, output, session) {
       saveWorkbook(wb5, file, overwrite = TRUE)
     }
   )
+  
+ # Manuscript tab
+  
+  output$msframe <- renderUI({
+    tags$iframe(style="height:600px; width:100%", src="Manuscript/essoar.10507995.1.pdf")
+  })
   
 }
   

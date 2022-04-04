@@ -24,8 +24,8 @@ fitClumpedRegressions <<- function(calibrationData,
   if(priors == "Informative"){
     alphaBLM1 = "dnorm(0.231,0.065)" 
     betaBLM1 = "dnorm(0.039,0.004)"}else{
-      alphaBLM1 = "dnorm(0.231, 0.195)" 
-      betaBLM1 = "dnorm(0.231, 0.012)"
+      alphaBLM1 = "dnorm(0, 1e-3)" 
+      betaBLM1 = "dnorm(0, 1e-3)"
     }
   
   
@@ -150,31 +150,18 @@ fitClumpedRegressions <<- function(calibrationData,
                              N=nrow(calibrationData))
     
     
-    #Inits
-    initsMixed <- function () {
-      list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
-           beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
-      
-    }
-    
-    initsSimple <- function () {
-      list(alpha = rnorm(1,0.231,0.065),
-           beta = rnorm(1,0.039,0.004))
-      
-    }
-    
     #Fit models
-    BLM3_fit <- jags(data = ANCOVA2_Data, inits = initsMixed,
+    BLM3_fit <- jags(data = ANCOVA2_Data,
                      parameters = c("alpha","beta","conditionalR2", "marginalR2", "tau"), 
                      model = textConnection(BLM3), n.chains = 3,
                      n.iter = n.iter)
 
-    BLM1_fit <- jags(data = LM_Data, inits = initsSimple,
+    BLM1_fit <- jags(data = LM_Data, 
                      parameters = c("alpha","beta", "tau"),
                      model = textConnection(BLM1), n.chains = 3, 
                      n.iter = n.iter)
     
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data, inits = initsSimple,
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data, 
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), n.chains = 3,
                               n.iter = n.iter)

@@ -1,7 +1,7 @@
 ---
 title: "User Manual"
-author: "Updated July 23rd, 2021"
-subtitle: "BayClump v. 0.9"
+author: "Updated March 28th, 2022"
+subtitle: "BayClump v. 0.9.1"
 date: "Table of Contents"
 output:
   html_document: 
@@ -18,8 +18,9 @@ urlcolor: blue
 
 ## Publication Information  
 
-C. Román-Palacios, H. M. Carroll, A. J. Arnold, R. Ulrich, R. J. Flores, D. Brown, K. A. McKinnon, and A. Tripati. BayClump: Bayesian Calibration Models of the ‘Clumped Isotopes’ Paleothermometer. In preparation for submission to *Paleoceanography and Paleoclimatology*.  
-(Hyperlink to the paper here)  
+C. Román-Palacios, H.M. Carroll, A.J. Arnold, R.J. Flores, S.V. Petersen, K.A. McKinnon, and A. Tripati. BayClump: Bayesian Calibration and Temperature Reconstructions for Clumped Isotope Thermometry. Under revision at *Geochemistry, Geophysics, Geosystems*. Preprint available at: https://www.essoar.org/doi/abs/10.1002/essoar.10507995.1  
+
+<hr />  
 
 ## Contact Information
 
@@ -40,9 +41,47 @@ Aradhna Tripati [atripati@g.ucla.edu](mailto:atripati@g.ucla.edu)
 
 <https://github.com/Tripati-Lab/BayClump/issues>
 
+<hr />
+
+## News and Updates
+
+*March 28th, 2022* -- *BayClump v 0.9.1*  
+
+We have a News and Updates section now! Stay tuned for info on what's new with BayClump.  
+
+### Updates to functions  
+
+The developers are grateful to Ilja Kocken for alerting us to a concern with the way clumpedr's revcal function propagates uncertainties and deals with covariance between slope and intercept. You can see the issue on BayClump's GitHub repo here: https://github.com/Tripati-Lab/BayClump/issues/7 and the subsequent update to clumpedr here on Ilja's GitHub repo: https://github.com/isoverse/clumpedr/commit/31a60b10f3d36b395722a1a4ee11884a34480ae9  
+
+The revcal function was swapped out for ** CRISTIAN'S EXPLANATION HERE AND AT THE 'CLASSIC CALIBRATION APPROACH' LINE BELOW ** and we have completed testing to ensure the estimates are accurate. 
+
+Functions throughout the app have been streamlined, meaning that all of the models run faster!  
+
+### Updates to the user interface  
+
+Lots has changed with this update!  
+
+Additions to the Calibration tab include:  
+- A slider that allows users to select the temperature range for estimation of confidence intervals.  
+- The option to change the number of iterations to use for Bayesian models (default is 20,000)  
+- The option to change the number of observations per bootstrap sample (default scales to the calibration data selected)  
+- The option to multicore Deming regressions to improve computing time  
+- A menu to select either informative or diffuse priors for Bayesian models  
+- Additional download buttons for raw Bayesian outputs, posteriors, and priors  
+- More detailed progress bar messages  
+
+Additions to the Reconstruction tab include:  
+- The option to use a classic calibration approach  
+- Additional download buttons for priors and posteriors for Bayesian prediction models  
+
+New Prior tab:  
+- Placeholder text! 
+
+<hr />
+
 ## BayClump Basics
 
-BayClump version 0.9 was developed in R version 4.1.0 and RStudio version 1.4.1106. This app accompanies Román-Palacios et al. (xxxx): BayClump: Bayesian Calibration and Temperature Reconstructions for Clumped Isotope Thermometry  
+BayClump version 0.9.1 was developed in R version 4.1.0 and RStudio version 1.4.1106. It has been tested up to R 4.1.3 and RStudio 1.4.1717. This app accompanies Román-Palacios et al. *under revision*: BayClump: Bayesian Calibration and Temperature Reconstructions for Clumped Isotope Thermometry.
 
 BayClump is separated into calibration and reconstruction workflows. Any calibration models selected on the Calibrations tab are automatically made available for use in the Reconstructions tab. At this time, only $Δ_{47}$-based calibrations and reconstructions are supported.
 
@@ -90,15 +129,23 @@ If calibration data values are produced from a very wide range of growth tempera
 
 ## Calibration Model Setup and Selection
 
-BayClump offers five calibration model options. Bootstrapping is used to produce robust estimates of regression coefficients. The user is able to select 50, 100, 500, or 1,000 bootstrap replicates. We recommend that the number of bootstrap replicates chosen be at least 10 times the number of unique samples, with a minimum of 50 and a maximum of 1,000 offered. For example, if you have ten unique samples you wish to use in calibration models, you should choose at least 100 bootstrap replicates (10 x 10). If you have 3 or fewer samples, do not exceed 50 bootstrap replicates.  
+BayClump offers five calibration model options. Bootstrapping is used to produce robust estimates of regression coefficients for non-Bayesian models. The user is able to type in the number of replicates or use the default 100 bootstrap. We recommend that the number of bootstrap replicates chosen be at least 10 times the number of unique samples, with a minimum of 50 and a maximum of 1,000. For example, if you have ten unique samples you wish to use in calibration models, you should choose at least 100 bootstrap replicates (10 x 10). If you have 3 or fewer samples, do not exceed 50 bootstrap replicates.  
 
-**Warning: Selecting all available calibration models and a large number of bootstraps will require significant processing time. This may exceed 30-40 minutes if server traffic is heavy. The app may appear to hang while calculations are being performed, but should complete normally.**  
+**Warning: Selecting all available calibration models and a large number of bootstraps will require significant processing time. This may exceed 30-40 minutes if server traffic is heavy. The app may appear to hang while calculations are being performed, but should complete normally. Do not disconnect from the app during the calibration run**  
 
-**Important: Calibration data should be entered into the template in $10^6/T^2$ format, where temperature, T, is in Kelvin.**
+**Important: Calibration data should be entered into the template in $10^6/T^2$ format, where temperature, T, is in Kelvin.**  
+
+### Temperature range for CI estimation  
+
+A slider is used to select the appropriate temperature range over which to estimate the confidence interval around calibration models. The user may match their calibration data exactly, narrow the range if they wish to produce a CI over just a portion of the temperature range covered by their calibration data, or extend the range to extrapolate from the available calibration data. The default is 1 - 14 ($10^6/T^2$).  
+
+### Number of iterations for Bayesian models  
+
+The number of iterations needed to allow models to converge properly varies by dataset, but the default of 20,000 will be appropriate for most applications. Reduce this number to improve times, or increase the number if the models are having issues converging. Increasing the number of iterations takes more time.
 
 ### Calibration model descriptions  
 
-**Note: The descriptions provided below are taken from the publication this app accompanies.** For additional information, please see Román-Palacios et al. (xxxx).  
+**Note: The descriptions provided below are taken from the publication this app accompanies.** For additional information, please see Román-Palacios et al. *under revision*.  
 
 ### Simple linear model  
 
@@ -170,3 +217,12 @@ Temperature predictions are explicitly based on parameter estimates for Bayesian
 
 ### Reconstruction output  
 By default, up to six rows of data for each reconstruction model are displayed in the output. This may be copied and pasted directly into external software if desired. The download button will provide a multi-tabbed spreadsheet in .xlsx format containing the full output from all selected models.  
+
+<hr /> 
+
+## The Priors Tab
+
+### Info about the priors tab will go here!!  
+
+Text here  
+

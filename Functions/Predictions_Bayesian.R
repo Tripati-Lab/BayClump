@@ -14,121 +14,83 @@
 BayesianPredictions <- function(bayeslincals, 
                                     D47Pred,
                                     D47Prederror,
-                                    materialsPred, 
-                                    nsamp=500){
+                                    materialsPred){
   
 
 BLM1<-paste("model{
   for(i in 1:N){ 
-    x[i] ~ dnorm(11, 0.394)
-    y[i] ~ dnorm(mu2[i], tau)
-    x2[i] <- sqrt((beta * 10^6) / (y[i] - alpha)) - 273.15
-    mu2[i] <- alpha  + beta * x[i]
-    
-    terr[i] ~ dunif(0.00001, yp[i])
-    tp[i] <- y[i]+terr[i]
-    xp[i] ~ dnorm(11, 0.394)
-    yp[i] ~ dnorm(mu2p[i], tau)
-    x2p[i] <- sqrt((beta * 10^6) / (tp[i] - alpha)) - 273.15
-    mu2p[i] <- alpha  + beta * xp[i]
-    unc[i] <- x2[i]-x2p[i]
-    pred[i] ~ dnorm(x2[i], pow(unc[i],-2))
+    x[i] ~ dnorm(11, 0.0001)
+    y[i] ~ dnorm(mu2[i], tau[i])
+    x2[i] <- sqrt((beta[i] * 10^6) / (y[i] - alpha[i])) - 273.15
+    mu2[i] <- alpha[i]  + beta[i] * x[i]
+    y2[i] ~ dnorm(y[i], pow(y2err[i],-2))
   }
-  
+  x3 <- mean(x2)
 }")
   
   postBLM<- bayeslincals$BLM1_fit_NoErrors$BUGSoutput$sims.matrix
-  postPredBLM1 <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(j){
+  postPredBLM1 <- do.call(rbind,lapply(1:length(D47Pred), function(i){
     tryCatch({
       LM_No_error_Data <- list(
-        N=length(D47Pred),
-        y=D47Pred,
-        yp = D47Prederror,
-        alpha=postBLM[j,'alpha'],
-        beta=postBLM[j,'beta'],
-        tau=postBLM[j,'tau']
+        N=nrow(postBLM),
+        y2=rep(D47Pred[i],nrow(postBLM)),
+        y2err=rep(D47Prederror[i],nrow(postBLM)),
+        alpha=postBLM[,'alpha'],
+        beta=postBLM[,'beta'],
+        tau=postBLM[,'tau']
       )
     
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
-                              parameters = c("pred"),
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
+                              parameters = c("x3"),
                               model = textConnection(BLM1), n.chains = 3,
-                              n.iter =  50000)
-  
-    
-    
-    cbind.data.frame(D47Pred, 
-                     D47Prederror, 
-                     Tc=BLM1_fit_NoErrors$BUGSoutput$mean$pred,
-                     se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
-                     )
-    
+                              n.iter =  1000, n.burnin=0)
+    unlist(c(BLM1_fit_NoErrors$BUGSoutput$mean[-1], BLM1_fit_NoErrors$BUGSoutput$sd[-1]))
   }, error=function(e){c(NA,NA)})
   }))
-  postPredBLM1 <-aggregate(postPredBLM1[, 3:4], list(postPredBLM1$D47Pred, postPredBLM1$D47Prederror), mean)
-  
   
   postBLM<- bayeslincals$BLM1_fit$BUGSoutput$sims.matrix
-  postPredBLM2 <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(j){
-   
-     tryCatch({
-       LM_No_error_Data <- list(
-         N=length(D47Pred),
-         y=D47Pred,
-         yp = D47Prederror,
-         alpha=postBLM[j,'alpha'],
-         beta=postBLM[j,'beta'],
-         tau=postBLM[j,'tau']
-       )
-       
-       BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
-                                 parameters = c("pred"),
-                                 model = textConnection(BLM1), n.chains = 3,
-                                 n.iter =  50000)
-       
-       cbind.data.frame(D47Pred, 
-                        D47Prederror, 
-                        Tc=BLM1_fit_NoErrors$BUGSoutput$mean$pred,
-                        se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
-       )
-       
-      
+  postPredBLM2 <- do.call(rbind,lapply(1:length(D47Pred), function(i){
+    tryCatch({
+      LM_No_error_Data <- list(
+        N=nrow(postBLM),
+        y2=rep(D47Pred[i],nrow(postBLM)),
+        y2err=rep(D47Prederror[i],nrow(postBLM)),
+        alpha=postBLM[,'alpha'],
+        beta=postBLM[,'beta'],
+        tau=postBLM[,'tau']
+      )
+    
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
+                              parameters = c("x3"),
+                              model = textConnection(BLM1), n.chains = 3,
+                              n.iter =  1000, n.burnin=0)
+    unlist(c(BLM1_fit_NoErrors$BUGSoutput$mean[-1], BLM1_fit_NoErrors$BUGSoutput$sd[-1]))
     }, error=function(e){c(NA,NA)})
   }))
-  postPredBLM2 <-aggregate(postPredBLM2[, 3:4], list(postPredBLM2$D47Pred, postPredBLM2$D47Prederror), mean)
   
   postBLMM<- bayeslincals$BLM3_fit$BUGSoutput$sims.matrix
-  postPredBLMM <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(j){
+  postPredBLMM <- do.call(rbind,lapply(1:length(D47Pred), function(i){
   tryCatch({
     
     alphas=lapply(grep("alpha", colnames(postBLMM)), function(x) postBLMM[,x])
     betas=lapply(grep("beta", colnames(postBLMM)), function(x) postBLMM[,x])
     
+      LM_No_error_Data <- list(
+        N=nrow(postBLM),
+        y2=rep(D47Pred[i],nrow(postBLM)),
+        y2err=rep(D47Prederror[i],nrow(postBLM)),
+        alpha=alphas[[materialsPred[i]]],
+        beta=betas[[materialsPred[i]]],
+        tau=postBLMM[,'tau']
+      )
     
-    LM_No_error_Data <- list(
-      N=length(D47Pred),
-      y=D47Pred,
-      yp = D47Prederror,
-      alpha=alphas[[1]][j],
-      beta=betas[[1]][j],
-      tau=postBLMM[j,'tau']
-    )
-    
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
-                              parameters = c("pred"),
-                              model = textConnection(BLM1), n.chains = 3,
-                              n.iter =  50000)
-    
-    cbind.data.frame(D47Pred, 
-                     D47Prederror, 
-                     Tc= BLM1_fit_NoErrors$BUGSoutput$mean$pred,
-                     se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
-    )
-    
-    
-      }, error=function(e){c(NA,NA)})
+      BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,#inits = inits,
+                                parameters = c("x3"),
+                                model = textConnection(BLM1), n.chains = 3,
+                                n.iter =  1000, n.burnin=0)
+      unlist(c(BLM1_fit_NoErrors$BUGSoutput$mean[-1], BLM1_fit_NoErrors$BUGSoutput$sd[-1]))
+  }, error=function(e){c(NA,NA)})
   }))
-  postPredBLMM <-aggregate(postPredBLMM[, 3:4], list(postPredBLMM$D47Pred, postPredBLMM$D47Prederror), mean)
-
   
   CompleteModelFit<-list("BLM1_fit"=postPredBLM1,"BLM1_fit_NoErrors"=postPredBLM2, "BLM3"=postPredBLMM)
   
