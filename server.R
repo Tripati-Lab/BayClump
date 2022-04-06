@@ -205,6 +205,8 @@ server <- function(input, output, session) {
     bayeslincals <<- NULL
 
     
+    # Calibration data
+    
     calData <<- NULL
     calData <<- calibrationData()
 
@@ -1450,6 +1452,12 @@ server <- function(input, output, session) {
       saveWorkbook(wb5, file, overwrite = TRUE)
     }
   )
+  
+  # Manuscript tab
+  
+  output$msframe <- renderUI({
+    tags$iframe(style="height:600px; width:100%", src="Manuscript/essoar.10507995.1.pdf")
+  })
   
 }
   

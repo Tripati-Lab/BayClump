@@ -83,11 +83,11 @@ body <- dashboardBody(
                   column(12, "For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual",
                          numericInput("replication", label = "Number of bootstrap replicates for non-Bayesian models", 
                                       100, min = 2, max = 10000),
-                        sliderInput("range", label = HTML(paste0("Range for temperature to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
+                        sliderInput("range", label = HTML(paste0("Temperature range to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
                                     min = 0, max = 30, value = c(1, 14)),
                         numericInput("generations", label = "Number of iterations for Bayesian models", 
                                      20000, min = 1000, max = 1000000),
-                        checkboxInput("multicore", "Multicore for Deming regression?", FALSE),
+                        checkboxInput("multicore", "Multicore for Deming regression", FALSE),
                          uiOutput("myList"),
                          selectInput("priors", label = "Bayesian priors", 
                                     choices = c("Informative", "Diffuse"), selected = "Informative"),
@@ -109,12 +109,12 @@ body <- dashboardBody(
                                           icon = icon("cogs", lib = "font-awesome")
                              )
                          ),
-                         div(style="display:inline-block; vertical-align:top;", 
-                             actionButton('reset', "Reset ALL", 
-                                          icon = icon("trash-alt", lib = "font-awesome"))),
-                         bsTooltip('reset', "Warning: This resets EVERYTHING, including data inputs",
-                                   placement = "bottom", trigger = "hover",
-                                   options = NULL),
+                     #    div(style="display:inline-block; vertical-align:top;", 
+                    #         actionButton('reset', "Reset ALL", 
+                    #                      icon = icon("trash-alt", lib = "font-awesome"))),
+                    #     bsTooltip('reset', "Warning: This resets EVERYTHING, including data inputs",
+                    #               placement = "bottom", trigger = "hover",
+                    #               options = NULL),
                          verbatimTextOutput("modresults")
                          
                   )
@@ -194,9 +194,7 @@ body <- dashboardBody(
             
             
     ),
-    
-    
-    
+
     
     #Reconstruction tab
     tabItem(tabName = "reconstruction",
@@ -222,7 +220,7 @@ body <- dashboardBody(
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
                          tags$b("Use the classic calibration approach?"),
-                         checkboxInput("ClassicRec", "Yes", TRUE),
+                         checkboxInput("ClassicRec", "Yes"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
@@ -256,6 +254,18 @@ body <- dashboardBody(
             
     ),
     
+    
+    #Priors tab
+    tabItem(tabName = "priors",
+            fluidRow(
+              box(width = 12, 
+                  title = "Bayesian Priors", solidHeader = TRUE,
+                  column(12, tags$b("Information on the priors goes here!"),
+                  )
+              )
+            )
+    ),
+    
     #User manual
     tabItem(tabName = "usermanual",
             fluidRow(
@@ -277,11 +287,16 @@ body <- dashboardBody(
               ))),
     
     #Manuscript
-    tabItem(tabName = "manuscript",
+    tabItem(tabName = "manuscript", 
             fluidRow(
-              column(12, "A static link to the publisher's website will be embedded here upon acceptance for publication"
-                     #includeHTML("Our manuscript here")
-              ))),
+              box(width = 12, title = "Note: This is a preprint and has not yet been accepted for publication. Updates will be posted here.",
+                  solidHeader = TRUE,
+              column(12, 
+                     uiOutput("msframe")
+                     )
+                   )
+            )
+            ),
     
     #Download
     tabItem(tabName = "download",
@@ -308,8 +323,13 @@ sidebar <- dashboardSidebar(width = 200,
                                        icon =icon("chart-bar", lib = "font-awesome")
                               ),
                               
+
                               menuItem("Reconstructions", tabName = "reconstruction", 
                                        icon = icon("chart-area", lib = "font-awesome")
+                              ),
+                              
+                              menuItem("Bayesian Priors", tabName = "priors", 
+                                       icon =icon("rotate-left", lib = "font-awesome")
                               ),
                               
                               menuItem("User Manual", tabName = "usermanual", 
