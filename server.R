@@ -77,7 +77,7 @@ server <- function(input, output, session) {
   observeEvent(calibrationData(),{
   output$myList <-  renderUI({
     numericInput("samples", min = 3, max = nrow(calibrationData()), 
-                label = paste0("Number of observations per bootstrap sample, (max. recommended: ", nrow(calibrationData()) ,")" ), 
+                label = paste0("Number of observations per bootstrap sample (max. recommended: ", nrow(calibrationData()) ,")" ), 
                 value =  nrow(calibrationData()))
   })
   })
@@ -1456,7 +1456,7 @@ server <- function(input, output, session) {
   # Manuscript tab
   
   output$msframe <- renderUI({
-    tags$iframe(style="height:600px; width:100%", src="Manuscript/essoar.10507995.1.pdf")
+    tags$iframe(style="height:600px; width:100%", src="essoar.10507995.2.pdf")
   })
   
 }
