@@ -77,7 +77,7 @@ server <- function(input, output, session) {
   observeEvent(calibrationData(),{
   output$myList <-  renderUI({
     numericInput("samples", min = 3, max = nrow(calibrationData()), 
-                label = paste0("Number of observations per bootstrap sample, (max. recommended: ", nrow(calibrationData()) ,")" ), 
+                label = paste0("Number of observations per bootstrap sample (max. recommended: ", nrow(calibrationData()) ,")" ), 
                 value =  nrow(calibrationData()))
   })
   })
