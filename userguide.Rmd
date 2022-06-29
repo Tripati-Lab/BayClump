@@ -18,7 +18,7 @@ urlcolor: blue
 
 ## Publication Information  
 
-C. Román-Palacios, H.M. Carroll, A.J. Arnold, R.J. Flores, S.V. Petersen, K.A. McKinnon, and A. Tripati. BayClump: Bayesian Calibration and Temperature Reconstructions for Clumped Isotope Thermometry. Under revision at *Geochemistry, Geophysics, Geosystems*. Preprint available at: https://www.essoar.org/doi/abs/10.1002/essoar.10507995.1  
+C. Román-Palacios, H. M. Carroll, A. J. Arnold, R. J. Flores, Q. Guan, S. Petersen, K. A. McKinnon, and A. Tripati. BayClump: Bayesian Calibration Models of the ‘Clumped Isotopes’ Paleothermometer. Under review in *Geochemistry, Geophysics, Geosystems*.  
 
 <hr />  
 
@@ -27,7 +27,7 @@ C. Román-Palacios, H.M. Carroll, A.J. Arnold, R.J. Flores, S.V. Petersen, K.A. 
 **Developers**
 
 Hannah M. Carroll [hcarroll@epss.ucla.edu](mailto:hcarroll@epss.ucla.edu)  
-Cristian Román-Palacios [cromanpa@g.ucla.edu](mailto:cromanpa@g.ucla.edu)  
+Cristian Román-Palacios [cromanpa@g.ucla.edu](mailto:cromanpa94@arizona.edu)  
 
 **Senior author**
 
