@@ -74,9 +74,6 @@ Additions to the Reconstruction tab include:
 - The option to use a classic calibration approach  
 - Additional download buttons for priors and posteriors for Bayesian prediction models  
 
-New Prior tab:  
-- Placeholder text! 
-
 <hr />
 
 ## BayClump Basics
