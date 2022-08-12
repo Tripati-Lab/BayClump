@@ -256,15 +256,15 @@ body <- dashboardBody(
     
     
     #Priors tab
-    tabItem(tabName = "priors",
-            fluidRow(
-              box(width = 12, 
-                  title = "Bayesian Priors", solidHeader = TRUE,
-                  column(12, tags$b("Information on the priors goes here!"),
-                  )
-              )
-            )
-    ),
+#    tabItem(tabName = "priors",
+#            fluidRow(
+#              box(width = 12, 
+#                  title = "Bayesian Priors", solidHeader = TRUE,
+#                  column(12, tags$b("Information on the priors goes here!"),
+#                  )
+#              )
+#            )
+#    ),
     
     #User manual
     tabItem(tabName = "usermanual",
@@ -328,9 +328,9 @@ sidebar <- dashboardSidebar(width = 200,
                                        icon = icon("chart-area", lib = "font-awesome")
                               ),
                               
-                              menuItem("Bayesian Priors", tabName = "priors", 
-                                       icon =icon("rotate-left", lib = "font-awesome")
-                              ),
+                       #       menuItem("Bayesian Priors", tabName = "priors", 
+                      #                 icon =icon("rotate-left", lib = "font-awesome")
+                       #       ),
                               
                               menuItem("User Manual", tabName = "usermanual", 
                                        icon = icon("question-circle", lib = "font-awesome")
