@@ -1330,7 +1330,7 @@ server <- function(input, output, session) {
               
               sink()
 
-              infTempBayesian_werrors <- infTempBayesian$BLM1_fit[,3:4]
+              infTempBayesian_werrors <- infTempBayesian$BLM1_fit[,2:3]
               df0 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
 
               names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
@@ -1353,7 +1353,7 @@ server <- function(input, output, session) {
 
               
               ##Without errors
-              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors[,3:4]
+              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors[,2:3]
               df0.1 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
 
               names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
@@ -1376,7 +1376,7 @@ server <- function(input, output, session) {
               )
               
               
-              infTempBayesianMixed <- infTempBayesian$BLM3[,3:4]
+              infTempBayesianMixed <- infTempBayesian$BLM3[,2:3]
               df0.2 <- cbind.data.frame(recData$D47, recData$D47error, recData$Material,infTempBayesianMixed)
 
               names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")

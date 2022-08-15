@@ -12,13 +12,13 @@
 #" @param priors Informative priors or not on the slope and intercept
 
 BayesianPredictions <- function(bayeslincals, 
-                                    D47Pred,
-                                    D47Prederror,
-                                    materialsPred, 
-                                    nsamp=500){
+                                D47Pred,
+                                D47Prederror,
+                                materialsPred, 
+                                nsamp=500){
   
-
-BLM1<-paste("model{
+  
+  BLM1<-paste("model{
   for(i in 1:N){ 
     x[i] ~ dnorm(11, 0.394)
     y[i] ~ dnorm(mu2[i], tau)
@@ -48,87 +48,91 @@ BLM1<-paste("model{
         beta=postBLM[j,'beta'],
         tau=postBLM[j,'tau']
       )
-    
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
-                              parameters = c("pred"),
-                              model = textConnection(BLM1), n.chains = 3,
-                              n.iter =  50000)
-  
-    
-    
-    cbind.data.frame(D47Pred, 
-                     D47Prederror, 
-                     Tc=BLM1_fit_NoErrors$BUGSoutput$mean$pred,
-                     se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
-                     )
-    
-  }, error=function(e){c(NA,NA)})
+      
+      BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
+                                parameters = c("pred"),
+                                model = textConnection(BLM1), n.chains = 3,
+                                n.iter =  50000)
+      
+      
+      
+      cbind.data.frame(D47Pred, 
+                       D47Prederror, 
+                       Tc=BLM1_fit_NoErrors$BUGSoutput$mean$pred,
+                       se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
+      )
+      
+    }, error=function(e){c(NA,NA)})
   }))
-  postPredBLM1 <-aggregate(postPredBLM1[, 3:4], list(postPredBLM1$D47Pred, postPredBLM1$D47Prederror), mean)
+  
+  postPredBLM1$samples <- rep(seq_along(D47Pred), nrow(postPredBLM1)/length(D47Pred))
+  postPredBLM1 <- aggregate(postPredBLM1[, 3:4], list(postPredBLM1$samples), mean )
   
   
   postBLM<- bayeslincals$BLM1_fit$BUGSoutput$sims.matrix
   postPredBLM2 <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(j){
-   
-     tryCatch({
-       LM_No_error_Data <- list(
-         N=length(D47Pred),
-         y=D47Pred,
-         yp = D47Prederror,
-         alpha=postBLM[j,'alpha'],
-         beta=postBLM[j,'beta'],
-         tau=postBLM[j,'tau']
-       )
-       
-       BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
-                                 parameters = c("pred"),
-                                 model = textConnection(BLM1), n.chains = 3,
-                                 n.iter =  50000)
-       
-       cbind.data.frame(D47Pred, 
-                        D47Prederror, 
-                        Tc=BLM1_fit_NoErrors$BUGSoutput$mean$pred,
-                        se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
-       )
-       
+    
+    tryCatch({
+      LM_No_error_Data <- list(
+        N=length(D47Pred),
+        y=D47Pred,
+        yp = D47Prederror,
+        alpha=postBLM[j,'alpha'],
+        beta=postBLM[j,'beta'],
+        tau=postBLM[j,'tau']
+      )
+      
+      BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
+                                parameters = c("pred"),
+                                model = textConnection(BLM1), n.chains = 3,
+                                n.iter =  50000)
+      
+      cbind.data.frame(D47Pred, 
+                       D47Prederror, 
+                       Tc=BLM1_fit_NoErrors$BUGSoutput$mean$pred,
+                       se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
+      )
+      
       
     }, error=function(e){c(NA,NA)})
   }))
-  postPredBLM2 <-aggregate(postPredBLM2[, 3:4], list(postPredBLM2$D47Pred, postPredBLM2$D47Prederror), mean)
+  postPredBLM2$samples <- rep(seq_along(D47Pred), nrow(postPredBLM2)/length(D47Pred))
+  postPredBLM2 <-aggregate(postPredBLM2[, 3:4], list(postPredBLM2$samples), mean)
   
   postBLMM<- bayeslincals$BLM3_fit$BUGSoutput$sims.matrix
   postPredBLMM <- do.call(rbind,lapply(sample(1:nrow(postBLM), nsamp), function(j){
-  tryCatch({
-    
-    alphas=lapply(grep("alpha", colnames(postBLMM)), function(x) postBLMM[,x])
-    betas=lapply(grep("beta", colnames(postBLMM)), function(x) postBLMM[,x])
-    
-    
-    LM_No_error_Data <- list(
-      N=length(D47Pred),
-      y=D47Pred,
-      yp = D47Prederror,
-      alpha=alphas[[1]][j],
-      beta=betas[[1]][j],
-      tau=postBLMM[j,'tau']
-    )
-    
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
-                              parameters = c("pred"),
-                              model = textConnection(BLM1), n.chains = 3,
-                              n.iter =  50000)
-    
-    cbind.data.frame(D47Pred, 
-                     D47Prederror, 
-                     Tc= BLM1_fit_NoErrors$BUGSoutput$mean$pred,
-                     se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
-    )
-    
-    
-      }, error=function(e){c(NA,NA)})
+    tryCatch({
+      
+      alphas=lapply(grep("alpha", colnames(postBLMM)), function(x) postBLMM[,x])
+      betas=lapply(grep("beta", colnames(postBLMM)), function(x) postBLMM[,x])
+      
+      
+      LM_No_error_Data <- list(
+        N=length(D47Pred),
+        y=D47Pred,
+        yp = D47Prederror,
+        alpha=alphas[[1]][j],
+        beta=betas[[1]][j],
+        tau=postBLMM[j,'tau']
+      )
+      
+      BLM1_fit_NoErrors <- jags(data = LM_No_error_Data,
+                                parameters = c("pred"),
+                                model = textConnection(BLM1), n.chains = 3,
+                                n.iter =  50000)
+      
+      cbind.data.frame(D47Pred, 
+                       D47Prederror, 
+                       Tc= BLM1_fit_NoErrors$BUGSoutput$mean$pred,
+                       se=BLM1_fit_NoErrors$BUGSoutput$sd$pred
+      )
+      
+      
+    }, error=function(e){c(NA,NA)})
   }))
-  postPredBLMM <-aggregate(postPredBLMM[, 3:4], list(postPredBLMM$D47Pred, postPredBLMM$D47Prederror), mean)
-
+  postPredBLMM$samples <- rep(seq_along(D47Pred), nrow(postPredBLMM)/length(D47Pred))
+  postPredBLMM <-aggregate(postPredBLMM[, 3:4], list(postPredBLMM$samples), mean)
+  
   
   CompleteModelFit<-list("BLM1_fit"=postPredBLM1,"BLM1_fit_NoErrors"=postPredBLM2, "BLM3"=postPredBLMM)
   
