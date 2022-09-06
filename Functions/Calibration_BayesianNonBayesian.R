@@ -1,36 +1,51 @@
-#" This function generate temperature predictions (in 10^6/T2) based on a 
-#" calibration dataset and target D47. Note that this alternative function
-#" propagates uncertainty around the target D47.
-#" 
-#" @param calibrationData The calibration dataset
-#" @param hasMaterial Whether only a mixed model should be run
-#" @param n.iter number of MCMC iterations
-#" @param burninFrac burnin fraction (0-1)
-#" @param priors Informative priors or not on the beta and alpha
-#" @param useInits whether we should use inits to the run
-#" @param D47error the column in calibrationData containing the uncertainty in D47
+#' This function generate temperature predictions (in 10^6/T2) based on a 
+#' calibration dataset and target D47. Note that this alternative function
+#' propagates uncertainty around the target D47.
+#' 
+#' @param calibrationData The calibration dataset
+#' @param n.iter number of MCMC iterations
+#' @param priors Informative, difusse, or NonInformative on the beta and alpha
+#' @param D47error the column in calibrationData containing the uncertainty in D47
+#' @param init.values Use initial values for runs in JAGS?
 
 
 fitClumpedRegressions <<- function(calibrationData, 
                                 n.iter = 5000, 
                                 priors = "Informative",
                                 D47error = "D47error",
-                                samples=NULL){
+                                samples=NULL,
+                                init.values = FALSE){
   
-  samples <- if(is.null(samples)){nrow(calibrationData)}else{samples}
+  if(! priors %in% c("Informative", "Difusse", "NonInformative") ){ 
+    stop("Priors must be in `Informative`, `Difusse` or `NonInformative`")
+  }
   
-  calibrationData <- calibrationData[sample(1:nrow(calibrationData), samples), ]
+  if(is.null(samples)){
+    warning("Using the full dataset in the calibration step.")
+    samples <- nrow(calibrationData)
+  }else{
+    warning("Sampling ", samples, " from the dataset.")
+    calibrationData <- calibrationData[sample(1:nrow(calibrationData), samples), ]
+  }
+     
   
   if(priors == "Informative"){
     alphaBLM1 = "dnorm(0.231,0.065)" 
-    betaBLM1 = "dnorm(0.039,0.004)"}else{
-      alphaBLM1 = "dnorm(0.231, 0.195)" 
-      betaBLM1 = "dnorm(0.231, 0.012)"
-    }
+    betaBLM1 = "dnorm(0.039,0.004)"}
+  
+  if(priors == "Difusse"){
+    alphaBLM1 = "dnorm(0, 0.01)" 
+    betaBLM1 = "dnorm(0, 0.01)"
+  }
+  
+  if(priors == "NonInformative"){
+    alphaBLM1 = "dnorm(0.231, 0.195)" 
+    betaBLM1 = "dnorm(0.231, 0.012)"
+  }
   
   
   ##Models
-  BLM1<-paste(" model{
+  BLM1 <- paste(" model{
     # Diffuse normal priors for predictors
     alpha ~ ", alphaBLM1," \n ",
               "beta ~ ", betaBLM1," \n ", 
@@ -57,7 +72,7 @@ fitClumpedRegressions <<- function(calibrationData,
 }")
   
   
-  BLM1_NoErrors<-paste("model{
+  BLM1_NoErrors <- paste("model{
                 # Diffuse normal priors for predictors
                 alpha ~ ", alphaBLM1," \n ",
                        "beta ~ ", betaBLM1," \n ",
@@ -79,7 +94,7 @@ fitClumpedRegressions <<- function(calibrationData,
 }")
   
   ##Mixed Model (interaction effects; multiple betas and alphas)
-  BLM3<-paste(" model{
+  BLM3 <- paste(" model{
   
     # Diffuse normal priors for predictors
         for (i in 1:K) {
@@ -137,17 +152,23 @@ fitClumpedRegressions <<- function(calibrationData,
   
   #Data
 
-    ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                         errx1 = abs(calibrationData$TempError), erry = calibrationData[,D47error], 
-                         K=length(unique(calibrationData$Material)),
-                         N=nrow(calibrationData),
-                         type= as.numeric(calibrationData$Material))
-    LM_Data <- list(obsx = calibrationData$Temperature , obsy = calibrationData$D47 , 
-                    errx = abs(calibrationData$TempError), erry = calibrationData[,D47error], 
-                    N=nrow(calibrationData))
+    ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature, 
+                         obsy = calibrationData$D47 , 
+                         errx1 = abs(calibrationData$TempError), 
+                         erry = calibrationData[,D47error], 
+                         K = length(unique(calibrationData$Material)),
+                         N = nrow(calibrationData),
+                         type = as.numeric(calibrationData$Material))
     
-    LM_No_error_Data <- list(x = calibrationData$Temperature , y = calibrationData$D47,
-                             N=nrow(calibrationData))
+    LM_Data <- list(obsx = calibrationData$Temperature, 
+                    obsy = calibrationData$D47 , 
+                    errx = abs(calibrationData$TempError), 
+                    erry = calibrationData[,D47error], 
+                    N = nrow(calibrationData))
+    
+    LM_No_error_Data <- list(x = calibrationData$Temperature, 
+                             y = calibrationData$D47,
+                             N = nrow(calibrationData))
     
     
     #Inits
@@ -163,21 +184,32 @@ fitClumpedRegressions <<- function(calibrationData,
       
     }
     
-    #Fit models
-    BLM3_fit <- jags(data = ANCOVA2_Data, inits = initsMixed,
-                     parameters = c("alpha","beta","conditionalR2", "marginalR2", "tau"), 
-                     model = textConnection(BLM3), n.chains = 3,
-                     n.iter = n.iter)
-
-    BLM1_fit <- jags(data = LM_Data, inits = initsSimple,
-                     parameters = c("alpha","beta", "tau"),
-                     model = textConnection(BLM1), n.chains = 3, 
-                     n.iter = n.iter)
+    init.values
     
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data, inits = initsSimple,
+    #Fit models
+    BLM3_fit <- jags(data = ANCOVA2_Data, 
+                     inits = if(init.values){initsMixed}else{NULL},
+                     parameters = c("alpha","beta","conditionalR2", "marginalR2", "tau"), 
+                     model = textConnection(BLM3), 
+                     n.chains = 3,
+                     n.iter = n.iter)
+    BLM3_fit <- autojags(BLM3_fit)
+    
+    BLM1_fit <- jags(data = LM_Data, 
+                     inits = if(init.values){initsSimple}else{NULL},
+                     parameters = c("alpha","beta", "tau"),
+                     model = textConnection(BLM1), 
+                     n.chains = 3, 
+                     n.iter = n.iter)
+    BLM1_fit <- autojags(BLM1_fit)
+    
+    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data, 
+                              inits = if(init.values){initsSimple}else{NULL},
                               parameters = c("alpha","beta", "tau"),
-                              model = textConnection(BLM1_NoErrors), n.chains = 3,
+                              model = textConnection(BLM1_NoErrors), 
+                              n.chains = 3,
                               n.iter = n.iter)
+    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors)
     
     #Extract relevant descriptors
     R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
@@ -203,12 +235,12 @@ fitClumpedRegressions <<- function(calibrationData,
 }
 
 
-#" Bootstrap York regression models from a calibration dataset
-#" 
-#" @param data The calibration dataset
-#" @param replicates Number of bootstrap replicates
-#" @param samples Number of samples per replicate
-#" @param D47error The column in data containing the errors in D47
+#' Bootstrap York regression models from a calibration dataset
+#' 
+#' @param data The calibration dataset
+#' @param replicates Number of bootstrap replicates
+#' @param samples Number of samples per replicate
+#' @param D47error The column in data containing the errors in D47
 
 simulateYork_measured <<- function(data, 
                                    replicates, 
@@ -224,12 +256,12 @@ simulateYork_measured <<- function(data,
 }
 
 
-#" Bootstrap an OLS regression models from a calibration dataset
-#" 
-#" @param data The calibration dataset
-#" @param replicates Number of bootstrap replicates
-#" @param samples Number of samples per replicate
-#" @param D47error The column in data containing the errors in D47
+#' Bootstrap an OLS regression models from a calibration dataset
+#' 
+#' @param data The calibration dataset
+#' @param replicates Number of bootstrap replicates
+#' @param samples Number of samples per replicate
+#' @param D47error The column in data containing the errors in D47
 
 simulateLM_measured <<- function(data, 
                                replicates, 
@@ -254,12 +286,12 @@ simulateLM_measured <<- function(data,
 }
 
 
-#" Bootstrap a weighted OLS regression models from a calibration dataset
-#" 
-#" @param data The calibration dataset
-#" @param replicates Number of bootstrap replicates
-#" @param samples Number of samples per replicate
-#" @param D47error The column in data containing the errors in D47
+#' Bootstrap a weighted OLS regression models from a calibration dataset
+#' 
+#' @param data The calibration dataset
+#' @param replicates Number of bootstrap replicates
+#' @param samples Number of samples per replicate
+#' @param D47error The column in data containing the errors in D47
 
 
 simulateLM_inverseweights <<- function(data, 
@@ -286,12 +318,12 @@ simulateLM_inverseweights <<- function(data,
 }
 
 
-#" Bootstrap Deming regression models from a calibration dataset
-#" 
-#" @param data The calibration dataset
-#" @param replicates Number of bootstrap replicates
-#" @param samples Number of samples per replicate
-#" @param D47error The column in data containing the errors in D47
+#' Bootstrap Deming regression models from a calibration dataset
+#' 
+#' @param data The calibration dataset
+#' @param replicates Number of bootstrap replicates
+#' @param samples Number of samples per replicate
+#' @param D47error The column in data containing the errors in D47
 
 
 simulateDeming <<- function(data, 
@@ -323,11 +355,11 @@ simulateDeming <<- function(data,
   
 }
 
-#" Estimate the R2 for Bayesian models
-#" 
-#" @param model The model (from R2jags)
-#" @param calibrationData the calibration dataset used to fit the model
-#" @param hasMaterial Is it the mixed model?
+#' Estimate the R2 for Bayesian models
+#' 
+#' @param model The model (from R2jags)
+#' @param calibrationData the calibration dataset used to fit the model
+#' @param hasMaterial Is it the mixed model?
 
 getR2Bayesian <<- function(model, 
                            calibrationData, 
@@ -368,14 +400,14 @@ getR2Bayesian <<- function(model,
 }
 
 
-#" This function is used to generate CI estimates at given intervals. It is currently
-#" used for plotting in BayClump.
-#" 
-#" @param data A data.frame with two columns labeled beta and alpha. 
-#" This should be the result of bootstrapping a given calibration set.
-#" @param from the lower limit in x
-#" @param to the upper limit in x
-#" @param length.out the number of breaks
+#' This function is used to generate CI estimates at given intervals. It is currently
+#' used for plotting in BayClump.
+#' 
+#' @param data A data.frame with two columns labeled beta and alpha. 
+#' This should be the result of bootstrapping a given calibration set.
+#' @param from the lower limit in x
+#' @param to the upper limit in x
+#' @param length.out the number of breaks
 
 
 RegressionSingleCI<-function(data, from, to, length.out=100){
@@ -406,10 +438,10 @@ RegressionSingleCI<-function(data, from, to, length.out=100){
   
 }
 
-#" Generate a dataset reflecting the priors used to run the analyses
-#" 
-#" @param prior Informative or not
-#" @param n number of observations to simulate
+#' Generate a dataset reflecting the priors used to run the analyses
+#' 
+#' @param prior Informative or not
+#' @param n number of observations to simulate
 
 generatePriorDistCalibration <- function(prior, n=1000){
   if(prior == "Informative"){
