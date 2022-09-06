@@ -212,7 +212,7 @@ server <- function(input, output, session) {
 
     samples <<- if(is.null(input$samples)){nrow(calData) }else{input$samples}
     samples <<- ifelse(samples==2, 3, samples)
-    multicore <<- input$simulateDeming
+    #multicore <<- input$simulateDeming
       
     # Recode NA or 0 error values to dummy value
     calData$D47error[calData$D47error == 0] <<- 0.000001
@@ -502,7 +502,7 @@ server <- function(input, output, session) {
         
         if(input$simulateDeming != FALSE) {
           sink(file = "out/demingmodtext.txt", type = "output")
-          demingcals <<- simulateDeming(calData, replicates = replicates, samples = samples, multicore=multicore)
+          demingcals <<- simulateDeming(calData, replicates = replicates, samples = samples, multicore = FALSE)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting Deming regression model...")
           

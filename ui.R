@@ -87,7 +87,7 @@ body <- dashboardBody(
                                     min = 0, max = 30, value = c(1, 14)),
                         numericInput("generations", label = "Number of iterations for Bayesian models", 
                                      20000, min = 1000, max = 1000000),
-                        checkboxInput("multicore", "Multicore for Deming regression", FALSE),
+                       # checkboxInput("multicore", "Multicore for Deming regression", FALSE),
                          uiOutput("myList"),
                          selectInput("priors", label = "Bayesian priors", 
                                     choices = c("Informative", "Diffuse", "NonInformative"), selected = "Informative"),
