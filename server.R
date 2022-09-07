@@ -1047,7 +1047,6 @@ server <- function(input, output, session) {
           
           # Misc options
           
-          ClassicRec <- input$ClassicRec
           calData$T2 <<- calData$Temperature
           calData$Tc <<- sqrt(10^6/(calData$T2))-273.15
           calData$TcE <<- abs((sqrt(10^6/(calData$T2))-273.15) - (sqrt(10^6/(calData$T2+abs(calData$TempError)))-273.15))
@@ -1063,25 +1062,14 @@ server <- function(input, output, session) {
             calData$T2 <<- calData$Temperature
 
             
-            if(!ClassicRec){
-              
-              lmrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
-                a <- predictTcInvest(calData=calData, 
-                                   targety=recData$D47[x],
-                                   targetyError=recData$D47error[x],
-                                   nObs = recData$N[x],
-                                   obCal=lmcals)
-                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$se)
-              } ))
-              
-            }else{
+            
             lmrec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
                 a <- predictTc(calData, targety=recData$D47[x],obCal=lmcals)
                 b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], obCal=lmcals)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
             
-            }
+            
             sink()
             df1 <- lmrec
             
@@ -1120,25 +1108,13 @@ server <- function(input, output, session) {
               
             calData$T2 <<- calData$Temperature
             
-            if(!ClassicRec){
-              
-              lminverserec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
-                a<-predictTcInvest(calData=calData, 
-                                   targety=recData$D47[x],
-                                   targetyError=recData$D47error[x],
-                                   nObs = recData$N[x],
-                                   obCal=lminversecals)
-                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$se)
-              } ))
-              
-            }else{
-            
+
             lminverserec <<-  do.call(rbind,lapply(1:nrow(recData), function(x){
                 a <- predictTc(calData, targety=recData$D47[x], obCal=lminversecals)
                 b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], obCal=lminversecals)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 } ))
-            }
+            
             
               sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the weighted OLS...")
@@ -1190,26 +1166,14 @@ server <- function(input, output, session) {
               
             calData$T2 <<- calData$Temperature
 
-            if(!ClassicRec){
-              
-              yorkrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
-                a<-predictTcInvest(calData=calData, 
-                                targety=recData$D47[x],
-                                targetyError=recData$D47error[x],
-                                nObs = recData$N[x],
-                                obCal=yorkcals)
-                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$se)
-                } ))
-              
-            }else{
-            
+
             yorkrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
                 a <- predictTc(calData, targety=recData$D47[x], obCal=yorkcals)
                 b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], obCal=yorkcals)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
               } ))
             
-            }
+            
             
               sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the York regression...")
@@ -1257,24 +1221,12 @@ server <- function(input, output, session) {
               
             calData$T2 <<- calData$Temperature
 
-            if(!ClassicRec){
-              
-              demingrec <<-   do.call(rbind,lapply(1:nrow(recData), function(x){
-                a<-predictTcInvest(calData=calData, 
-                                   targety=recData$D47[x],
-                                   targetyError=recData$D47error[x],
-                                   nObs = recData$N[x],
-                                   obCal=demingcals)
-                cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$se)
-              } ))
-              
-            }else{
             demingrec <<- do.call(rbind,lapply(1:nrow(recData), function(x){
                 a <- predictTc(calData, targety=recData$D47[x], obCal=demingcals)
                 b <- predictTc(calData, targety=recData$D47[x]+recData$D47error[x], obCal=demingcals)
                 cbind.data.frame("D47"=recData$D47[x],"D47se"=recData$D47error[x], "Tc"=a$temp, "se"=a$temp-b$temp)
                 }))
-            }
+            
             
             sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the Deming regression...")
