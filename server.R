@@ -1273,24 +1273,27 @@ server <- function(input, output, session) {
               ##This function runs only Bayesian predictions
               sink("out/bayespredictions.txt", type = "output")
               
-              infTempBayesian <- BayesianPredictions(bayeslincals=bayeslincals, 
-                                                     D47Pred=recData$D47,
-                                                     D47Prederror=ifelse(recData$D47error==0,0.00001,recData$D47error),
-                                                     materialsPred=as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material)))
-                                                     )
+              infTempBayesian <- BayesianPredictions(calibrationData = calData, 
+                                                     n.iter = ngenerationsBayes, 
+                                                     priors = priors,
+                                                     samples = samples,
+                                                     init.values = FALSE, 
+                                                     D47Pred = recData$D47,
+                                                     materialsPred = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material)))
+                                                    )
               
               
               sink()
 
-              infTempBayesian_werrors <- infTempBayesian$BLM1_fit[,2:3]
-              df0 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesian_werrors)
+              infTempBayesian_werrors <- infTempBayesian$BLM1_fit
+              df0 <- infTempBayesian_werrors
 
-              names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0) <- c("Δ47 (‰)",  "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
               
               output$BpredictionsErrors <- renderTable({
                 df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
-                df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
+                #df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
                 df0$`1SD Temperature (°C)` <- formatC(df0$`1SD Temperature (°C)`, digits = 7, format = "f")
                 head(df0)
@@ -1305,16 +1308,16 @@ server <- function(input, output, session) {
 
               
               ##Without errors
-              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors[,2:3]
-              df0.1 <- cbind.data.frame(recData$D47, recData$D47error, infTempBayesianNE)
+              infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
+              df0.1 <- infTempBayesianNE
 
-              names(df0.1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0.1) <- c("Δ47 (‰)", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
               
               output$Bpredictions <- renderTable({
                 
                 df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
-                df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
+                #df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
                 df0.1$`1SD Temperature (°C)` <- formatC(df0.1$`1SD Temperature (°C)`, digits = 7, format = "f")
                 head(df0.1)
@@ -1328,10 +1331,10 @@ server <- function(input, output, session) {
               )
               
               
-              infTempBayesianMixed <- infTempBayesian$BLM3[,2:3]
-              df0.2 <- cbind.data.frame(recData$D47, recData$D47error, recData$Material,infTempBayesianMixed)
+              infTempBayesianMixed <- infTempBayesian$BLM3
+              df0.2 <- infTempBayesianMixed
 
-              names(df0.2) <- c("Δ47 (‰)", "Δ47 (‰) error","Material", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0.2) <- c("Δ47 (‰)", "Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
               
               output$BpredictionsBLMM <- renderTable({

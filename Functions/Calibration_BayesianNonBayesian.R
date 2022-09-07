@@ -5,14 +5,13 @@
 #' @param calibrationData The calibration dataset
 #' @param n.iter number of MCMC iterations
 #' @param priors Informative, difusse, or NonInformative on the beta and alpha
-#' @param D47error the column in calibrationData containing the uncertainty in D47
+#' @param samples Number of samples to analyze
 #' @param init.values Use initial values for runs in JAGS?
 
 
 fitClumpedRegressions <<- function(calibrationData, 
                                 n.iter = 5000, 
                                 priors = "Informative",
-                                D47error = "D47error",
                                 samples=NULL,
                                 init.values = FALSE){
   
