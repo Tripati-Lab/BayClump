@@ -1279,7 +1279,8 @@ server <- function(input, output, session) {
                                                      samples = samples,
                                                      init.values = FALSE, 
                                                      D47Pred = recData$D47,
-                                                     materialsPred = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material)))
+                                                     materialsPred = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
+                                                     D47PredErr = recData$D47error
                                                     )
               
               
@@ -1288,12 +1289,12 @@ server <- function(input, output, session) {
               infTempBayesian_werrors <- infTempBayesian$BLM1_fit
               df0 <- infTempBayesian_werrors
 
-              names(df0) <- c("Δ47 (‰)",  "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error",  "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
               
               output$BpredictionsErrors <- renderTable({
                 df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
-                #df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
                 df0$`1SD Temperature (°C)` <- formatC(df0$`1SD Temperature (°C)`, digits = 7, format = "f")
                 head(df0)
@@ -1311,13 +1312,13 @@ server <- function(input, output, session) {
               infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
               df0.1 <- infTempBayesianNE
 
-              names(df0.1) <- c("Δ47 (‰)", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0.1) <- c("Δ47 (‰)","Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
               
               output$Bpredictions <- renderTable({
                 
                 df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
-                #df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
                 df0.1$`1SD Temperature (°C)` <- formatC(df0.1$`1SD Temperature (°C)`, digits = 7, format = "f")
                 head(df0.1)
@@ -1334,13 +1335,13 @@ server <- function(input, output, session) {
               infTempBayesianMixed <- infTempBayesian$BLM3
               df0.2 <- infTempBayesianMixed
 
-              names(df0.2) <- c("Δ47 (‰)", "Material", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0.2) <- c("Δ47 (‰)","Δ47 (‰) error", "Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
               
               output$BpredictionsBLMM <- renderTable({
                 df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
+                df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.2$Material <- formatC(df0.2$Material, digits = 1, format = "f")
-                #df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
                 df0.2$`1SD Temperature (°C)` <- formatC(df0.2$`1SD Temperature (°C)`, digits = 7, format = "f")
                 head(df0.2)

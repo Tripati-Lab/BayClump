@@ -18,7 +18,8 @@ BayesianPredictions <- function(calibrationData,
                                 samples=NULL,
                                 init.values = FALSE, 
                                 D47Pred,
-                                materialsPred){
+                                materialsPred,
+                                D47PredErr){
   
   
   
@@ -40,8 +41,8 @@ BayesianPredictions <- function(calibrationData,
     betaBLM1 = "dnorm(0.039,0.004)"}
   
   if(priors == "Difusse"){
-    alphaBLM1 = "dnorm(0, 0.01)" 
-    betaBLM1 = "dnorm(0, 0.01)"
+    alphaBLM1 = "dnorm(0.01, 0.01)" 
+    betaBLM1 = "dnorm(0.01, 0.01)"
   }
   
   if(priors == "NonInformative"){
@@ -69,7 +70,9 @@ BayesianPredictions <- function(calibrationData,
   
   # Inversion
   for(i in 1:NPred){
-  yTemp[i] <- sqrt((beta * 10 ^ 6) / (yPred[i] - alpha)) - 273.15
+  yPredTrue[i] ~ dnorm(11, 0.01)
+  yPred[i] ~ dnorm(yPredTrue[i], D47PredErr[i])
+  yTemp[i] <- sqrt((beta * 10 ^ 6) / (yPredTrue[i] - alpha)) - 273.15
   }
   
 }")
@@ -91,7 +94,9 @@ BayesianPredictions <- function(calibrationData,
   
   # Inversion
   for(i in 1:NPred){
-  yTemp[i] <- sqrt((beta * 10 ^ 6) / (yPred[i] - alpha)) - 273.15
+  yPredTrue[i] ~ dnorm(11, 0.01)
+  yPred[i] ~ dnorm(yPredTrue[i], D47PredErr[i])
+  yTemp[i] <- sqrt((beta * 10 ^ 6) / (yPredTrue[i] - alpha)) - 273.15
   }
   
 }")
@@ -141,9 +146,12 @@ BayesianPredictions <- function(calibrationData,
   # calculate conditional R^2
   conditionalR2 <- (varRandom + varFixed) / (varFixed + varRandom + varResidual) 
 
+
   # Inversion
   for(i in 1:NPred){
-  yTemp[i] <- sqrt((beta[typePred[i]] * 10 ^ 6) / (yPred[i] - alpha[typePred[i]])) - 273.15
+  yPredTrue[i] ~ dnorm(11, 0.01)
+  yPred[i] ~ dnorm(yPredTrue[i], D47PredErr[i])
+  yTemp[i] <- sqrt((beta[typePred[i]] * 10 ^ 6) / (yPredTrue[i] - alpha[typePred[i]])) - 273.15
   }
 
 }")
@@ -157,13 +165,15 @@ BayesianPredictions <- function(calibrationData,
                    type = as.numeric(calibrationData$Material),
                    NPred = length(D47Pred),
                    yPred = D47Pred,
-                   typePred = materialsPred)
+                   typePred = materialsPred,
+                   D47PredErr = 1/D47PredErr^2)
   
   LM_Data <- list(x = calibrationData$Temperature, 
                   y = calibrationData$D47,
                   N = nrow(calibrationData),
                   NPred = length(D47Pred),
-                  yPred = D47Pred)
+                  yPred = D47Pred,
+                  D47PredErr = 1/D47PredErr^2)
   
   
   #Inits
@@ -209,17 +219,20 @@ BayesianPredictions <- function(calibrationData,
   dsSumBLM1_NE <- summary(as.mcmc(BLM1_fit_NoErrors))$quantiles[-1,]
   
   postPredBLMM <-     cbind.data.frame(D47Pred, 
+                                       D47PredErr,
                                        Material = materialsPred,
                                        Tc = BLM3_fit$BUGSoutput$mean$yTemp,
                                        sd = BLM3_fit$BUGSoutput$sd$yTemp)
   
   
   postPredBLM2 <-     cbind.data.frame(D47Pred, 
+                                       D47PredErr,
                                        Tc = BLM1_fit_NoErrors$BUGSoutput$mean$yTemp,
                                        sd = BLM1_fit_NoErrors$BUGSoutput$sd$yTemp)
   
   
   postPredBLM1 <-     cbind.data.frame(D47Pred, 
+                                       D47PredErr,
                                        Tc = BLM1_fit$BUGSoutput$mean$yTemp,
                                        sd = BLM1_fit$BUGSoutput$sd$yTemp)
   
