@@ -45,29 +45,21 @@ fitClumpedRegressions <<- function(calibrationData,
   
   
   ##Models
-  BLM1 <- paste(" model{
-    # Diffuse normal priors for predictors
-    alpha ~ ", alphaBLM1," \n ",
-              "beta ~ ", betaBLM1," \n ", 
-              "
+  BLM1 <- paste("model{
+                # Diffuse normal priors for predictors
+                alpha ~ ", alphaBLM1," \n ",
+                "beta ~ ", betaBLM1," \n ",
+                "
     tau <- pow(sigma, -2) 
     sigma ~ dunif(0, 100)                             
+    taux ~ dunif(40, 2700) #based on SD used for simulations
     
-    for (i in 1:N){
-        x[i] ~ dnorm(11,0.01)
-    }
-    # Likelihood
-    for (i in 1:N){
-        obsy[i] ~ dnorm(y[i],pow(erry[i],-2))
-        y[i] ~ dnorm(mu[i],tau)
-        obsx[i] ~ dnorm(x[i],pow(errx[i],-2))
-        mu[i] <- alpha + beta*x[i]
-    }
-    
-    ##Log-likelihood
-  for(i in 1:N){ 
-   regression_residual[i] <- y[i] - mu[i]
-   zloglik[i] <- logdensity.norm(y[i], mu[i], tau)
+  # calibration
+  for(i in 1:N){   
+    truex[i] ~ dnorm(11,0.01)
+    x[i] ~ dnorm(truex[i], taux)
+    y[i] ~ dnorm(mu[i], tau)
+    mu[i] <- alpha + beta * truex[i]
   }
 }")
   
@@ -99,26 +91,22 @@ fitClumpedRegressions <<- function(calibrationData,
     # Diffuse normal priors for predictors
         for (i in 1:K) {
             beta[i] ~  ", betaBLM1 ," \n ",
-              
-              " alpha[i] ~  ",alphaBLM1 ," \n ",
-              " }
+                
+                " alpha[i] ~  ",alphaBLM1 ," \n ",
+                " }
               
     # Prior for standard deviation
     tau <- pow(sigma, -2) 
     sigma ~ dunif(0, 100)                             
-    
-    # Diffuse normal priors for true x
-    for (i in 1:N){
-        x1[i] ~ dnorm(11,0.01)
-    }
+    taux ~ dunif(40, 2700) #based on SD used for simulations
+
 
     # Likelihood function
     for (i in 1:N){
-        obsy[i] ~ dnorm(y[i],pow(erry[i],-2))
-        y[i] ~ dnorm(mu[i],tau)
-        obsx1[i] ~ dnorm(x1[i],pow(errx1[i],-2))
-
-        mu[i] <- alpha[type[i]] + beta[type[i]] * x1[i]
+    truex[i] ~ dnorm(11,0.01)
+    x[i] ~ dnorm(truex[i], taux)
+    y[i] ~ dnorm(mu[i], tau)
+    mu[i] <- alpha[type[i]] + beta[type[i]] * truex[i]
     }
     
     ##R2s (mod from)
@@ -131,7 +119,7 @@ fitClumpedRegressions <<- function(calibrationData,
   subjEffSigma <- zSubjEffSigma*sd(y)
 
   for (j in 1:N){
-     yPredFixed[j] <-  sum(alpha[type[j]] + beta[type[j]] * x1[j])
+     yPredFixed[j] <-  sum(alpha[type[j]] + beta[type[j]] * truex[j])
   }
 
   varFixed <- (sd(yPredFixed))^2
@@ -152,29 +140,21 @@ fitClumpedRegressions <<- function(calibrationData,
   
   #Data
 
-    ANCOVA2_Data <- list(obsx1 = calibrationData$Temperature, 
-                         obsy = calibrationData$D47 , 
-                         errx1 = abs(calibrationData$TempError), 
-                         erry = calibrationData[,D47error], 
-                         K = length(unique(calibrationData$Material)),
-                         N = nrow(calibrationData),
-                         type = as.numeric(calibrationData$Material))
+   LMM_Data <- list(x = calibrationData$Temperature, 
+                       y = calibrationData$D47, 
+                       K = length(unique(calibrationData$Material)),
+                       N = nrow(calibrationData),
+                       type = as.numeric(calibrationData$Material))
     
-    LM_Data <- list(obsx = calibrationData$Temperature, 
-                    obsy = calibrationData$D47 , 
-                    errx = abs(calibrationData$TempError), 
-                    erry = calibrationData[,D47error], 
-                    N = nrow(calibrationData))
-    
-    LM_No_error_Data <- list(x = calibrationData$Temperature, 
+    LM_Data <- list(x = calibrationData$Temperature, 
                              y = calibrationData$D47,
                              N = nrow(calibrationData))
     
     
     #Inits
     initsMixed <- function () {
-      list(alpha = rnorm(ANCOVA2_Data$K,0.231,0.065),
-           beta = rnorm(ANCOVA2_Data$K,0.039,0.004))
+      list(alpha = rnorm(LMM_Data$K,0.231,0.065),
+           beta = rnorm(LMM_Data$K,0.039,0.004))
       
     }
     
@@ -184,10 +164,8 @@ fitClumpedRegressions <<- function(calibrationData,
       
     }
     
-    init.values
-    
     #Fit models
-    BLM3_fit <- jags(data = ANCOVA2_Data, 
+    BLM3_fit <- jags(data = LMM_Data, 
                      inits = if(init.values){initsMixed}else{NULL},
                      parameters = c("alpha","beta","conditionalR2", "marginalR2", "tau"), 
                      model = textConnection(BLM3), 
@@ -203,7 +181,7 @@ fitClumpedRegressions <<- function(calibrationData,
                      n.iter = n.iter)
     BLM1_fit <- autojags(BLM1_fit)
     
-    BLM1_fit_NoErrors <- jags(data = LM_No_error_Data, 
+    BLM1_fit_NoErrors <- jags(data = LM_Data, 
                               inits = if(init.values){initsSimple}else{NULL},
                               parameters = c("alpha","beta", "tau"),
                               model = textConnection(BLM1_NoErrors), 
