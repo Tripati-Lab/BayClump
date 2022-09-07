@@ -219,7 +219,6 @@ body <- dashboardBody(
                          checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
-                         tags$b("Use the classic calibration approach?"),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),

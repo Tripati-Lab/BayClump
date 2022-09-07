@@ -1339,7 +1339,8 @@ server <- function(input, output, session) {
               
               output$BpredictionsBLMM <- renderTable({
                 df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
-                df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
+                df0.2$Material <- formatC(df0.2$Material, digits = 1, format = "f")
+                #df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
                 df0.2$`1SD Temperature (°C)` <- formatC(df0.2$`1SD Temperature (°C)`, digits = 7, format = "f")
                 head(df0.2)
