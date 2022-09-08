@@ -90,7 +90,7 @@ body <- dashboardBody(
                        # checkboxInput("multicore", "Multicore for Deming regression", FALSE),
                          uiOutput("myList"),
                          selectInput("priors", label = "Bayesian priors", 
-                                    choices = c("Informative", "Diffuse", "NonInformative"), selected = "Informative"),
+                                    choices = c("Informative", "Weak", "Uninformative"), selected = "Informative"),
                          checkboxInput("simulateLM_measured", "Linear model", FALSE),
                          checkboxInput("simulateLM_inverseweights", "Inverse weighted linear model", FALSE),
                          checkboxInput("simulateYork_measured", "York regression", FALSE),

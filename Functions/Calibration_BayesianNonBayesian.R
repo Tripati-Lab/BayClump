@@ -15,7 +15,7 @@ fitClumpedRegressions <<- function(calibrationData,
                                 samples=NULL,
                                 init.values = FALSE){
   
-  if(! priors %in% c("Informative", "Difusse", "NonInformative") ){ 
+  if(! priors %in% c("Informative", "Weak", "Uninformative") ){ 
     stop("Priors must be in `Informative`, `Difusse` or `NonInformative`")
   }
   
@@ -32,12 +32,12 @@ fitClumpedRegressions <<- function(calibrationData,
     alphaBLM1 = "dnorm(0.231,0.065)" 
     betaBLM1 = "dnorm(0.039,0.004)"}
   
-  if(priors == "Difusse"){
-    alphaBLM1 = "dnorm(0, 0.01)" 
-    betaBLM1 = "dnorm(0, 0.01)"
+  if(priors == "Uninformative"){
+    alphaBLM1 = "dnorm(0.01, 0.01)" 
+    betaBLM1 = "dnorm(0.01, 0.01)"
   }
   
-  if(priors == "NonInformative"){
+  if(priors == "Weak"){
     alphaBLM1 = "dnorm(0.231, 0.195)" 
     betaBLM1 = "dnorm(0.231, 0.012)"
   }
