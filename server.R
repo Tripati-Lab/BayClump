@@ -109,8 +109,7 @@ server <- function(input, output, session) {
       print(noquote("Please upload calibration data first"))
     } 
     
-    hasMaterial <<- ifelse( is.na(calibrationData()$Material), FALSE, TRUE )
-    
+
     priors <<- input$priors
     replicates <<- input$replication
     ngenerationsBayes <<- input$generations
@@ -220,6 +219,8 @@ server <- function(input, output, session) {
     calData$D47error[is.na(calData$D47error)] <<- 0.000001
     calData$TempError[is.na(calData$TempError)] <<- 0.000001
     calData$Material[is.na(calData$Material)] <<- 1
+    calData$Material <<- factor(calData$Material, labels = seq(1:length(unique(calData$Material))))
+    
     
     
     ##Limits of the CI
@@ -978,9 +979,8 @@ server <- function(input, output, session) {
       
       recData <- NULL
       recData <- reconstructionData()
-      
-      hasMaterial <- ifelse( is.na(reconstructionData()$Material), FALSE, TRUE )
-      
+      recData$Material <- factor(recData$Material, labels = seq(1:length(unique(recData$Material))))
+
       # Remove existing worksheets from wb2 on "run" click, if any
       if("Linear" %in% names(wb2) == TRUE) 
       {removeWorksheet(wb2, "Linear")}
