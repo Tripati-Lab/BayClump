@@ -997,12 +997,7 @@ server <- function(input, output, session) {
       if(min(as.numeric(recData$Material)) != 1){
         print(noquote("The sequence of Materials now start from 1"))
       }
-      
-      NegValsRec <- any(recData$D47error <= 0)
-      
-      if(NegValsRec ) {
-        print(noquote("Invalid input: 0 or negative uncertainty values"))
-      }
+  
       
       # Remove existing worksheets from wb2 on "run" click, if any
       if("Linear" %in% names(wb2) == TRUE) 
@@ -1074,7 +1069,7 @@ server <- function(input, output, session) {
           calData$Tc <<- sqrt(10^6/(calData$T2))-273.15
           calData$TcE <<- abs((sqrt(10^6/(calData$T2))-273.15) - (sqrt(10^6/(calData$T2+abs(calData$TempError)))-273.15))
           
-          if(NegValsRec == FALSE){
+          
           #OLS
           if( input$simulateLM_measuredRec) {
             
@@ -1401,7 +1396,7 @@ server <- function(input, output, session) {
             }
           }
           
-          }
+          
           
         })
       
