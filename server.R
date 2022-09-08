@@ -219,8 +219,13 @@ server <- function(input, output, session) {
     calData$D47error[is.na(calData$D47error)] <<- 0.000001
     calData$TempError[is.na(calData$TempError)] <<- 0.000001
     calData$Material[is.na(calData$Material)] <<- 1
-    calData$Material <<- factor(calData$Material, labels = seq(1:length(unique(calData$Material))))
     
+    
+    
+    calData$Material <<- factor(calData$Material, labels = seq(1:length(unique(calData$Material))))
+    if(min(as.numeric(calData$Material)) != 1){
+    print(noquote("The sequence of Materials now start from 1"))
+    }
     
     
     ##Limits of the CI
@@ -237,13 +242,21 @@ server <- function(input, output, session) {
       calData$D47error <<- scale(calData$D47error)
     }
     
+    NegErrors <- any(calData$D47error <= 0) | any(calData$TempError <= 0)
+    if(NegErrors) {
+      print(noquote("Invalid input: 0 or negative uncertainty values"))
+      }
 
     
     if(input$simulateLM_measured == FALSE &
        input$simulateLM_inverseweights == FALSE &
        input$simulateYork_measured == FALSE &
        input$simulateDeming == FALSE &
-       input$BayesianCalibrations == FALSE) {print(noquote("Please select at least one model"))}
+       input$BayesianCalibrations == FALSE) {
+      print(noquote("Please select at least one model"))
+      }
+    
+   if(NegErrors == FALSE){
     
     if(input$simulateLM_measured != FALSE |
        input$simulateLM_inverseweights != FALSE |
@@ -831,6 +844,7 @@ server <- function(input, output, session) {
       })
       
     }
+   }
     
   })
   
@@ -980,7 +994,16 @@ server <- function(input, output, session) {
       recData <- NULL
       recData <- reconstructionData()
       recData$Material <- factor(recData$Material, labels = seq(1:length(unique(recData$Material))))
-
+      if(min(as.numeric(recData$Material)) != 1){
+        print(noquote("The sequence of Materials now start from 1"))
+      }
+      
+      NegValsRec <- any(recData$D47error <= 0)
+      
+      if(NegValsRec ) {
+        print(noquote("Invalid input: 0 or negative uncertainty values"))
+      }
+      
       # Remove existing worksheets from wb2 on "run" click, if any
       if("Linear" %in% names(wb2) == TRUE) 
       {removeWorksheet(wb2, "Linear")}
@@ -1051,7 +1074,7 @@ server <- function(input, output, session) {
           calData$Tc <<- sqrt(10^6/(calData$T2))-273.15
           calData$TcE <<- abs((sqrt(10^6/(calData$T2))-273.15) - (sqrt(10^6/(calData$T2+abs(calData$TempError)))-273.15))
           
-          
+          if(NegValsRec == FALSE){
           #OLS
           if( input$simulateLM_measuredRec) {
             
@@ -1378,7 +1401,7 @@ server <- function(input, output, session) {
             }
           }
           
-          
+          }
           
         })
       
