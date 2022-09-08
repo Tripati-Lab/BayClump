@@ -19,7 +19,9 @@ BayesianPredictions <- function(calibrationData,
                                 init.values = FALSE, 
                                 D47Pred,
                                 materialsPred,
-                                D47PredErr){
+                                D47PredErr,
+                                priorTmean = 11,
+                                priorTsd = 0.01){
   
   
   
@@ -70,7 +72,7 @@ BayesianPredictions <- function(calibrationData,
   
   # Inversion
   for(i in 1:NPred){
-  yPredTrue[i] ~ dnorm(11, 0.01)
+  yPredTrue[i] ~ dnorm(", priorTmean, ", ", priorTsd, ")
   yPred[i] ~ dnorm(yPredTrue[i], D47PredErr[i])
   yTemp[i] <- sqrt((beta * 10 ^ 6) / (yPredTrue[i] - alpha)) - 273.15
   }
@@ -94,7 +96,7 @@ BayesianPredictions <- function(calibrationData,
   
   # Inversion
   for(i in 1:NPred){
-  yPredTrue[i] ~ dnorm(11, 0.01)
+  yPredTrue[i] ~ dnorm(", priorTmean, ", ", priorTsd, ")
   yPred[i] ~ dnorm(yPredTrue[i], D47PredErr[i])
   yTemp[i] <- sqrt((beta * 10 ^ 6) / (yPredTrue[i] - alpha)) - 273.15
   }
@@ -149,7 +151,7 @@ BayesianPredictions <- function(calibrationData,
 
   # Inversion
   for(i in 1:NPred){
-  yPredTrue[i] ~ dnorm(11, 0.01)
+  yPredTrue[i] ~ dnorm(", priorTmean, ", ", priorTsd, ")
   yPred[i] ~ dnorm(yPredTrue[i], D47PredErr[i])
   yTemp[i] <- sqrt((beta[typePred[i]] * 10 ^ 6) / (yPredTrue[i] - alpha[typePred[i]])) - 273.15
   }

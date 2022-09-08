@@ -1291,6 +1291,9 @@ server <- function(input, output, session) {
               ##This function runs only Bayesian predictions
               sink("out/bayespredictions.txt", type = "output")
               
+              TPriorMean <- as.numeric(input$TPriorMean)
+              TPriorSd <- as.numeric(input$TPriorSd)
+              
               infTempBayesian <- BayesianPredictions(calibrationData = calData, 
                                                      n.iter = ngenerationsBayes, 
                                                      priors = priors,
@@ -1298,7 +1301,9 @@ server <- function(input, output, session) {
                                                      init.values = FALSE, 
                                                      D47Pred = recData$D47,
                                                      materialsPred = as.numeric(as.factor(ifelse(is.na(recData$Material), 1,recData$Material))),
-                                                     D47PredErr = recData$D47error
+                                                     D47PredErr = recData$D47error,
+                                                     priorTmean = TPriorMean,
+                                                     priorTsd = TPriorSd
                                                     )
               
               

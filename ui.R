@@ -37,7 +37,7 @@ body <- dashboardBody(
     tabItem(tabName = "calibration",
             fluidRow(
               box(width = 4, 
-                  title = "Step 1: Calibration Options", solidHeader = TRUE,
+                  title = h4("Step 1: Calibration Options"), solidHeader = FALSE,
                   column(12,
                          radioButtons("calset", "Select calibration set",
                                       choices = c('Román-Palacios et al. - Model 1' = 'model1',
@@ -80,8 +80,8 @@ body <- dashboardBody(
               
               # Model selection
               box(width = 4,
-                  title = "Step 2: Select Models", solidHeader = TRUE,
-                  column(12, "For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual",
+                  title = h4("Step 2: Select Models"), solidHeader = FALSE,
+                  column(12, h5("For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual"),
                          numericInput("replication", label = "Number of bootstrap replicates for non-Bayesian models", 
                                       100, min = 2, max = 10000),
                         sliderInput("range", label = HTML(paste0("Temperature range to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
@@ -121,7 +121,7 @@ body <- dashboardBody(
                   )
               ),
               box(width = 4,
-                  title = "Step 3: Calibration Output", solidHeader = TRUE,
+                  title = h4("Step 3: Calibration Output"), solidHeader = FALSE,
                   column(12, "Truncated output from each selected model",
                          tags$h4("Linear model"),
                          verbatimTextOutput("lmcal", placeholder = TRUE),
@@ -220,6 +220,10 @@ body <- dashboardBody(
                          checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
+                         numericInput("TPriorMean", label = "Mean value for the prior distribution on temperature (10^6/T^2)", 
+                                      11, min = 0, max = 20),
+                         numericInput("TPriorSd", label = "Standard deviation value for the prior distribution on temperature (10^6/T^2)", 
+                                      0.01, min = 0.0001, max = 0.09),
                          bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
