@@ -1094,9 +1094,9 @@ server <- function(input, output, session) {
             
             
             sink()
-            df1 <- lmrec
+            df1 <- cbind.data.frame(Sample = recData$Sample, lmrec)
             
-            names(df1) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+            names(df1) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df1) <- NULL
             
            
@@ -1148,10 +1148,10 @@ server <- function(input, output, session) {
               lminverserec[,c("D47","D47se", "Tc", "se")]
             
               
-            lminverserecwun <- lminverserec
+            lminverserecwun <- cbind.data.frame(Sample = recData$Sample, lminverserec)
             df3<-lminverserecwun
             
-            names(df3) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+            names(df3) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df3) <- NULL
             
             
@@ -1207,8 +1207,8 @@ server <- function(input, output, session) {
               yorkrec[,c("D47","D47se", "Tc", "se")]
             
             
-            df5 <- yorkrec
-            names(df5) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+            df5 <- cbind.data.frame(Sample = recData$Sample, yorkrec)
+            names(df5) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df5) <- NULL
             
             
@@ -1260,8 +1260,8 @@ server <- function(input, output, session) {
               demingrec[,c("D47","D47se", "Tc", "se")]
             
 
-            df7 <- demingrec
-            names(df7) <- c("Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+            df7 <- cbind.data.frame(Sample = recData$Sample, demingrec)
+            names(df7) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
             rownames(df7) <- NULL
 
             output$demingrecswun <- renderTable({
@@ -1310,9 +1310,9 @@ server <- function(input, output, session) {
               sink()
 
               infTempBayesian_werrors <- infTempBayesian$BLM1_fit
-              df0 <- infTempBayesian_werrors
+              df0 <- cbind.data.frame(Sample = recData$Sample, infTempBayesian_werrors)
 
-              names(df0) <- c("Δ47 (‰)", "Δ47 (‰) error",  "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error",  "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0) <- NULL
               
               output$BpredictionsErrors <- renderTable({
@@ -1333,9 +1333,9 @@ server <- function(input, output, session) {
               
               ##Without errors
               infTempBayesianNE <- infTempBayesian$BLM1_fit_NoErrors
-              df0.1 <- infTempBayesianNE
+              df0.1 <- cbind.data.frame(Sample = recData$Sample, infTempBayesianNE)
 
-              names(df0.1) <- c("Δ47 (‰)","Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0.1) <- c("Sample", "Δ47 (‰)","Δ47 (‰) error", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.1) <- NULL
               
               output$Bpredictions <- renderTable({
@@ -1356,9 +1356,9 @@ server <- function(input, output, session) {
               
               
               infTempBayesianMixed <- infTempBayesian$BLM3
-              df0.2 <- infTempBayesianMixed
+              df0.2 <- cbind.data.frame(Sample = recData$Sample, infTempBayesianMixed)
 
-              names(df0.2) <- c("Δ47 (‰)","Δ47 (‰) error", "Material", "Temperature (°C)", "1SD Temperature (°C)")
+              names(df0.2) <- c("Sample", "Δ47 (‰)","Δ47 (‰) error", "Material", "Temperature (°C)", "1SD Temperature (°C)")
               rownames(df0.2) <- NULL
               
               output$BpredictionsBLMM <- renderTable({
