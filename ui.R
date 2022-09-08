@@ -6,6 +6,7 @@ header <-  dashboardHeader(title = "BayClump: Bayesian methods for clumped isoto
 
 
 
+
 body <- dashboardBody(
   tags$head(tags$style(HTML('
       .form-group, .selectize-control {
@@ -312,6 +313,7 @@ body <- dashboardBody(
 
 
 sidebar <- dashboardSidebar(width = 200,
+                            tags$script(JS("document.getElementsByClassName('sidebar-toggle')[0].style.visibility = 'hidden';")),
                             sidebarMenu(
                               menuItem("Calibrations", tabName = "calibration", 
                                        icon = icon("drafting-compass", lib = "font-awesome")
@@ -368,9 +370,13 @@ sidebar <- dashboardSidebar(width = 200,
 
 ########### Dashboard page ####################
 dashboardPage(
+  skin = "black",
   header,
   sidebar,
   body
+  ,tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+  )
 )
 
 
