@@ -100,6 +100,8 @@ The default calibration datasets may be used individually or in combination to c
 - The template must be left in `.csv` format, although the user is free to change the name of the spreadsheet as needed. Do not change column headings or orders.
 - Do not enter extra columns - these will not be used by the app and may create problems.  
 - Please make sure that uncertainties are all ` > 0`. The app will not run otherwise and will print a message to the console.
+- The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
+- If a sample was analyzed under a single replicate, please assign the instrument's uncertainty as the error.
 
 <center>
 
@@ -255,6 +257,8 @@ Once calibration model runs are complete, the Calibration Plots tab will update 
 - The template must be left in `.csv` format, although the user is free to change the name of the spreadsheet as needed. 
 - Materials (i.e. numbers) must correspond to those used in the `Calibrations` tab. Users can skip numbers in the `Reconstructions` tab (not allowed in the `Calibrations` tab).
 - **Do not change column headings or orders. Do not enter extra columns - these will not be used by the app and may create problems.**  
+- The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
+- If a sample was analyzed under a single replicate, please assign the instrument's uncertainty as the error.
 
 ### Reconstruction options  
 
