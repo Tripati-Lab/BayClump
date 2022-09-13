@@ -3,17 +3,15 @@
 #' propagates uncertainty around the target D47.
 #' 
 #' @param calibrationData The calibration dataset
-#' @param n.iter number of MCMC iterations
-#' @param priors Informative, difusse, or NonInformative on the beta and alpha
+#' @param numSavedSteps number of MCMC iterations to save
+#' @param priors Informative, Weak, or Uninformative on the beta and alpha
 #' @param samples Number of samples to analyze
-#' @param init.values Use initial values for runs in JAGS?
 
 
 fitClumpedRegressions <<- function(calibrationData, 
-                                n.iter = 5000, 
-                                priors = "Informative",
-                                samples=NULL,
-                                init.values = FALSE){
+                                   numSavedSteps = 3000, 
+                                   priors = "Informative",
+                                   samples=NULL){
   
   if(! priors %in% c("Informative", "Weak", "Uninformative") ){ 
     stop("Priors must be in `Informative`, `Difusse` or `NonInformative`")
@@ -29,184 +27,174 @@ fitClumpedRegressions <<- function(calibrationData,
      
   
   if(priors == "Informative"){
-    alphaBLM1 = "dnorm(0.231,0.065)" 
-    betaBLM1 = "dnorm(0.039,0.004)"}
+    beta_mu =  0.039
+    beta_sd = 0.004
+    alpha_mu = 0.231
+    alpha_sd = 0.065
+  }
   
   if(priors == "Uninformative"){
-    alphaBLM1 = "dnorm(0.01, 0.01)" 
-    betaBLM1 = "dnorm(0.01, 0.01)"
+    beta_mu =  0.01
+    beta_sd = 0.01
+    alpha_mu = 0.01
+    alpha_sd = 0.01
   }
   
   if(priors == "Weak"){
-    alphaBLM1 = "dnorm(0.231, 0.195)" 
-    betaBLM1 = "dnorm(0.231, 0.012)"
+    beta_mu =  0.039
+    beta_sd = 0.004 * 2
+    alpha_mu = 0.231
+    alpha_sd = 0.065 * 2
   }
   
   
   ##Models
-  BLM1 <- paste("model{
-                # Diffuse normal priors for predictors
-                alpha ~ ", alphaBLM1," \n ",
-                "beta ~ ", betaBLM1," \n ",
-                "
-    tau <- pow(sigma, -2) 
-    sigma ~ dunif(0, 100)                             
-    taux ~ dunif(40, 2700) #based on SD used for simulations
+  fwMod_Errors = "
+  data {
+    int<lower=0> N; 
+    vector[N] y; 
+    vector[N] x_meas; 
+    real<lower=0> tau;
+    real beta_mu;
+    real beta_sd;
+    real alpha_mu;
+    real alpha_sd;
+    real mu_x;
+    real sigma_x;
+  }
+  
+  parameters {
+    vector[N] x;
+    real alpha; 
+    real beta; 
+    real<lower=0> sigma;
+  }
+  
+  model {
+    beta ~ normal(beta_mu, beta_sd);
+    alpha ~ normal(alpha_mu, alpha_sd);
     
-  # calibration
-  for(i in 1:N){   
-    truex[i] ~ dnorm(11,0.01)
-    x[i] ~ dnorm(truex[i], taux)
-    y[i] ~ dnorm(mu[i], tau)
-    mu[i] <- alpha + beta * truex[i]
+    x ~ normal(mu_x, sigma_x);
+    x_meas ~ normal(x, tau); 
+    y ~ normal(alpha + beta * x, sigma);
+  
+    sigma ~ cauchy(0, 5);
   }
-}")
+"
   
   
-  BLM1_NoErrors <- paste("model{
-                # Diffuse normal priors for predictors
-                alpha ~ ", alphaBLM1," \n ",
-                       "beta ~ ", betaBLM1," \n ",
-                       "
-    tau <- pow(sigma, -2) 
-    sigma ~ dunif(0, 100)                             
-    
-  # calibration
-  for(i in 1:N){   
-    y[i] ~ dnorm(mu[i], tau)
-    mu[i] <- alpha + beta * x[i]
+  fwMod_NE = "
+  data {
+    int<lower = 0> N;
+    vector[N] x;
+    vector[N] y;
+    real beta_mu;
+    real beta_sd;
+    real alpha_mu;
+    real alpha_sd;
+  }
+
+  parameters {
+    real alpha;
+    real beta;
+    real sigma;
   }
   
-  ##Log-likelihood
-  for(i in 1:N){ 
-   regression_residual[i] <- y[i] - mu[i]
-   zloglik[i] <- logdensity.norm(y[i], mu[i], tau)
+  model {
+    alpha ~ normal(alpha_mu, alpha_sd);
+    beta ~ normal(beta_mu, beta_sd);
+    sigma ~ cauchy(0, 5);
+    y ~ normal(alpha + beta * x, sigma);
   }
-}")
+"
   
-  ##Mixed Model (interaction effects; multiple betas and alphas)
-  BLM3 <- paste(" model{
+  fwMod_mixed = "
+  data {
+    int<lower=0> N;
+    int<lower=0> J;
+    vector[N] y;
+    vector[N] x;
+    int Material[N];
+    real beta_mu;
+    real beta_sd;
+    real alpha_mu;
+    real alpha_sd;
+  }
   
-    # Diffuse normal priors for predictors
-        for (i in 1:K) {
-            beta[i] ~  ", betaBLM1 ," \n ",
-                
-                " alpha[i] ~  ",alphaBLM1 ," \n ",
-                " }
-              
-    # Prior for standard deviation
-    tau <- pow(sigma, -2) 
-    sigma ~ dunif(0, 100)                             
-    taux ~ dunif(40, 2700) #based on SD used for simulations
-
-
-    # Likelihood function
-    for (i in 1:N){
-    truex[i] ~ dnorm(11,0.01)
-    x[i] ~ dnorm(truex[i], taux)
-    y[i] ~ dnorm(mu[i], tau)
-    mu[i] <- alpha[type[i]] + beta[type[i]] * truex[i]
-    }
-    
-    ##R2s (mod from)
-    #http://samcarcagno.altervista.org/stat_notes/r2_lmm_jags/r_squared_lmm.html
-  for (s in 2:N){
-    subjEff[s] ~ dnorm(0, 1/zSubjEffSigma^2)
+  parameters {
+    real<lower=0> sigma;
+    vector[J] alpha;
+    vector[J] beta;
   }
-  subjEff[1] <- -sum(subjEff[2:N]) #sum-to-zero constraint
-  zSubjEffSigma ~ dunif(0.00001, 10)
-  subjEffSigma <- zSubjEffSigma*sd(y)
-
-  for (j in 1:N){
-     yPredFixed[j] <-  sum(alpha[type[j]] + beta[type[j]] * truex[j])
+  
+  model {
+    alpha ~ normal(alpha_mu, alpha_sd);
+    beta ~ normal(beta_mu, beta_sd);
+    y ~ normal(alpha[Material] + beta[Material].*x, sigma);
+    sigma ~ cauchy(0, 5);
   }
-
-  varFixed <- (sd(yPredFixed))^2
-  varResidual <- sigma^2 # get the variance of residuals
-  varRandom <- subjEffSigma^2  # get the variance of random plot effect
-  # calculate marginal R^2
-  marginalR2 <- varFixed / (varFixed + varRandom + varResidual)
-  # calculate conditional R^2
-  conditionalR2 <- (varRandom + varFixed) / (varFixed + varRandom + varResidual) 
-
-##Log-likelihood
-  for(i in 1:N){ 
-   regression_residual[i] <- y[i] - mu[i]
-   zloglik[i] <- logdensity.norm(y[i], mu[i], tau)
-  }
-
-}")
+"
   
   #Data
 
-   LMM_Data <- list(x = calibrationData$Temperature, 
+  stan_data_NE <- list(N = nrow(calibrationData), 
+                       x = calibrationData$Temperature,
                        y = calibrationData$D47, 
-                       K = length(unique(calibrationData$Material)),
-                       N = nrow(calibrationData),
-                       type = as.numeric(calibrationData$Material))
+                       beta_mu =  beta_mu,
+                       beta_sd = beta_sd,
+                       alpha_mu = alpha_mu,
+                       alpha_sd = alpha_sd)
     
-    LM_Data <- list(x = calibrationData$Temperature, 
-                             y = calibrationData$D47,
-                             N = nrow(calibrationData))
+  stan_data_Err <- list(N = nrow(calibrationData), 
+                        x_meas = calibrationData$Temperature,
+                        y = calibrationData$D47, 
+                        tau = mean(calibrationData$TempError), 
+                        beta_mu =  beta_mu,
+                        beta_sd = beta_sd,
+                        alpha_mu = alpha_mu,
+                        alpha_sd = alpha_sd,
+                        mu_x = mean(calibrationData$Temperature),
+                        sigma_x = sd(calibrationData$Temperature))
+  
+    stan_data_mixed <- list(N = nrow(calData), 
+                            x = calData$Temperature,
+                            y = calData$D47, 
+                            J = length(unique(calibrationData$Material)),
+                            Material = as.numeric(calibrationData$Material), 
+                            beta_mu =  beta_mu,
+                            beta_sd = beta_sd,
+                            alpha_mu = alpha_mu,
+                            alpha_sd = alpha_sd)
     
+    #Parameters for the run
     
-    #Inits
-    initsMixed <- function () {
-      list(alpha = rnorm(LMM_Data$K,0.231,0.065),
-           beta = rnorm(LMM_Data$K,0.039,0.004))
-      
-    }
-    
-    initsSimple <- function () {
-      list(alpha = rnorm(1,0.231,0.065),
-           beta = rnorm(1,0.039,0.004))
-      
-    }
-    
+    nChains = 2
+    burnInSteps = 1000
+    thinSteps = 1
+    nIter = ceiling(burnInSteps + (numSavedSteps * thinSteps)/nChains)
+  
     #Fit models
-    BLM3_fit <- jags(data = LMM_Data, 
-                     inits = if(init.values){initsMixed}else{NULL},
-                     parameters = c("alpha","beta","conditionalR2", "marginalR2", "tau"), 
-                     model = textConnection(BLM3), 
-                     n.chains = 3,
-                     n.iter = n.iter)
-    BLM3_fit <- autojags(BLM3_fit)
-    
-    BLM1_fit <- jags(data = LM_Data, 
-                     inits = if(init.values){initsSimple}else{NULL},
-                     parameters = c("alpha","beta", "tau"),
-                     model = textConnection(BLM1), 
-                     n.chains = 3, 
-                     n.iter = n.iter)
-    BLM1_fit <- autojags(BLM1_fit)
-    
-    BLM1_fit_NoErrors <- jags(data = LM_Data, 
-                              inits = if(init.values){initsSimple}else{NULL},
-                              parameters = c("alpha","beta", "tau"),
-                              model = textConnection(BLM1_NoErrors), 
-                              n.chains = 3,
-                              n.iter = n.iter)
-    BLM1_fit_NoErrors <- autojags(BLM1_fit_NoErrors)
-    
-    #Extract relevant descriptors
-    R2sComplete<-rbind.data.frame(getR2Bayesian(BLM1_fit, calibrationData=calibrationData),
-                                  getR2Bayesian(BLM1_fit_NoErrors, calibrationData=calibrationData),
-                                  getR2Bayesian(BLM3_fit, calibrationData=calibrationData,hasMaterial=T)
-                                  )
-    
-    R2sComplete <- cbind.data.frame(model=c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit"), R2sComplete)
-    
-    aMErrors <- sum(dic.samples(BLM1_fit$model, n.iter=n.iter, thin = 1, "pD")$deviance) 
-    aMNoErrors <- sum(dic.samples(BLM1_fit_NoErrors$model, n.iter=n.iter, thin = 1, "pD")$deviance)
-    aM <- sum(dic.samples(BLM3_fit$model, n.iter=n.iter, thin = 1, "pD")$deviance) 
-    DICs<-c(aMErrors, aMNoErrors, aM)
-    names(DICs)<-c("BLM1_fit", "BLM1_fit_NoErrors", "BLM3_fit")
-    
-    CompleteModelFit<-list("BLM1_fit"=BLM1_fit,"BLM1_fit_NoErrors"=BLM1_fit_NoErrors, "BLM3_fit"=BLM3_fit)
+    BLM1_E <- stan(data = stan_data_Err, model_code = fwMod_Errors, 
+                 chains = nChains, iter = nIter, warmup = burnInSteps,
+                 thin = thinSteps, pars = c('alpha', 'beta'))
 
-    attr(CompleteModelFit, "data") <- calibrationData 
-    attr(CompleteModelFit, "R2s") <- R2sComplete 
-    attr(CompleteModelFit, "DICs") <- DICs 
+    BLM1_NE <- stan(data = stan_data_NE, model_code = fwMod_NE, 
+                  chains = nChains, iter = nIter, warmup = burnInSteps,
+                  thin = thinSteps, pars = c('alpha', 'beta'))
+    
+    BLM3 <- stan(data = stan_data_mixed, model_code = fwMod_mixed, 
+                 chains = 2, iter = nIter, warmup = burnInSteps,
+                 thin = thinSteps, pars = c('alpha', 'beta'))
+    
+    
+    CompleteModelFit<-list("BLM1_fit" = BLM1_E
+                           ,"BLM1_fit_NoErrors" = BLM1_NE
+                           , "BLM3_fit" = BLM3
+                           )
+
+    #attr(CompleteModelFit, "data") <- calibrationData 
+    #attr(CompleteModelFit, "R2s") <- R2sComplete 
+    #attr(CompleteModelFit, "DICs") <- DICs 
   
   return(CompleteModelFit)
 }

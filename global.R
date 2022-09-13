@@ -24,6 +24,9 @@ library(ggpubr)
 library(parallel)
 library(openxlsx)
 library(bib2df)
+
+library(rstan)
+
 #library(loo)
 #library(coda)
 

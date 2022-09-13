@@ -593,12 +593,25 @@ server <- function(input, output, session) {
           sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- fitClumpedRegressions(calibrationData=calData, 
                                                  priors = priors,
-                                                 n.iter = ngenerationsBayes,
+                                                 numSavedSteps = ngenerationsBayes,
                                                  samples = samples)
+
+          PostBLM1_fit_NoErrors <-do.call(rbind, mcmc.list(
+            lapply(1:ncol(bayeslincals$BLM1_fit_NoErrors), function(x) {
+            mcmc(as.array(bayeslincals$BLM1_fit_NoErrors)[,x,])
+            })))
           
-          PostBLM1_fit_NoErrors <- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit_NoErrors))
-          PostBLM1_fit <- do.call(rbind, as.mcmc(bayeslincals$BLM1_fit))
-          PostBLM3_fit <- do.call(rbind, as.mcmc(bayeslincals$BLM3_fit))
+          PostBLM1_fit <- do.call(rbind, mcmc.list(
+            lapply(1:ncol(bayeslincals$BLM1_fit), function(x) {
+              mcmc(as.array(bayeslincals$BLM1_fit)[,x,])
+            })))
+          
+          PostBLM3_fit <- do.call(rbind, mcmc.list(
+            lapply(1:ncol(bayeslincals$BLM3_fit), function(x) {
+              mcmc(as.array(bayeslincals$BLM3_fit)[,x,])
+            })))
+          
+
           
           sink()
           incProgress(1/TotProgress, detail="...Done fitting the Bayesian linear regression model...")
@@ -695,13 +708,10 @@ server <- function(input, output, session) {
           
           
           ##For the Bayesian sheet
-          conv_BLM <- bayeslincals$BLM1_fit_NoErrors$BUGSoutput$summary
-          conv_BLM_errors <- bayeslincals$BLM1_fit$BUGSoutput$summary
+          conv_BLM <- summary(bayeslincals$BLM1_fit_NoErrors)$summary
+          conv_BLM_errors <- summary(bayeslincals$BLM1_fit)$summary
           conv_BLM <- cbind.data.frame(parameter=row.names(conv_BLM),conv_BLM)
           conv_BLM_errors <- cbind.data.frame(parameter=row.names(conv_BLM_errors),conv_BLM_errors)
-          
-          conv_BLM$SE <- conv_BLM$sd/sqrt(bayeslincals$BLM1_fit_NoErrors$BUGSoutput$n.keep)
-          conv_BLM_errors$SE <- conv_BLM$sd/sqrt(bayeslincals$BLM1_fit$BUGSoutput$n.keep)
           
           
           addWorksheet(wb3, "Bayesian model no errors") # Add a blank sheet
@@ -717,23 +727,23 @@ server <- function(input, output, session) {
           writeData(wb4, sheet = "Bayesian model with errors", PostBLM1_fit) # Write regression data
           
           
-          outBLM <- summary(as.mcmc(bayeslincals$BLM1_fit_NoErrors))$statistics
+          outBLM <- summary(bayeslincals$BLM1_fit_NoErrors)$summary
           
           output$blinnoerr <- renderPrint({
-            round(outBLM[c(1:2),c(1,4)],7)
+            round(outBLM[c(1:2),c(1,2)],7)
           })
           
-          outBLMerrors <- summary(as.mcmc(bayeslincals$BLM1_fit))$statistics
+          outBLMerrors <- summary(bayeslincals$BLM1_fit)$summary
 
           output$blinwerr <- renderPrint({
-             round(outBLMerrors[c(1:2),c(1,4)],7)
+             round(outBLMerrors[c(1:2),c(1,2)],7)
           })
           
-          outBLMM <- summary(as.mcmc(bayeslincals$BLM3_fit))$statistics
+          outBLMM <- summary(bayeslincals$BLM3_fit)$summary
           outBLMM <- as.data.frame(outBLMM[grep("alpha|beta", row.names(outBLMM)),] )
 
           output$blinmwerr <- renderPrint(
-            round(outBLMM[,c(1,4)],7)
+            round(outBLMM[,c(1,2)],7)
           ) 
 
           outBLMM2 <- PostBLM3_fit
@@ -760,11 +770,8 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Bayesian mixed w errors CI", bayeslmmincalciwitherror2)
           
           ##For the Bayesian sheet
-          conv_BLMM <- bayeslincals$BLM3_fit$BUGSoutput$summary
+          conv_BLMM <- summary(bayeslincals$BLM3_fit)$summary
           conv_BLMM <- cbind.data.frame(parameter=row.names(conv_BLMM),conv_BLMM)
-          
-          conv_BLMM$SE <- conv_BLMM$sd/sqrt(bayeslincals$BLM3_fit$BUGSoutput$n.keep)
-
           
           addWorksheet(wb3, "Bayesian mixed w errors") # Add a blank sheet
           writeData(wb3, sheet = "Bayesian mixed w errors", conv_BLMM) # Write regression data
@@ -827,17 +834,17 @@ server <- function(input, output, session) {
             return(bayesmixedfig)
           })
           
-          cat(paste0("\nBayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
-                     " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
-                     "\n   *DIC=", round(attr(bayeslincals,"DICs")[1],4),
-                     "\n *without errors\n   *R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
-                     " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")",
-                     "\n   *DIC=", round(attr(bayeslincals,"DICs")[2],4),
-                     "\n Bayesian linear mixed model complete\n   *R^2=", round(attr(bayeslincals,"R2s")[3,2],4),
-                     " (95% CI, ",round(attr(bayeslincals,"R2s")[3,3],4),"-",round(attr(bayeslincals,"R2s")[3,4],4),")",
-                     "\n   *DIC=", round(attr(bayeslincals,"DICs")[3],4)
-          )
-          )
+          # cat(paste0("\nBayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
+          #            " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
+          #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[1],4),
+          #            "\n *without errors\n   *R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
+          #            " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")",
+          #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[2],4),
+          #            "\n Bayesian linear mixed model complete\n   *R^2=", round(attr(bayeslincals,"R2s")[3,2],4),
+          #            " (95% CI, ",round(attr(bayeslincals,"R2s")[3,3],4),"-",round(attr(bayeslincals,"R2s")[3,4],4),")",
+          #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[3],4)
+          # )
+          #)
 
       }
         
