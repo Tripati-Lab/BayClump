@@ -1,11 +1,11 @@
-#' This function generate temperature predictions (in 10^6/T2) based on a 
-#' calibration dataset and target D47. Note that this alternative function
-#' propagates uncertainty around the target D47.
+#' Bayesian regressions to calibrate the clumped isotopes paleotermometer using
+#' stan.
 #' 
-#' @param calibrationData The calibration dataset
-#' @param numSavedSteps number of MCMC iterations to save
-#' @param priors Informative, Weak, or Uninformative on the beta and alpha
-#' @param samples Number of samples to analyze
+#' @param calibrationData The calibration dataset.
+#' @param numSavedSteps Number of MCMC iterations to save.
+#' @param priors Either \code{Informative}, \code{Weak}, or 
+#'               \code{Uninformative} on the slope and intercept.
+#' @param samples Number of samples in the \code{calibrationData} to analyze.
 
 
 fitClumpedRegressions <<- function(calibrationData, 
@@ -167,7 +167,6 @@ fitClumpedRegressions <<- function(calibrationData,
                             alpha_sd = alpha_sd)
     
     #Parameters for the run
-    
     nChains = 2
     burnInSteps = 1000
     thinSteps = 1
@@ -318,50 +317,6 @@ simulateDeming <<- function(data,
     }))
   }
   
-}
-
-#' Estimate the R2 for Bayesian models
-#' 
-#' @param model The model (from R2jags)
-#' @param calibrationData the calibration dataset used to fit the model
-#' @param hasMaterial Is it the mixed model?
-
-getR2Bayesian <<- function(model, 
-                           calibrationData, 
-                           hasMaterial=FALSE) {
-  if(hasMaterial==F){
-    mcmc <- model$BUGSoutput$sims.matrix
-    Xmat = model.matrix( ~ Temperature, calibrationData)
-    coefs = mcmc[, c("alpha", "beta")]
-    fit = coefs %*% t(Xmat)
-    resid = sweep(fit, 2, calibrationData$D47, "-")
-    var_f = apply(fit, 1, var)
-    var_e = apply(resid, 1, var)
-    R2 = var_f / (var_f + ifelse(is.na(var_e), 0,var_e))
-    cbind.data.frame(
-      mean = mean(R2),
-      lwr = quantile(R2, 0.025),
-      upr = quantile(R2, 0.975)
-    )
-  }else{
-    mcmc <- model$BUGSoutput$sims.matrix
-    Xmat = model.matrix( ~ Temperature, calibrationData)
-    coefs = as.data.frame(mcmc[,-ncol(mcmc) ])
-    new <- rowSums(coefs[,grep("alpha", names(coefs)), drop=FALSE])
-    new2 <- rowSums(coefs[,grep("beta", names(coefs)), drop=FALSE])
-    coefs<-cbind(new,new2)
-    fit = coefs %*% t(Xmat)
-    resid = sweep(fit, 2, calibrationData$D47, "-")
-    var_f = apply(fit, 1, var)
-    var_e = apply(resid, 1, var)
-    R2 = var_f / (var_f + var_e)
-    cbind.data.frame(
-      mean = mean(R2),
-      lwr = quantile(R2, 0.025),
-      upr = quantile(R2, 0.975)
-    )
-    
-  }
 }
 
 
