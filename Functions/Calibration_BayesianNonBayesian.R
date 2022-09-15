@@ -175,18 +175,18 @@ fitClumpedRegressions <<- function(calibrationData,
     #Fit models
     BLM1_E <- stan(data = stan_data_Err, model_code = fwMod_Errors, 
                  chains = nChains, iter = nIter, warmup = burnInSteps,
-                 thin = thinSteps, pars = c('alpha', 'beta'))
+                 thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
 
     BLM1_NE <- stan(data = stan_data_NE, model_code = fwMod_NE, 
                   chains = nChains, iter = nIter, warmup = burnInSteps,
-                  thin = thinSteps, pars = c('alpha', 'beta'))
+                  thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
     
     BLM3 <- stan(data = stan_data_mixed, model_code = fwMod_mixed, 
                  chains = 2, iter = nIter, warmup = burnInSteps,
-                 thin = thinSteps, pars = c('alpha', 'beta'))
+                 thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
     
     
-    CompleteModelFit<-list("BLM1_fit" = BLM1_E
+    CompleteModelFit <- list("BLM1_fit" = BLM1_E
                            ,"BLM1_fit_NoErrors" = BLM1_NE
                            , "BLM3_fit" = BLM3
                            )
@@ -215,7 +215,7 @@ simulateYork_measured <<- function(data,
     dataSub$y_SE <- dataSub[,D47error]
     dataSub$x_SE <- abs(dataSub$TempError)
     Reg <- york(cbind.data.frame(dataSub$Temperature, dataSub$x_SE, dataSub$D47, dataSub$y_SE))
-    cbind.data.frame("alpha"=Reg$a[1],"beta"=Reg$b[1])
+    cbind.data.frame("alpha" = Reg$a[1],"beta" = Reg$b[1])
   }))
 }
 
@@ -232,19 +232,17 @@ simulateLM_measured <<- function(data,
                                samples = NULL, 
                                D47error="D47error"){
   
-  a<-lapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
-    dataSub$y_SE<-dataSub[,D47error]
-    dataSub$x_SE<-dataSub$TempError
-    Reg<-summary(lm(D47 ~ Temperature,  dataSub))
-    res<-cbind.data.frame("alpha"=Reg$coefficients[1,1],"beta"=Reg$coefficients[2,1])
+  a <- lapply(1:replicates, function(x){
+    dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
+    Reg <- summary(lm(D47 ~ Temperature,  dataSub))
+    res <- cbind.data.frame("alpha" = Reg$coefficients[1,1],"beta" = Reg$coefficients[2,1])
     attr(res, "R2") <- Reg$r.squared
     res
   })
   
-  R2s<-unlist(lapply(a, function(x) attributes(x)$R2))
-  R2s<-data.frame(median=median(R2s), lwr=quantile(R2s, 0.025), upr=quantile(R2s, 0.975))
-  a<-do.call(rbind,a)
+  R2s <- unlist(lapply(a, function(x) attributes(x)$R2))
+  R2s <- data.frame(median = median(R2s), lwr = quantile(R2s, 0.025), upr = quantile(R2s, 0.975))
+  a <- do.call(rbind,a)
   attr(a, "R2") <- R2s
   return(a)
 }
@@ -262,21 +260,19 @@ simulateLM_inverseweights <<- function(data,
                                      replicates, 
                                      samples = NULL, 
                                      D47error="D47error"){
-  a<-lapply(1:replicates, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
-    dataSub$y_SE<-dataSub[,D47error]
-    dataSub$x_SE<-abs(dataSub$TempError)
-    Reg0<-lm(D47 ~ Temperature,  dataSub)
+  a <- lapply(1:replicates, function(x){
+    dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
+    Reg0 <- lm(D47 ~ Temperature,  dataSub)
     wt <- 1 / lm(abs(Reg0$residuals) ~ Reg0$fitted.values)$fitted.values^2
-    Reg<-summary(lm(D47 ~ Temperature,  dataSub, weights = wt))
-    res<-cbind.data.frame("alpha"=Reg$coefficients[1,1],"beta"=Reg$coefficients[2,1])
+    Reg <- summary(lm(D47 ~ Temperature,  dataSub, weights = wt))
+    res <- cbind.data.frame("alpha" = Reg$coefficients[1,1], "beta" = Reg$coefficients[2,1])
     attr(res, "R2") <- Reg$r.squared
     res
   })
   
-  R2s<-unlist(lapply(a, function(x) attributes(x)$R2))
-  R2s<-data.frame(median=median(R2s), lwr=quantile(R2s, 0.025), upr=quantile(R2s, 0.975))
-  a<-do.call(rbind,a)
+  R2s <- unlist(lapply(a, function(x) attributes(x)$R2))
+  R2s <- data.frame(median = median(R2s), lwr = quantile(R2s, 0.025), upr = quantile(R2s, 0.975))
+  a <- do.call(rbind,a)
   attr(a, "R2") <- R2s
   return(a)
 }
@@ -293,30 +289,16 @@ simulateLM_inverseweights <<- function(data,
 simulateDeming <<- function(data, 
                           replicates, 
                           samples = NULL, 
-                          D47error="D47error", 
-                          multicore=FALSE){
+                          D47error="D47error"){
   
-  if(multicore){
-  
-  ncores = parallel::detectCores()
-  do.call(rbind,mclapply(1:replicates, mc.cores = ncores, function(x){
-    dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
-    dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
-    dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
-    Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
-    cbind.data.frame("alpha"=Reg$coefficients[1],"beta"=Reg$coefficients[2])
-  }))
-  
-  }else{
     do.call(rbind,lapply(1:replicates, function(x){
-      dataSub<-data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
-      dataSub$y_SE<-abs(dataSub[,D47error])/sqrt(nrow(dataSub))
-      dataSub$x_SE<-abs(dataSub$TempError)/sqrt(nrow(dataSub))
-      Reg<-deming(D47 ~ Temperature, dataSub, xstd= 1/x_SE^2, ystd= 1/y_SE^2)
-      cbind.data.frame("alpha"=Reg$coefficients[1],"beta"=Reg$coefficients[2])
+      dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
+      dataSub$y_SE <- abs(dataSub[,D47error])
+      dataSub$x_SE <- abs(dataSub$TempError)
+      Reg <- deming(D47 ~ Temperature, dataSub, xstd= x_SE, ystd= y_SE)
+      cbind.data.frame("alpha" = Reg$coefficients[1],"beta" = Reg$coefficients[2])
     }))
-  }
-  
+
 }
 
 
@@ -330,9 +312,9 @@ simulateDeming <<- function(data,
 #' @param length.out the number of breaks
 
 
-RegressionSingleCI<-function(data, from, to, length.out=100){
+RegressionSingleCI <-function(data, from, to, length.out=100){
   
-  sampleDataReplicates<- as.data.frame(data)
+  sampleDataReplicates <- as.data.frame(data)
   
   Theta_mat <- sampleDataReplicates
   
@@ -364,10 +346,10 @@ RegressionSingleCI<-function(data, from, to, length.out=100){
 #' @param n number of observations to simulate
 
 generatePriorDistCalibration <- function(prior, n=1000){
-  if(prior == "Informative"){
-    params <- cbind.data.frame(parameter=c("alpha", "beta"),
-                               mean=c(0.231,0.039), 
-                               sd=c(0.065,0.004))
+  if (prior == "Informative") {
+    params <- cbind.data.frame(parameter = c("alpha", "beta"),
+                               mean = c(0.231,0.039), 
+                               sd = c(0.065,0.004))
     params
     } else {
       params <- cbind.data.frame(parameter=c("alpha", "beta"),
@@ -376,8 +358,8 @@ generatePriorDistCalibration <- function(prior, n=1000){
       params
     }
   
-  data <- cbind.data.frame(alpha=rnorm(n, params[1,2], params[1,3]), 
-                   beta=rnorm(n, params[2,2], params[2,3]))
+  data <- cbind.data.frame(alpha = rnorm(n, params[1,2], params[1,3]), 
+                   beta = rnorm(n, params[2,2], params[2,3]))
   attr(data, "priors") <-  prior
   attr(data, "params") <-  params
   data

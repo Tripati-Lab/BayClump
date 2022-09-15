@@ -26,6 +26,7 @@ library(openxlsx)
 library(bib2df)
 
 library(rstan)
+library(coda)
 
 #library(loo)
 #library(coda)
