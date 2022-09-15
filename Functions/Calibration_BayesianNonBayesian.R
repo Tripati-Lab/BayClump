@@ -24,7 +24,7 @@ fitClumpedRegressions <<- function(calibrationData,
     warning("Sampling ", samples, " from the dataset.")
     calibrationData <- calibrationData[sample(1:nrow(calibrationData), samples), ]
   }
-     
+  
   
   if(priors == "Informative"){
     beta_mu =  0.039
@@ -136,7 +136,7 @@ fitClumpedRegressions <<- function(calibrationData,
 "
   
   #Data
-
+  
   stan_data_NE <- list(N = nrow(calibrationData), 
                        x = calibrationData$Temperature,
                        y = calibrationData$D47, 
@@ -144,7 +144,7 @@ fitClumpedRegressions <<- function(calibrationData,
                        beta_sd = beta_sd,
                        alpha_mu = alpha_mu,
                        alpha_sd = alpha_sd)
-    
+  
   stan_data_Err <- list(N = nrow(calibrationData), 
                         x_meas = calibrationData$Temperature,
                         y = calibrationData$D47, 
@@ -156,44 +156,45 @@ fitClumpedRegressions <<- function(calibrationData,
                         mu_x = mean(calibrationData$Temperature),
                         sigma_x = sd(calibrationData$Temperature))
   
-    stan_data_mixed <- list(N = nrow(calData), 
-                            x = calData$Temperature,
-                            y = calData$D47, 
-                            J = length(unique(calibrationData$Material)),
-                            Material = as.numeric(calibrationData$Material), 
-                            beta_mu =  beta_mu,
-                            beta_sd = beta_sd,
-                            alpha_mu = alpha_mu,
-                            alpha_sd = alpha_sd)
-    
-    #Parameters for the run
-    nChains = 2
-    burnInSteps = 1000
-    thinSteps = 1
-    nIter = ceiling(burnInSteps + (numSavedSteps * thinSteps)/nChains)
+  stan_data_mixed <- list(N = nrow(calData), 
+                          x = calData$Temperature,
+                          y = calData$D47, 
+                          J = length(unique(calibrationData$Material)),
+                          Material = as.numeric(calibrationData$Material), 
+                          beta_mu =  beta_mu,
+                          beta_sd = beta_sd,
+                          alpha_mu = alpha_mu,
+                          alpha_sd = alpha_sd)
   
-    #Fit models
-    BLM1_E <- stan(data = stan_data_Err, model_code = fwMod_Errors, 
+  #Parameters for the run
+  nChains = 2
+  burnInSteps = 1000
+  thinSteps = 1
+  nIter = ceiling(burnInSteps + (numSavedSteps * thinSteps)/nChains)
+  
+  #Fit models
+  options(mc.cores = parallel::detectCores())
+  BLM1_E <- stan(data = stan_data_Err, model_code = fwMod_Errors, 
                  chains = nChains, iter = nIter, warmup = burnInSteps,
                  thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
-
-    BLM1_NE <- stan(data = stan_data_NE, model_code = fwMod_NE, 
+  
+  BLM1_NE <- stan(data = stan_data_NE, model_code = fwMod_NE, 
                   chains = nChains, iter = nIter, warmup = burnInSteps,
                   thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
-    
-    BLM3 <- stan(data = stan_data_mixed, model_code = fwMod_mixed, 
-                 chains = 2, iter = nIter, warmup = burnInSteps,
-                 thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
-    
-    
-    CompleteModelFit <- list("BLM1_fit" = BLM1_E
+  
+  BLM3 <- stan(data = stan_data_mixed, model_code = fwMod_mixed, 
+               chains = 2, iter = nIter, warmup = burnInSteps,
+               thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
+  
+  
+  CompleteModelFit <- list("BLM1_fit" = BLM1_E
                            ,"BLM1_fit_NoErrors" = BLM1_NE
                            , "BLM3_fit" = BLM3
-                           )
-
-    #attr(CompleteModelFit, "data") <- calibrationData 
-    #attr(CompleteModelFit, "R2s") <- R2sComplete 
-    #attr(CompleteModelFit, "DICs") <- DICs 
+  )
+  
+  #attr(CompleteModelFit, "data") <- calibrationData 
+  #attr(CompleteModelFit, "R2s") <- R2sComplete 
+  #attr(CompleteModelFit, "DICs") <- DICs 
   
   return(CompleteModelFit)
 }
@@ -228,9 +229,9 @@ simulateYork_measured <<- function(data,
 #' @param D47error The column in data containing the errors in D47
 
 simulateLM_measured <<- function(data, 
-                               replicates, 
-                               samples = NULL, 
-                               D47error="D47error"){
+                                 replicates, 
+                                 samples = NULL, 
+                                 D47error="D47error"){
   
   a <- lapply(1:replicates, function(x){
     dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
@@ -257,9 +258,9 @@ simulateLM_measured <<- function(data,
 
 
 simulateLM_inverseweights <<- function(data, 
-                                     replicates, 
-                                     samples = NULL, 
-                                     D47error="D47error"){
+                                       replicates, 
+                                       samples = NULL, 
+                                       D47error="D47error"){
   a <- lapply(1:replicates, function(x){
     dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
     Reg0 <- lm(D47 ~ Temperature,  dataSub)
@@ -287,18 +288,18 @@ simulateLM_inverseweights <<- function(data,
 
 
 simulateDeming <<- function(data, 
-                          replicates, 
-                          samples = NULL, 
-                          D47error="D47error"){
+                            replicates, 
+                            samples = NULL, 
+                            D47error="D47error"){
   
-    do.call(rbind,lapply(1:replicates, function(x){
-      dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
-      dataSub$y_SE <- abs(dataSub[,D47error])
-      dataSub$x_SE <- abs(dataSub$TempError)
-      Reg <- deming(D47 ~ Temperature, dataSub, xstd= x_SE, ystd= y_SE)
-      cbind.data.frame("alpha" = Reg$coefficients[1],"beta" = Reg$coefficients[2])
-    }))
-
+  do.call(rbind,lapply(1:replicates, function(x){
+    dataSub <- data[sample(seq_along(data[,1]), if(is.null(samples)){nrow(data)}else{samples}, replace = T),]
+    dataSub$y_SE <- abs(dataSub[,D47error])
+    dataSub$x_SE <- abs(dataSub$TempError)
+    Reg <- deming(D47 ~ Temperature, dataSub, xstd= x_SE, ystd= y_SE)
+    cbind.data.frame("alpha" = Reg$coefficients[1],"beta" = Reg$coefficients[2])
+  }))
+  
 }
 
 
@@ -351,15 +352,15 @@ generatePriorDistCalibration <- function(prior, n=1000){
                                mean = c(0.231,0.039), 
                                sd = c(0.065,0.004))
     params
-    } else {
-      params <- cbind.data.frame(parameter=c("alpha", "beta"),
-                                 mean=c(0,0.01), 
-                                 sd=c(0,0.01))
-      params
-    }
+  } else {
+    params <- cbind.data.frame(parameter=c("alpha", "beta"),
+                               mean=c(0,0.01), 
+                               sd=c(0,0.01))
+    params
+  }
   
   data <- cbind.data.frame(alpha = rnorm(n, params[1,2], params[1,3]), 
-                   beta = rnorm(n, params[2,2], params[2,3]))
+                           beta = rnorm(n, params[2,2], params[2,3]))
   attr(data, "priors") <-  prior
   attr(data, "params") <-  params
   data
