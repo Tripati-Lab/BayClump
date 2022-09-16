@@ -19,10 +19,9 @@ fitClumpedRegressions <<- function(calibrationData,
   
   if(is.null(samples)){
     warning("Using the full dataset in the calibration step.")
-    samples <- nrow(calibrationData)
   }else{
-    warning("Sampling ", samples, " from the dataset.")
-    calibrationData <- calibrationData[sample(1:nrow(calibrationData), samples), ]
+    warning("Sampling ", samples, " observations from the dataset.")
+    calibrationData <- calibrationData[sample(1:nrow(calibrationData), samples, replace = TRUE), ]
   }
   
   
@@ -156,9 +155,9 @@ fitClumpedRegressions <<- function(calibrationData,
                         mu_x = mean(calibrationData$Temperature),
                         sigma_x = sd(calibrationData$Temperature))
   
-  stan_data_mixed <- list(N = nrow(calData), 
-                          x = calData$Temperature,
-                          y = calData$D47, 
+  stan_data_mixed <- list(N = nrow(calibrationData), 
+                          x = calibrationData$Temperature,
+                          y = calibrationData$D47, 
                           J = length(unique(calibrationData$Material)),
                           Material = as.numeric(calibrationData$Material), 
                           beta_mu =  beta_mu,
