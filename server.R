@@ -348,9 +348,9 @@ server <- function(input, output, session) {
           
           
           
-          cat("Linear regression complete \n *R^2=", round(unlist(attributes(lmcals)$R2[1],4)),
-              " (95% CI, ",round(unlist(attributes(lmcals)$R2[2],4)),"-",round(unlist(attributes(lmcals)$R2[3],4)),")"
-          )
+          # cat("Linear regression complete \n *R^2=", round(unlist(attributes(lmcals)$R2[1],4)),
+          #     " (95% CI, ",round(unlist(attributes(lmcals)$R2[2],4)),"-",round(unlist(attributes(lmcals)$R2[3],4)),")"
+          # )
           
 
           output$lmcal <- renderPrint({
@@ -426,9 +426,9 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Inverse linear regression", lminversecals) # Write regression data
           writeData(wb, sheet = "Inverse linear regression CI", lminversecalci2)
           
-          cat("\nInverse regression complete \n *R^2=", round(unlist(attributes(lminversecals)$R2[1],4)),
-              " (95% CI, ",round(unlist(attributes(lminversecals)$R2[2],4)),"-",round(unlist(attributes(lminversecals)$R2[3],4)),")"
-          )
+          # cat("\nInverse regression complete \n *R^2=", round(unlist(attributes(lminversecals)$R2[1],4)),
+          #     " (95% CI, ",round(unlist(attributes(lminversecals)$R2[2],4)),"-",round(unlist(attributes(lminversecals)$R2[3],4)),")"
+          # )
           
           output$lminversecal <- renderPrint({
             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
@@ -503,7 +503,7 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "York regression", yorkcals) # Write regression data
           writeData(wb, sheet = "York regression CI", yorkcalci2)
           
-          cat("\nYork regression complete")
+          # cat("\nYork regression complete")
           
           output$york <- renderPrint({
             do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
@@ -578,7 +578,7 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Deming regression", demingcals) # Write regression data
           writeData(wb, sheet = "Deming regression CI", demingcalci2)
           
-          cat("\nDeming regression complete")
+          #cat("\nDeming regression complete")
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
               cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
@@ -833,6 +833,12 @@ server <- function(input, output, session) {
             return(bayesmixedfig)
           })
           
+          lootab <- attr(bayeslincals,"loo")
+          
+          cat("Model comparison in loo\n\n")
+          cat("")
+          print(lootab)
+          
           # cat(paste0("\nBayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
           #            " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
           #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[1],4),
@@ -907,8 +913,8 @@ server <- function(input, output, session) {
                            x = ~Temperature, 
                            y = ~D47, 
                            type = "scatter", 
-                           mode = "lines+markers", 
-                           linetype = ~as.factor(Material), 
+                           mode = "markers", 
+                           #linetype = ~as.factor(Material), 
                            color = ~as.factor(Mineralogy),
                            colors = viridis_pal(option = "D", end = 0.9)(minlength),
                            opacity = 0.6,

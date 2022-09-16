@@ -79,6 +79,13 @@ fitClumpedRegressions <<- function(calibrationData,
   
     sigma ~ cauchy(0, 5);
   }
+  
+  generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | 0, sigma);
+    }
+  }
 "
   
   
@@ -105,6 +112,14 @@ fitClumpedRegressions <<- function(calibrationData,
     sigma ~ cauchy(0, 5);
     y ~ normal(alpha + beta * x, sigma);
   }
+  
+  generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | 0, sigma);
+    }
+  }
+  
 "
   
   fwMod_mixed = "
@@ -132,6 +147,14 @@ fitClumpedRegressions <<- function(calibrationData,
     y ~ normal(alpha[Material] + beta[Material].*x, sigma);
     sigma ~ cauchy(0, 5);
   }
+  
+  generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | 0, sigma);
+    }
+  }
+  
 "
   
   #Data
@@ -175,23 +198,37 @@ fitClumpedRegressions <<- function(calibrationData,
   options(mc.cores = parallel::detectCores())
   BLM1_E <- stan(data = stan_data_Err, model_code = fwMod_Errors, 
                  chains = nChains, iter = nIter, warmup = burnInSteps,
-                 thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
+                 thin = thinSteps, pars = c('alpha', 'beta', 'sigma', 'log_lik'))
   
   BLM1_NE <- stan(data = stan_data_NE, model_code = fwMod_NE, 
                   chains = nChains, iter = nIter, warmup = burnInSteps,
-                  thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
+                  thin = thinSteps, pars = c('alpha', 'beta', 'sigma', 'log_lik'))
   
   BLM3 <- stan(data = stan_data_mixed, model_code = fwMod_mixed, 
                chains = 2, iter = nIter, warmup = burnInSteps,
-               thin = thinSteps, pars = c('alpha', 'beta', 'sigma'))
+               thin = thinSteps, pars = c('alpha', 'beta', 'sigma', 'log_lik'))
   
+  ##
+  log_lik_BLM1_E = extract_log_lik(BLM1_E, merge_chains = F)
+  r_eff_1_BLM1_E = relative_eff(log_lik_BLM1_E)
+  log_lik_BLM1_NE = extract_log_lik(BLM1_NE, merge_chains = F)
+  r_eff_BLM1_NE = relative_eff(log_lik_BLM1_NE)
+  log_lik_BLM3 = extract_log_lik(BLM3, merge_chains = F)
+  r_eff_BLM3 = relative_eff(log_lik_BLM3)
+  
+  loo_BLM1_E <- loo(log_lik_BLM1_E, r_eff = r_eff_1_BLM1_E)
+  loo_BLM1_NE <- loo(log_lik_BLM1_NE, r_eff = r_eff_BLM1_NE)
+  loo_BLM3 <- loo(log_lik_BLM3, r_eff = r_eff_BLM3)
+  
+  looComp <- loo_compare(list('BLM1_E' = loo_BLM1_E, 'BLM1_NE' = loo_BLM1_NE, 'BLM3' = loo_BLM3))
+
   
   CompleteModelFit <- list("BLM1_fit" = BLM1_E
                            ,"BLM1_fit_NoErrors" = BLM1_NE
                            , "BLM3_fit" = BLM3
   )
   
-  #attr(CompleteModelFit, "data") <- calibrationData 
+  attr(CompleteModelFit, "loo") <- looComp 
   #attr(CompleteModelFit, "R2s") <- R2sComplete 
   #attr(CompleteModelFit, "DICs") <- DICs 
   

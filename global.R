@@ -27,6 +27,7 @@ library(bib2df)
 
 library(rstan)
 library(coda)
+library(loo)
 
 #library(loo)
 #library(coda)
