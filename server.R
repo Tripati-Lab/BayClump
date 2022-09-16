@@ -1263,12 +1263,10 @@ server <- function(input, output, session) {
               #TPriorSd <- as.numeric(input$TPriorSd) #Not being used rn
               
               infTempBayesian <- BayesianPredictions(calModel = bayeslincals$BLM1_fit_NoErrors,
-                                                     calData = calData,
                                                      recData = recData
                                                     )
               
               infTempBayesian_NE <- BayesianPredictions(calModel = bayeslincals$BLM1_fit_NoErrors,
-                                                     calData = calData,
                                                      recData = recData
               )
               

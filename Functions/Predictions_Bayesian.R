@@ -1,7 +1,6 @@
 #' This function generate temperature predictions (in 10^6/T2) based on a 
 #' calibration dataset and target D47. 
 #' 
-#' @param calData The calibration dataset
 #' @param calModel The stan model to be analyzed
 #' @param recData The reconstruction dataset
 #' @param iter Number of replicates to retain
@@ -10,7 +9,6 @@
 #' @param prior_sig Prior on sd temperature (scale = 10^6/T2, T in K)
 
 BayesianPredictions <- function(calModel,
-                                calData,
                                 recData,
                                 iter = 1000,
                                 priors = "Uninformative",
