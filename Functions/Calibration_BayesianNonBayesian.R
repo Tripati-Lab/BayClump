@@ -103,7 +103,7 @@ fitClumpedRegressions <<- function(calibrationData,
   parameters {
     real alpha;
     real beta;
-    real sigma;
+    real<lower=0> sigma;
   }
   
   model {
