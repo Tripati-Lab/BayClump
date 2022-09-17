@@ -599,16 +599,20 @@ server <- function(input, output, session) {
             lapply(1:ncol(bayeslincals$BLM1_fit_NoErrors), function(x) {
             mcmc(as.array(bayeslincals$BLM1_fit_NoErrors)[,x,])
             })))
+          PostBLM1_fit_NoErrors <- PostBLM1_fit_NoErrors[,-grep("log_lik", colnames(PostBLM1_fit_NoErrors))]
           
           PostBLM1_fit <- do.call(rbind, mcmc.list(
             lapply(1:ncol(bayeslincals$BLM1_fit), function(x) {
               mcmc(as.array(bayeslincals$BLM1_fit)[,x,])
             })))
+          PostBLM1_fit <- PostBLM1_fit[,-grep("log_lik", colnames(PostBLM1_fit))]
           
           PostBLM3_fit <- do.call(rbind, mcmc.list(
             lapply(1:ncol(bayeslincals$BLM3_fit), function(x) {
               mcmc(as.array(bayeslincals$BLM3_fit)[,x,])
             })))
+          
+          PostBLM3_fit <- PostBLM3_fit[,-grep("log_lik", colnames(PostBLM3_fit))]
           
 
           

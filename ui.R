@@ -221,7 +221,7 @@ body <- dashboardBody(
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
                          tags$b("Inversion interval:"),
-                         checkboxInput("simpleInversion","McClelland et al.",  FALSE),
+                         checkboxInput("simpleInversion","Simple IPI",  FALSE),
                          #numericInput("TPriorMean", label = "Mean value for the prior distribution on temperature (10^6/T^2)", 
                           #            11, min = 0, max = 20),
                          #numericInput("TPriorSd", label = "Standard deviation value for the prior distribution on temperature (10^6/T^2)", 
