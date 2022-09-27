@@ -202,7 +202,7 @@ body <- dashboardBody(
             fluidRow(
               box(width = 5, 
                   title = "Step 1: Reconstruction setup", solidHeader = TRUE,
-                  column(12, tags$b("Parameters for the selected models are automatically transferred from the Calibration tab to this tab. If you are interested in running classic reconstructions, please calibrate the relevant models calibration before."),
+                  column(12, tags$b("Parameters for the selected models are automatically transferred from the Calibration tab to this tab."),
                          tags$br(),
                          # Download templates
                          downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
@@ -221,12 +221,15 @@ body <- dashboardBody(
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
                          tags$b("Inversion interval:"),
-                         checkboxInput("simpleInversion","Simple IPI",  FALSE),
+                         checkboxInput("simpleInversion","Simple inverse prediction interval (IPI)",  FALSE),
                          #numericInput("TPriorMean", label = "Mean value for the prior distribution on temperature (10^6/T^2)", 
                           #            11, min = 0, max = 20),
                          #numericInput("TPriorSd", label = "Standard deviation value for the prior distribution on temperature (10^6/T^2)", 
                           #            0.01, min = 0.0001, max = 0.09),
-                         bsTooltip('bayesianPredictions', "This can take several minutes for large datasets",
+                         bsTooltip('BayesianCalibrationsRec', "This can take several minutes to an hour for large datasets",
+                                   placement = "bottom", trigger = "hover",
+                                   options = NULL),
+                         bsTooltip('simpleInversion', "Uses IPI method from McClelland et al. (2021)",
                                    placement = "bottom", trigger = "hover",
                                    options = NULL),
                          

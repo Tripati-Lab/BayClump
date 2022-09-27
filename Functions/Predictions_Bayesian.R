@@ -80,7 +80,7 @@ stan_date <- list(n = nrow(recData),
 options(mc.cores = parallel::detectCores())
 data.rstan <- stan(data = stan_date, model_code = if(priors == "Uninformative"){ununfpredMod}else{predMod}, 
                    chains = 2, iter = iter, warmup = floor(iter/2),
-                   , control = list(adapt_delta = 0.90, max_treedepth = 10)
+                   control = list(adapt_delta = 0.90, max_treedepth = 10)
 )
 
 params2 <- extract(data.rstan)
