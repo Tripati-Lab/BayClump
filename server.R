@@ -754,12 +754,14 @@ server <- function(input, output, session) {
 
           nmat <- ncol(outBLMM2)/2
           
-          bayeslmminciwitherror <- lapply(seq(1, ncol(outBLMM2), by=2), function(x){
-            subset <- outBLMM2[,c(x,x+1)]
-            colnames(subset) <- c("alpha", "beta")
+          outBLMM2_alpha <- outBLMM2[,grep("alpha", colnames(outBLMM2))]
+          outBLMM2_beta <- outBLMM2[,grep("beta", colnames(outBLMM2))]
+          
+          bayeslmminciwitherror <- lapply(1:nmat, function(x){
+            subset <- cbind.data.frame("alpha" =  outBLMM2_alpha[,x], "beta" = outBLMM2_beta[,x])
             RegressionSingleCI(data = subset, from = minLim, to = maxLim)[[1]]
           })
-          
+
           bayeslmminciwitherror <- rbindlist(bayeslmminciwitherror, idcol="Material")
           bayeslmmincalciwitherror <- as.data.frame(bayeslmminciwitherror)
 
