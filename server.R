@@ -1091,7 +1091,7 @@ server <- function(input, output, session) {
               lmrec <<-  predictTc(calData = calData,
                                  recData = recData,
                                  obCal = lmcals,
-                                 clumpedClassic = input$simpleInversion)
+                                 clumpedClassic = !input$simpleInversion)
             
             sink()
             df1 <- lmrec
@@ -1132,7 +1132,7 @@ server <- function(input, output, session) {
               lminverserec <<- predictTc(calData = calData,
                         recData = recData,
                         obCal = lminversecals,
-                        clumpedClassic = input$simpleInversion)
+                        clumpedClassic = !input$simpleInversion)
 
               sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the weighted OLS...")
@@ -1179,7 +1179,7 @@ server <- function(input, output, session) {
             yorkrec <<-  predictTc(calData = calData,
                                    recData = recData,
                                    obCal = yorkcals,
-                                   clumpedClassic = input$simpleInversion)
+                                   clumpedClassic = !input$simpleInversion)
             
             
               sink()
@@ -1227,7 +1227,7 @@ server <- function(input, output, session) {
             demingrec <<- predictTc(calData = calData,
                                     recData = recData,
                                     obCal = demingcals,
-                                    clumpedClassic = input$simpleInversion)
+                                    clumpedClassic = !input$simpleInversion)
             
             
             sink()
