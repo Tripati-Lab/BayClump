@@ -218,7 +218,8 @@ server <- function(input, output, session) {
     calData$D47error[is.na(calData$D47error)] <<- 0.000001
     calData$TempError[is.na(calData$TempError)] <<- 0.000001
     calData$Material[is.na(calData$Material)] <<- 1
-    
+    calData$D47error <<- abs(calData$D47error)
+    calData$TempError <<- abs(calData$TempError)
     
     
     calData$Material <<- factor(calData$Material, labels = seq(1:length(unique(calData$Material))))
@@ -754,8 +755,8 @@ server <- function(input, output, session) {
 
           nmat <- ncol(outBLMM2)/2
           
-          outBLMM2_alpha <- outBLMM2[,grep("alpha", colnames(outBLMM2))]
-          outBLMM2_beta <- outBLMM2[,grep("beta", colnames(outBLMM2))]
+          outBLMM2_alpha <- as.data.frame(outBLMM2[,grep("alpha", colnames(outBLMM2))])
+          outBLMM2_beta <- as.data.frame(outBLMM2[,grep("beta", colnames(outBLMM2))])
           
           bayeslmminciwitherror <- lapply(1:nmat, function(x){
             subset <- cbind.data.frame("alpha" =  outBLMM2_alpha[,x], "beta" = outBLMM2_beta[,x])
@@ -1090,8 +1091,8 @@ server <- function(input, output, session) {
             
               lmrec <<-  predictTc(calData = calData,
                                  recData = recData,
-                                 obCal = lmcals,
-                                 clumpedClassic = !input$simpleInversion)
+                                 obCal = lmcals
+                                 )
             
             sink()
             df1 <- lmrec
@@ -1103,7 +1104,7 @@ server <- function(input, output, session) {
             output$lmrecswun <- renderTable({
               df1$`Δ47 (‰)` <- formatC(df1$`Δ47 (‰)`, digits = 3, format = "f")
               df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 4, format = "f")
-              df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 1, format = "f")
+              df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 3, format = "f")
               df1$`LW, 95% CI` <- formatC(df1$`LW, 95% CI`, digits = 3, format = "f")
               df1$`Up, 95% CI` <- formatC(df1$`Up, 95% CI`, digits = 3, format = "f")
               head(df1)
@@ -1131,8 +1132,8 @@ server <- function(input, output, session) {
               
               lminverserec <<- predictTc(calData = calData,
                         recData = recData,
-                        obCal = lminversecals,
-                        clumpedClassic = !input$simpleInversion)
+                        obCal = lminversecals
+                        )
 
               sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the weighted OLS...")
@@ -1146,7 +1147,7 @@ server <- function(input, output, session) {
             output$lminverserecswun <- renderTable({
               df3$`Δ47 (‰)` <- formatC(df3$`Δ47 (‰)`, digits = 3, format = "f")
               df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 4, format = "f")
-              df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 1, format = "f")
+              df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 3, format = "f")
               df3$`LW, 95% CI` <- formatC(df3$`LW, 95% CI`, digits = 3, format = "f")
               df3$`Up, 95% CI` <- formatC(df3$`Up, 95% CI`, digits = 3, format = "f")
               head(df3)
@@ -1178,8 +1179,8 @@ server <- function(input, output, session) {
 
             yorkrec <<-  predictTc(calData = calData,
                                    recData = recData,
-                                   obCal = yorkcals,
-                                   clumpedClassic = !input$simpleInversion)
+                                   obCal = yorkcals
+                                   )
             
             
               sink()
@@ -1195,7 +1196,7 @@ server <- function(input, output, session) {
               
               df5$`Δ47 (‰)` <- formatC(df5$`Δ47 (‰)`, digits = 3, format = "f")
               df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 4, format = "f")
-              df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 1, format = "f")
+              df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 3, format = "f")
               df5$`LW, 95% CI` <- formatC(df5$`LW, 95% CI`, digits = 3, format = "f")
               df5$`Up, 95% CI` <- formatC(df5$`Up, 95% CI`, digits = 3, format = "f")
               head(df5)
@@ -1226,8 +1227,8 @@ server <- function(input, output, session) {
               
             demingrec <<- predictTc(calData = calData,
                                     recData = recData,
-                                    obCal = demingcals,
-                                    clumpedClassic = !input$simpleInversion)
+                                    obCal = demingcals
+                                    )
             
             
             sink()
@@ -1242,7 +1243,7 @@ server <- function(input, output, session) {
               
               df7$`Δ47 (‰)` <- formatC(df7$`Δ47 (‰)`, digits = 3, format = "f")
               df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 4, format = "f")
-              df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 1, format = "f")
+              df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 3, format = "f")
               df7$`LW, 95% CI` <- formatC(df7$`LW, 95% CI`, digits = 3, format = "f")
               df7$`Up, 95% CI` <- formatC(df7$`Up, 95% CI`, digits = 3, format = "f")
               head(df7)
@@ -1282,10 +1283,14 @@ server <- function(input, output, session) {
                                                      recData = recData
               )
               
-              ##Need to implement the mixed one...
+            
               
-              infTempBayesian_Mixed <- infTempBayesian_NE
+              infTempBayesian_Mixed <- BayesianPredictions(calModel = bayeslincals$BLM3_fit,
+                                                        recData = recData, 
+                                                        mixed = TRUE
+              )
               
+
               sink()
 
               df0 <- infTempBayesian
@@ -1295,7 +1300,7 @@ server <- function(input, output, session) {
               output$BpredictionsErrors <- renderTable({
                 df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
                 df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
-                df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 1, format = "f")
+                df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 3, format = "f")
                 df0$`LW, 95% CI` <- formatC(df0$`LW, 95% CI`, digits = 3, format = "f")
                 df0$`Up, 95% CI` <- formatC(df0$`Up, 95% CI`, digits = 3, format = "f")
                 head(df0)
@@ -1318,7 +1323,7 @@ server <- function(input, output, session) {
                 
                 df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
                 df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
-                df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 1, format = "f")
+                df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 3, format = "f")
                 df0.1$`LW, 95% CI` <- formatC(df0.1$`LW, 95% CI`, digits = 3, format = "f")
                 df0.1$`Up, 95% CI` <- formatC(df0.1$`Up, 95% CI`, digits = 3, format = "f")
                 head(df0.1)
@@ -1339,8 +1344,8 @@ server <- function(input, output, session) {
               output$BpredictionsBLMM <- renderTable({
                 df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
                 df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
-                #df0.2$Material <- formatC(df0.2$Material, digits = 1, format = "f")
-                df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 1, format = "f")
+                #df0.2$Material <- formatC(df0.2$Material, digits = 3, format = "f")
+                df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 3, format = "f")
                 df0.2$`LW, 95% CI` <- formatC(df0.2$`LW, 95% CI`, digits = 3, format = "f")
                 df0.2$`Up, 95% CI` <- formatC(df0.2$`Up, 95% CI`, digits = 3, format = "f")
                 head(df0.2)

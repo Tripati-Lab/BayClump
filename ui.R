@@ -135,7 +135,7 @@ body <- dashboardBody(
                          verbatimTextOutput("blinnoerr", placeholder = TRUE),
                          tags$h4("Bayesian simple linear model - with errors"),
                          verbatimTextOutput("blinwerr", placeholder = TRUE),
-                         tags$h4("Bayesian mixed model - with errors"),
+                         tags$h4("Bayesian mixed model - no errors"),
                          verbatimTextOutput("blinmwerr", placeholder = TRUE)
                   ),
                   
@@ -220,8 +220,6 @@ body <- dashboardBody(
                          checkboxInput("simulateYork_measuredRec", "York regression", FALSE),
                          checkboxInput("simulateDemingRec", "Deming regression", FALSE),
                          checkboxInput("BayesianCalibrationsRec", "Bayesian linear models", FALSE),
-                         tags$b("Inversion interval:"),
-                         checkboxInput("simpleInversion","Simple inverse prediction interval (IPI)",  FALSE),
                          #numericInput("TPriorMean", label = "Mean value for the prior distribution on temperature (10^6/T^2)", 
                           #            11, min = 0, max = 20),
                          #numericInput("TPriorSd", label = "Standard deviation value for the prior distribution on temperature (10^6/T^2)", 

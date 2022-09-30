@@ -13,7 +13,8 @@ BayesianPredictions <- function(calModel,
                                 iter = 1000,
                                 priors = "Uninformative",
                                 prior_mu = 11,
-                                prior_sig = 5){
+                                prior_sig = 5,
+                                mixed = FALSE){
   
   vects.params <- extract(calModel)
   
@@ -68,9 +69,59 @@ model {
 }
 "
 
+if(mixed){
+  
+  partMat <- split(recData, recData$Material)
+  
+  recs <- lapply(partMat, function(x){
+    
+    stan_date <- list(n = nrow(x), 
+                      y = x$D47, 
+                      posts = length(vects.params$alpha[,1]), 
+                      alpha = vects.params$alpha[,x$Material[1]],
+                      beta = vects.params$beta[,x$Material[1]],
+                      sigma = vects.params$sigma,
+                      prior_mu = prior_mu,
+                      prior_sig = prior_sig)
+    
+    options(mc.cores = parallel::detectCores())
+    data.rstan <- stan(data = stan_date, model_code = if(priors == "Uninformative"){ununfpredMod}else{predMod}, 
+                       chains = 2, iter = iter, warmup = floor(iter/2),
+                       control = list(adapt_delta = 0.90, max_treedepth = 10)
+    )
+    
+    
+    se <- function(x) sqrt(var(x)/iter)
+    
+    params2 <- extract(data.rstan)
+    Xouts2 <- params2$x_new
+    Xdims2 <- dim(Xouts2)
+    xis <- list()
+    recs <- lapply(1:Xdims2[2], function(x){
+      test <- as.vector(Xouts2[,x,])
+      cbind.data.frame(mean(test), mean(test) - (2*se(test)),
+                       mean(test) + (2*se(test))
+      )
+    })
+    
+    recs <- do.call(rbind, recs)
+    
+    cbind.data.frame(Sample = recData$Sample, 
+                     D47 = recData$D47, 
+                     D47error = recData$D47error, 
+                     meanTemp = sqrt(10^6/recs[,1]) - 273.15, 
+                     Temp_L = sqrt(10^6/recs[,3]) - 273.15, 
+                     Temp_H = sqrt(10^6/recs[,2]) - 273.15)
+  })
+  recs <- do.call(rbind, recs)
+  recs <- recs[match(recData$Sample, recs$Sample),]
+  row.names(recs) <- NULL
+  recs
+}else{
+
 stan_date <- list(n = nrow(recData), 
                   y = recData$D47, 
-                  posts = length(vects.params$beta), 
+                  posts = length(vects.params$alpha), 
                   alpha = vects.params$alpha,
                   beta = vects.params$beta,
                   sigma = vects.params$sigma,
@@ -83,13 +134,17 @@ data.rstan <- stan(data = stan_date, model_code = if(priors == "Uninformative"){
                    control = list(adapt_delta = 0.90, max_treedepth = 10)
 )
 
+se <- function(x) sqrt(var(x)/iter)
+
 params2 <- extract(data.rstan)
 Xouts2 <- params2$x_new
 Xdims2 <- dim(Xouts2)
 xis <- list()
 recs <- lapply(1:Xdims2[2], function(x){
-  cbind.data.frame(mean(Xouts2[,x,]), quantile(Xouts2[,x,], c(0.025)),
-                   quantile(Xouts2[,x,], c(0.975)))
+  test <- as.vector(Xouts2[,x,])
+  cbind.data.frame(mean(test), mean(test) - (2*se(test)),
+                   mean(test) + (2*se(test))
+                   )
 })
 
 recs <- do.call(rbind, recs)
@@ -101,6 +156,7 @@ cbind.data.frame(Sample = recData$Sample,
                  Temp_L = sqrt(10^6/recs[,3]) - 273.15, 
                  Temp_H = sqrt(10^6/recs[,2]) - 273.15)
 
+}
 
 }
 

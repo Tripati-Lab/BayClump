@@ -154,8 +154,98 @@ fitClumpedRegressions <<- function(calibrationData,
     log_lik[i] = normal_lpdf(y[i] | 0, sigma);
     }
   }
-  
 "
+  
+  ## Non-Informative
+  
+  fwMod_NE2 = "
+  data {
+    int<lower = 0> N;
+    vector[N] x;
+    vector[N] y;
+  }
+
+  parameters {
+    real alpha;
+    real beta;
+    real<lower=0> sigma;
+  }
+  
+  model {
+    sigma ~ cauchy(0, 5);
+    y ~ normal(alpha + beta * x, sigma);
+  }
+  
+  generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | 0, sigma);
+    }
+  }
+"
+  
+  fwMod_Errors2 = "
+  data {
+    int<lower=0> N; 
+    vector[N] y; 
+    vector[N] x_meas; 
+  }
+  
+  parameters {
+    vector[N] x;
+    real tau; 
+    real alpha; 
+    real beta; 
+    real mu_x;
+    real sigma_x;
+    real<lower=0> sigma;
+  }
+  
+  model {
+    x ~ normal(mu_x, sigma_x);
+    x_meas ~ normal(x, tau); 
+    y ~ normal(alpha + beta * x, sigma);
+  
+    sigma ~ cauchy(0, 5);
+  }
+  
+  generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | 0, sigma);
+    }
+  }
+"
+  
+  
+  fwMod_mixed2 = "
+  data {
+    int<lower=0> N;
+    int<lower=0> J;
+    vector[N] y;
+    vector[N] x;
+    int Material[N];
+  }
+  
+  parameters {
+    real<lower=0> sigma;
+    vector[J] alpha;
+    vector[J] beta;
+  }
+  
+  model {
+    y ~ normal(alpha[Material] + beta[Material].*x, sigma);
+    sigma ~ cauchy(0, 5);
+  }
+  
+  generated quantities {
+  vector[N] log_lik;
+  for (i in 1:N) {
+    log_lik[i] = normal_lpdf(y[i] | 0, sigma);
+    }
+  }
+"
+  
   
   #Data
   
@@ -196,15 +286,15 @@ fitClumpedRegressions <<- function(calibrationData,
   
   #Fit models
   options(mc.cores = parallel::detectCores())
-  BLM1_E <- stan(data = stan_data_Err, model_code = fwMod_Errors, 
+  BLM1_E <- stan(data = stan_data_Err, model_code = if( priors == "Uninformative") {fwMod_Errors2}else{fwMod_Errors}, 
                  chains = nChains, iter = nIter, warmup = burnInSteps,
                  thin = thinSteps, pars = c('alpha', 'beta', 'sigma', 'log_lik'))
   
-  BLM1_NE <- stan(data = stan_data_NE, model_code = fwMod_NE, 
+  BLM1_NE <- stan(data = stan_data_NE, model_code =  if( priors == "Uninformative") {fwMod_NE2}else{fwMod_NE}, 
                   chains = nChains, iter = nIter, warmup = burnInSteps,
                   thin = thinSteps, pars = c('alpha', 'beta', 'sigma', 'log_lik'))
   
-  BLM3 <- stan(data = stan_data_mixed, model_code = fwMod_mixed, 
+  BLM3 <- stan(data = stan_data_mixed, model_code =  if( priors == "Uninformative") {fwMod_mixed2}else{fwMod_mixed}, 
                chains = 2, iter = nIter, warmup = burnInSteps,
                thin = thinSteps, pars = c('alpha', 'beta', 'sigma', 'log_lik'))
   
