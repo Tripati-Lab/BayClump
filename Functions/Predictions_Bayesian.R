@@ -96,12 +96,10 @@ if(mixed){
     params2 <- extract(data.rstan)
     Xouts2 <- params2$x_new
     Xdims2 <- dim(Xouts2)
-    xis <- list()
     recs <- lapply(1:Xdims2[2], function(x){
       test <- as.vector(Xouts2[,x,])
-      cbind.data.frame(mean(test), mean(test) - (2*se(test)),
-                       mean(test) + (2*se(test))
-      )
+      test <- sqrt(10^6/test) - 273.15
+      cbind.data.frame(mean(test),  se(test))
     })
     
     recs <- do.call(rbind, recs)
@@ -109,9 +107,8 @@ if(mixed){
     cbind.data.frame(Sample = recData$Sample, 
                      D47 = recData$D47, 
                      D47error = recData$D47error, 
-                     meanTemp = sqrt(10^6/recs[,1]) - 273.15, 
-                     Temp_L = sqrt(10^6/recs[,3]) - 273.15, 
-                     Temp_H = sqrt(10^6/recs[,2]) - 273.15)
+                     meanTemp = recs[,1], 
+                     error = recs[,2])
   })
   recs <- do.call(rbind, recs)
   recs <- recs[match(recData$Sample, recs$Sample),]
@@ -139,12 +136,11 @@ se <- function(x) sqrt(var(x)/iter)
 params2 <- extract(data.rstan)
 Xouts2 <- params2$x_new
 Xdims2 <- dim(Xouts2)
-xis <- list()
+
 recs <- lapply(1:Xdims2[2], function(x){
   test <- as.vector(Xouts2[,x,])
-  cbind.data.frame(mean(test), mean(test) - (2*se(test)),
-                   mean(test) + (2*se(test))
-                   )
+  test <- sqrt(10^6/test) - 273.15
+  cbind.data.frame(mean(test),  se(test))
 })
 
 recs <- do.call(rbind, recs)
@@ -152,9 +148,8 @@ recs <- do.call(rbind, recs)
 cbind.data.frame(Sample = recData$Sample, 
                  D47 = recData$D47, 
                  D47error = recData$D47error, 
-                 meanTemp = sqrt(10^6/recs[,1]) - 273.15, 
-                 Temp_L = sqrt(10^6/recs[,3]) - 273.15, 
-                 Temp_H = sqrt(10^6/recs[,2]) - 273.15)
+                 meanTemp = recs[,1], 
+                 error = recs[,2])
 
 }
 
