@@ -33,6 +33,7 @@ fitClumpedRegressions <<- function(calibrationData,
   }
   
   if(priors == "Uninformative"){
+    #Stan actually uses a flat prior
     beta_mu =  0.01
     beta_sd = 0.01
     alpha_mu = 0.01
@@ -41,9 +42,9 @@ fitClumpedRegressions <<- function(calibrationData,
   
   if(priors == "Weak"){
     beta_mu =  0.039
-    beta_sd = 0.004 * 2
+    beta_sd = 1.000
     alpha_mu = 0.231
-    alpha_sd = 0.065 * 2
+    alpha_sd = 1.000
   }
   
   
