@@ -65,14 +65,12 @@ server <- function(input, output, session) {
   if(exists("wb3")) rm(wb3) # Delete any existing workbook in preparation for new results
   wb3 <- createWorkbook("Bayesian output") # Prepare a workbook for calibration outputs
   
-  
   if(exists("wb4")) rm(wb4) # Delete any existing workbook in preparation for new results
   wb4 <- createWorkbook("Bayesian posterior output") # Prepare a workbook for calibration outputs
   
   #For convergence
   if(exists("wb5")) rm(wb5) # Delete any existing workbook in preparation for new results
   wb5 <- createWorkbook("Bayesian reconstruction posterior output") # Prepare a workbook for calibration outputs
-  
   
   observeEvent(calibrationData(),{
   output$myList <-  renderUI({
@@ -82,7 +80,6 @@ server <- function(input, output, session) {
   })
   })
   
-
   observe({
     output$contents <- renderTable({
       calsummary <- calibrationData() %>%
@@ -109,20 +106,19 @@ server <- function(input, output, session) {
       print(noquote("Please upload calibration data first"))
     } 
     
-
     priors <<- input$priors
     replicates <<- input$replication
     ngenerationsBayes <<- input$generations
-    ngenerationsBayesianPredictions <<- input$generations
+    ngenerationsrec.bayesian <<- input$generations
 
-    ##Download priors (calibration; not reactive...)
+    ##Download priors
     if(exists("wb6")) rm(wb6)
     wb6 <- createWorkbook("Priors - Calibration")
     if("Settings" %in% names(wb6) == TRUE) 
     {removeWorksheet(wb6, "Settings")}
     if("Distributions" %in% names(wb6) == TRUE) 
     {removeWorksheet(wb6, "Distributions") }
-    pd <- generatePriorDistCalibration(prior = priors)
+    pd <- plot.cal.prior(prior = priors)
     addWorksheet(wb6, "Settings") # Add a blank sheet
     writeData(wb6, sheet = "Settings", attr(pd, "params")) # Write regression data
     addWorksheet(wb6, "Distributions") # Add a blank sheet
@@ -144,7 +140,7 @@ server <- function(input, output, session) {
     {removeWorksheet(wb7, "Settings")}
     if("Distributions" %in% names(wb7) == TRUE) 
     {removeWorksheet(wb7, "Distributions") }
-    pd <- generatePriorReconstructions(prior = priors)
+    pd <- plot.rec.priors(prior = priors)
     addWorksheet(wb7, "Settings") # Add a blank sheet
     writeData(wb7, sheet = "Settings", attr(pd, "params")) # Write regression data
     addWorksheet(wb7, "Distributions") # Add a blank sheet
@@ -158,10 +154,7 @@ server <- function(input, output, session) {
         saveWorkbook(wb7, file, overwrite = TRUE)
       }
     )
-    
-    
-    
-    
+
     # Remove existing worksheets from wb on "run" click, if any
     if("Linear regression" %in% names(wb) == TRUE) 
     {removeWorksheet(wb, "Linear regression") & removeWorksheet(wb, "Linear regression CI")}
@@ -196,7 +189,6 @@ server <- function(input, output, session) {
     {removeWorksheet(wb4, "Bayesian mixed w errors")}
     
 
-    
     lmcals <<- NULL
     lminversecals <<- NULL
     yorkcals <<- NULL
@@ -205,7 +197,6 @@ server <- function(input, output, session) {
 
     
     # Calibration data
-    
     calData <<- NULL
     calData <<- calibrationData()
 
@@ -218,15 +209,12 @@ server <- function(input, output, session) {
     calData$D47error <<- abs(calData$D47error)
     calData$TempError <<- abs(calData$TempError)
     
-    
     calData$Material <<- factor(calData$Material, labels = seq(1:length(unique(calData$Material))))
     if(min(as.numeric(calData$Material)) != 1){
     print(noquote("The sequence of Materials now start from 1"))
     }
     
-    
     ##Limits of the CI
-    
     minLim <- ifelse(input$range[1]==0, min(calData$Temperature),input$range[1])
     maxLim <- ifelse(input$range[2]==0, max(calData$Temperature),input$range[2])
     
@@ -235,47 +223,46 @@ server <- function(input, output, session) {
       print(noquote("Invalid input: 0 or negative uncertainty values"))
       }
 
-    
-    if(input$simulateLM_measured == FALSE &
-       input$simulateLM_inverseweights == FALSE &
-       input$simulateYork_measured == FALSE &
-       input$simulateDeming == FALSE &
-       input$BayesianCalibrations == FALSE) {
+    if(input$cal.ols == FALSE &
+       input$cal.wols == FALSE &
+       input$cal.york == FALSE &
+       input$cal.deming == FALSE &
+       input$cal.bayesian == FALSE) {
       print(noquote("Please select at least one model"))
       }
     
    if(NegErrors == FALSE){
     
-    if(input$simulateLM_measured != FALSE |
-       input$simulateLM_inverseweights != FALSE |
-       input$simulateYork_measured != FALSE |
-       input$simulateDeming != FALSE |
-       input$BayesianCalibrations != FALSE) {
+    if(input$cal.ols != FALSE |
+       input$cal.wols != FALSE |
+       input$cal.york != FALSE |
+       input$cal.deming != FALSE |
+       input$cal.bayesian != FALSE) {
       
       withProgress(message = "Running selected models, please wait", {
         
-        if(input$simulateLM_measured == FALSE) {
+        if(input$cal.ols == FALSE) {
         }
-        if(input$simulateLM_inverseweights == FALSE) {
+        if(input$cal.wols == FALSE) {
         }
-        if(input$simulateYork_measured == FALSE) {
+        if(input$cal.york == FALSE) {
         }
-        if(input$simulateDeming == FALSE) {
+        if(input$cal.deming == FALSE) {
         }
-        if(input$BayesianCalibrations == FALSE) {
+        if(input$cal.bayesian == FALSE) {
         }
         
-        totalModels <- c(input$simulateLM_measured, input$simulateLM_inverseweights, input$simulateYork_measured,
-                         input$simulateDeming, input$BayesianCalibrations)
+        totalModels <- c(input$cal.ols, input$cal.wols, input$cal.york,
+                         input$cal.deming, input$cal.bayesian)
         TotProgress <- length(which(totalModels==T))
         
-        if(input$simulateLM_measured != FALSE) {
+        if(input$cal.ols != FALSE) {
           sink(file = "out/linmodtext.txt", type = "output")
-          lmcals <<- simulateLM_measured(calData, replicates = replicates)
+          lmcals <<- cal.ols(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting the OLS...")
           
-          lmci <<- RegressionSingleCI(data = lmcals, from = minLim, to = maxLim)
+          lmci <<- plot.cal.ci(data = lmcals, from = minLim, to = maxLim)
           lmcalci <- as.data.frame(lmci)
           
           output$lmcalibration <- renderPlotly({
@@ -335,13 +322,6 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Linear regression", lmcals) # Write regression data
           writeData(wb, sheet = "Linear regression CI", lmcalci2)
           
-          
-          
-          # cat("Linear regression complete \n *R^2=", round(unlist(attributes(lmcals)$R2[1],4)),
-          #     " (95% CI, ",round(unlist(attributes(lmcals)$R2[2],4)),"-",round(unlist(attributes(lmcals)$R2[3],4)),")"
-          # )
-          
-
           output$lmcal <- renderPrint({
             do.call(rbind.data.frame,apply(lmcals, 2, function(x){
               cbind.data.frame(Mean= round(mean(x), 4), `SE`=round(sd(x)/sqrt(length(x)),7))
@@ -350,13 +330,13 @@ server <- function(input, output, session) {
           
         }
         
-        if(input$simulateLM_inverseweights != FALSE) {
+        if(input$cal.wols != FALSE) {
           sink(file = "out/inverselinmodtext.txt", type = "output")
-          lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates)
+          lminversecals <<- cal.wols(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting weighted OLS...")
           
-          lminverseci <- RegressionSingleCI(data = lminversecals, from = minLim, to = maxLim)
+          lminverseci <- plot.cal.ci(data = lminversecals, from = minLim, to = maxLim)
           lminversecalci <- as.data.frame(lminverseci)
           
           output$lminversecalibration <- renderPlotly({
@@ -421,19 +401,19 @@ server <- function(input, output, session) {
           
           output$lminversecal <- renderPrint({
             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
-              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
+              cbind.data.frame(Mean= round(mean(x), 4),`SE` = round(sd(x)/sqrt(length(x)),7))
             }))
           })
           
         }
         
-        if(input$simulateYork_measured != FALSE) {
+        if(input$cal.york != FALSE) {
           sink(file = "out/yorkmodtext.txt", type = "output")
-          yorkcals <<- simulateYork_measured(calData, replicates = replicates)
+          yorkcals <<- cal.york(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting York regression...")
           
-          yorkci <- RegressionSingleCI(data = yorkcals, from = minLim, to = maxLim)
+          yorkci <- plot.cal.ci(data = yorkcals, from = minLim, to = maxLim)
           yorkcalci <- as.data.frame(yorkci)
           
           output$yorkcalibration <- renderPlotly({
@@ -492,8 +472,6 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "York regression", yorkcals) # Write regression data
           writeData(wb, sheet = "York regression CI", yorkcalci2)
           
-          # cat("\nYork regression complete")
-          
           output$york <- renderPrint({
             do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
               cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
@@ -502,13 +480,13 @@ server <- function(input, output, session) {
           
         }
         
-        if(input$simulateDeming != FALSE) {
+        if(input$cal.deming != FALSE) {
           sink(file = "out/demingmodtext.txt", type = "output")
-          demingcals <<- simulateDeming(calData, replicates = replicates)
+          demingcals <<- cal.deming(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting Deming regression model...")
           
-          demingci <- RegressionSingleCI(data = demingcals, from = minLim, to = maxLim)
+          demingci <- plot.cal.ci(data = demingcals, from = minLim, to = maxLim)
           demingcalci <- as.data.frame(demingci)
           
           output$demingcalibration <- renderPlotly({
@@ -567,7 +545,6 @@ server <- function(input, output, session) {
           writeData(wb, sheet = "Deming regression", demingcals) # Write regression data
           writeData(wb, sheet = "Deming regression CI", demingcalci2)
           
-          #cat("\nDeming regression complete")
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
               cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
@@ -576,10 +553,10 @@ server <- function(input, output, session) {
           
         }
         
-        if(input$BayesianCalibrations != FALSE) {
+        if(input$cal.bayesian != FALSE) {
           
           sink(file = "out/Bayeslinmodtext.txt", type = "output")
-          bayeslincals <<- fitClumpedRegressions(calibrationData = calData, 
+          bayeslincals <<- cal.bayesian(calibrationData = calData, 
                                                  priors = priors,
                                                  numSavedSteps = ngenerationsBayes)
 
@@ -602,14 +579,12 @@ server <- function(input, output, session) {
           
           PostBLM3_fit <- PostBLM3_fit[,-grep("log_lik", colnames(PostBLM3_fit))]
           
-
-          
           sink()
           incProgress(1/TotProgress, detail="...Done fitting the Bayesian linear regression model...")
           
-          bayeslincinoerror <- RegressionSingleCI(data = PostBLM1_fit_NoErrors, from = minLim, to = maxLim)
+          bayeslincinoerror <- plot.cal.ci(data = PostBLM1_fit_NoErrors, from = minLim, to = maxLim)
           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
-          bayeslinciwitherror <- RegressionSingleCI(data = PostBLM1_fit, from = minLim, to = maxLim)
+          bayeslinciwitherror <- plot.cal.ci(data = PostBLM1_fit, from = minLim, to = maxLim)
           bayeslincalciwitherror <- as.data.frame(bayeslinciwitherror)
           
           output$bayeslincalibration <- renderPlotly({
@@ -747,7 +722,7 @@ server <- function(input, output, session) {
           
           bayeslmminciwitherror <- lapply(1:nmat, function(x){
             subset <- cbind.data.frame("alpha" =  outBLMM2_alpha[,x], "beta" = outBLMM2_beta[,x])
-            RegressionSingleCI(data = subset, from = minLim, to = maxLim)[[1]]
+            plot.cal.ci(data = subset, from = minLim, to = maxLim)[[1]]
           })
 
           bayeslmminciwitherror <- rbindlist(bayeslmminciwitherror, idcol="Material")
@@ -795,7 +770,6 @@ server <- function(input, output, session) {
             materials <- unique(bayeslmmincalciwitherror$Material)
             
             for(y in 1:nmat){
-              
               bayesmixedfig <- bayesmixedfig %>% 
                           add_ribbons(data = bayeslmmincalciwitherror[bayeslmmincalciwitherror$Material==materials[y],],
                           x = ~x,
@@ -832,26 +806,10 @@ server <- function(input, output, session) {
           cat("Model comparison in loo\n\n")
           cat("")
           print(lootab)
-          
-          # cat(paste0("\nBayesian linear model complete \n *with errors \n   *R^2=", round(attr(bayeslincals,"R2s")[1,2],4),
-          #            " (95% CI, ",round(attr(bayeslincals,"R2s")[1,3],4),"-",round(attr(bayeslincals,"R2s")[1,4],4),")",
-          #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[1],4),
-          #            "\n *without errors\n   *R^2=", round(attr(bayeslincals,"R2s")[2,2],4),
-          #            " (95% CI, ",round(attr(bayeslincals,"R2s")[2,3],4),"-",round(attr(bayeslincals,"R2s")[2,4],4),")",
-          #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[2],4),
-          #            "\n Bayesian linear mixed model complete\n   *R^2=", round(attr(bayeslincals,"R2s")[3,2],4),
-          #            " (95% CI, ",round(attr(bayeslincals,"R2s")[3,3],4),"-",round(attr(bayeslincals,"R2s")[3,4],4),")",
-          #            "\n   *DIC=", round(attr(bayeslincals,"DICs")[3],4)
-          # )
-          #)
-
       }
-        
       })
-      
     }
    }
-    
   })
   
   output$modresults <- renderPrint({
@@ -888,14 +846,6 @@ server <- function(input, output, session) {
       saveWorkbook(wb4, file, overwrite = TRUE)
     }
   )
-  
-  
-  ########################### Example code
-  #    output$calstorun<-renderText({
-  #      return(caltorun)
-  #})
-  ###################################################
-  
   
   # Calibration plots tab
   
@@ -999,11 +949,6 @@ server <- function(input, output, session) {
       
       recData <- NULL
       recData <- reconstructionData()
-      #recData$Material <- factor(recData$Material, labels = seq(1:length(unique(recData$Material))))
-      #if(min(as.numeric(recData$Material)) != 1){
-      #  print(noquote("The sequence of Materials now start from 1"))
-      #}
-  
       
       # Remove existing worksheets from wb2 on "run" click, if any
       if("Linear" %in% names(wb2) == TRUE) 
@@ -1063,23 +1008,20 @@ server <- function(input, output, session) {
       if("Bayesian linear mixed model (C)" %in% names(wb5) == TRUE)
       {removeWorksheet(wb5, "Bayesian linear mixed model (C)")}
       
-        totalModelsRecs <- c(input$simulateLM_measuredRec, input$simulateLM_inverseweightsRec, input$simulateYork_measuredRec,
-                         input$simulateDemingRec, input$BayesianCalibrationsRec)
+        totalModelsRecs <- c(input$cal.olsRec, input$cal.wolsRec, input$cal.yorkRec,
+                         input$cal.demingRec, input$rec.bayesian)
         totalModelsRecs <- length(which(totalModelsRecs==T))
 
         withProgress(message = "Running selected reconstructions, please wait", {
           
           #OLS
-          if( input$simulateLM_measuredRec) {
+          if( input$cal.olsRec) {
             
             if(is.null(lmcals)) { print(noquote("Please run the calibration step for linear models first")) }else{
               
               sink("out/LMpredictions.txt", type = "output")
             
-              lmrec <<-  predictTc(calData = calData,
-                                 recData = recData,
-                                 obCal = lmcals
-                                 )
+              lmrec <<-  rec.clumped(recData = recData, obCal = lmcals)
             
             sink()
             df1 <- lmrec
@@ -1111,21 +1053,18 @@ server <- function(input, output, session) {
             }
           
           #Inverse weighted linear model 
-          if( input$simulateLM_inverseweightsRec ) {
+          if( input$cal.wolsRec ) {
             if(is.null(lminversecals)) { print(noquote("Please run the calibration step for weighted OLS models first")) }else{
               
             sink("out/wLMpredictions.txt", type = "output")
               
-              lminverserec <<- predictTc(calData = calData,
-                        recData = recData,
-                        obCal = lminversecals
-                        )
+              lminverserec <<- rec.clumped(recData = recData, obCal = lminversecals)
 
               sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the weighted OLS...")
             
             
-            df3<-lminverserec
+            df3 <- lminverserec
             
             names(df3) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
             rownames(df3) <- NULL
@@ -1155,17 +1094,14 @@ server <- function(input, output, session) {
             }
           
           # York regression
-          if( input$simulateYork_measuredRec) {
+          if( input$cal.yorkRec) {
             if(is.null(yorkcals)) { print(noquote("Please run the calibration step for York models first")) }else{
               
               sink("out/Yorkpredictions.txt", type = "output")
               
 
 
-            yorkrec <<-  predictTc(calData = calData,
-                                   recData = recData,
-                                   obCal = yorkcals
-                                   )
+            yorkrec <<-  rec.clumped(recData = recData, obCal = yorkcals)
             
             
               sink()
@@ -1202,17 +1138,14 @@ server <- function(input, output, session) {
             }
           
           # Deming regression
-          if( input$simulateDemingRec) {
+          if( input$cal.demingRec) {
             if(is.null(demingcals) ) { print(noquote("Please run the calibration step for Deming models first")) }else{
               
               sink("out/Demingpredictions.txt", type = "output")
               
               
               
-            demingrec <<- predictTc(calData = calData,
-                                    recData = recData,
-                                    obCal = demingcals
-                                    )
+            demingrec <<- rec.clumped(recData = recData, obCal = demingcals)
             
             
             sink()
@@ -1248,7 +1181,7 @@ server <- function(input, output, session) {
             }
 
           #BML
-          if(input$BayesianCalibrationsRec){
+          if(input$rec.bayesian){
             
             if(is.null(bayeslincals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
               
@@ -1256,20 +1189,11 @@ server <- function(input, output, session) {
               sink("out/bayespredictions.txt", type = "output")
               
 
-              infTempBayesian <- BayesianPredictions(calModel = bayeslincals$BLM1_fit,
-                                                     recData = recData
-                                                    )
+              infTempBayesian <- rec.bayesian(calModel = bayeslincals$BLM1_fit, recData = recData)
               
-              infTempBayesian_NE <- BayesianPredictions(calModel = bayeslincals$BLM1_fit_NoErrors,
-                                                     recData = recData
-              )
-              
-            
-              
-              infTempBayesian_Mixed <- BayesianPredictions(calModel = bayeslincals$BLM3_fit,
-                                                        recData = recData, 
-                                                        mixed = TRUE
-              )
+              infTempBayesian_NE <- rec.bayesian(calModel = bayeslincals$BLM1_fit_NoErrors, recData = recData)
+
+              infTempBayesian_Mixed <- rec.bayesian(calModel = bayeslincals$BLM3_fit, recData = recData, mixed = TRUE)
               
               sink()
 

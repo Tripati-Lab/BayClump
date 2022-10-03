@@ -1,4 +1,11 @@
+
 if("tidyverse" %in% installed.packages() == TRUE) {remove.packages("tidyverse")} # Tidyverse breaks the app by calling sample.int instead of sample if it's even installed
+if(!"devtools" %in% installed.packages()) {install.packages("devtools")} 
+if(!"bayclumpr" %in% installed.packages()) {
+  library(devtools)
+  install_github("Tripati-Lab/bayclumpr")
+  } 
+
 
 # To work in shinyapps.io, each package has be loaded individually instead of with lapply
 library(shiny)
@@ -7,30 +14,19 @@ library(plyr)
 library(dplyr)
 library(xtable)
 library(viridis)
-library(data.table)
 library(plotly)
 library(bibtex)
 library(readxl)
-library(lme4)
-library(R2jags)
-library(IsoplotR)
-library(investr)
-library(DT)
 library(knitcitations)
-library(deming)
 library(shinyBS)
 library(ggridges)
 library(ggpubr)
-library(parallel)
 library(openxlsx)
 library(bib2df)
 
-library(rstan)
-library(coda)
-library(loo)
 
-#library(loo)
-#library(coda)
+library(bayclumpr)
+
 
 # Create automatic bibliography containing loaded packages and their dependencies
 bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, verbose = TRUE)
@@ -53,7 +49,7 @@ Complete_Calibration_List <- NULL
 set.seed(4)
 
 # Load necessary functions
-sapply(list.files('Functions', full.names = T), source)
+#sapply(list.files('Functions', full.names = T), source)
 
 # Set number of cores
 #options(mc.cores = parallel::detectCores())
