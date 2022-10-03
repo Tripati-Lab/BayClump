@@ -72,8 +72,8 @@ body <- dashboardBody(
                          ),
                       
                          # Misc options
-                         tags$b("Miscellaneous options"),
-                         checkboxInput("scale" ,'Scale data')
+                         #tags$b("Miscellaneous options"),
+                         #checkboxInput("scale" ,'Scale data')
                   )
                   
               ),
@@ -81,15 +81,15 @@ body <- dashboardBody(
               # Model selection
               box(width = 4,
                   title = h4("Step 2: Select Models"), solidHeader = FALSE,
-                  column(12, h5("For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual"),
+                  column(12, #h5("For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual"),
                          numericInput("replication", label = "Number of bootstrap replicates for non-Bayesian models", 
                                       100, min = 2, max = 10000),
                         sliderInput("range", label = HTML(paste0("Temperature range to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
                                     min = 0, max = 30, value = c(1, 14)),
                         numericInput("generations", label = "Iterations to keep for Bayesian models", 
                                      3000, min = 100, max = 7000),
-                       # checkboxInput("multicore", "Multicore for Deming regression", FALSE),
-                         uiOutput("myList"),
+                        #checkboxInput("multicore", "Multicore for Deming regression", FALSE),
+                         #uiOutput("myList"),
                          selectInput("priors", label = "Bayesian priors", 
                                     choices = c("Informative", "Weak", "Uninformative"), selected = "Weak"),
                          checkboxInput("simulateLM_measured", "Linear model", FALSE),

@@ -209,9 +209,6 @@ server <- function(input, output, session) {
     calData <<- NULL
     calData <<- calibrationData()
 
-    samples <<- if(is.null(input$samples)){nrow(calData) }else{input$samples}
-    samples <<- ifelse(samples==2, 3, samples)
-
     # Recode NA or 0 error values to dummy value
     calData$D47error[calData$D47error == 0] <<- 0.000001
     calData$TempError[calData$TempError == 0] <<- 0.000001
@@ -232,15 +229,6 @@ server <- function(input, output, session) {
     
     minLim <- ifelse(input$range[1]==0, min(calData$Temperature),input$range[1])
     maxLim <- ifelse(input$range[2]==0, max(calData$Temperature),input$range[2])
-    
-
-    
-    if(input$scale == TRUE) {
-      calData$Temperature <<- scale(calData$Temperature)
-      calData$TempError <<- scale(calData$TempError)
-      calData$D47 <<- scale(calData$D47)
-      calData$D47error <<- scale(calData$D47error)
-    }
     
     NegErrors <- any(calData$D47error <= 0) | any(calData$TempError <= 0)
     if(NegErrors) {
@@ -283,7 +271,7 @@ server <- function(input, output, session) {
         
         if(input$simulateLM_measured != FALSE) {
           sink(file = "out/linmodtext.txt", type = "output")
-          lmcals <<- simulateLM_measured(calData, replicates = replicates, samples = samples)
+          lmcals <<- simulateLM_measured(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting the OLS...")
           
@@ -364,7 +352,7 @@ server <- function(input, output, session) {
         
         if(input$simulateLM_inverseweights != FALSE) {
           sink(file = "out/inverselinmodtext.txt", type = "output")
-          lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates, samples = samples)
+          lminversecals <<- simulateLM_inverseweights(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting weighted OLS...")
           
@@ -441,7 +429,7 @@ server <- function(input, output, session) {
         
         if(input$simulateYork_measured != FALSE) {
           sink(file = "out/yorkmodtext.txt", type = "output")
-          yorkcals <<- simulateYork_measured(calData, replicates = replicates, samples = samples)
+          yorkcals <<- simulateYork_measured(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting York regression...")
           
@@ -516,7 +504,7 @@ server <- function(input, output, session) {
         
         if(input$simulateDeming != FALSE) {
           sink(file = "out/demingmodtext.txt", type = "output")
-          demingcals <<- simulateDeming(calData, replicates = replicates, samples = samples)
+          demingcals <<- simulateDeming(calData, replicates = replicates)
           sink()
           incProgress(1/TotProgress, detail="...Done fitting Deming regression model...")
           
@@ -593,8 +581,7 @@ server <- function(input, output, session) {
           sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- fitClumpedRegressions(calibrationData = calData, 
                                                  priors = priors,
-                                                 numSavedSteps = ngenerationsBayes,
-                                                 samples = samples)
+                                                 numSavedSteps = ngenerationsBayes)
 
           PostBLM1_fit_NoErrors <-do.call(rbind, mcmc.list(
             lapply(1:ncol(bayeslincals$BLM1_fit_NoErrors), function(x) {
@@ -1097,7 +1084,7 @@ server <- function(input, output, session) {
             sink()
             df1 <- lmrec
             
-            names(df1) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+            names(df1) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
             rownames(df1) <- NULL
             
            
@@ -1105,7 +1092,7 @@ server <- function(input, output, session) {
               df1$`Δ47 (‰)` <- formatC(df1$`Δ47 (‰)`, digits = 3, format = "f")
               df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 4, format = "f")
               df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 3, format = "f")
-              df1$`± (°C)` <- formatC(df1$`± (°C)`, digits = 3, format = "f")
+              df1$`SE (°C)` <- formatC(df1$`SE (°C)`, digits = 3, format = "f")
               head(df1)
             },
               caption = "Linear model",
@@ -1140,14 +1127,14 @@ server <- function(input, output, session) {
             
             df3<-lminverserec
             
-            names(df3) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+            names(df3) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
             rownames(df3) <- NULL
             
             output$lminverserecswun <- renderTable({
               df3$`Δ47 (‰)` <- formatC(df3$`Δ47 (‰)`, digits = 3, format = "f")
               df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 4, format = "f")
               df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 3, format = "f")
-              df3$`± (°C)` <- formatC(df3$`± (°C)`, digits = 3, format = "f")
+              df3$`SE (°C)` <- formatC(df3$`SE (°C)`, digits = 3, format = "f")
               head(df3)
             },
               caption = "Inverse weighted linear model",
@@ -1186,7 +1173,7 @@ server <- function(input, output, session) {
             
 
             df5 <- yorkrec
-            names(df5) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+            names(df5) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
             rownames(df5) <- NULL
             
             
@@ -1195,7 +1182,7 @@ server <- function(input, output, session) {
               df5$`Δ47 (‰)` <- formatC(df5$`Δ47 (‰)`, digits = 3, format = "f")
               df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 4, format = "f")
               df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 3, format = "f")
-              df5$`± (°C)` <- formatC(df5$`± (°C)`, digits = 3, format = "f")
+              df5$`SE (°C)` <- formatC(df5$`SE (°C)`, digits = 3, format = "f")
               head(df5)
             },
               caption = "York regression",
@@ -1233,7 +1220,7 @@ server <- function(input, output, session) {
             
             
             df7 <- demingrec
-            names(df7) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+            names(df7) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
             rownames(df7) <- NULL
 
             output$demingrecswun <- renderTable({
@@ -1241,7 +1228,7 @@ server <- function(input, output, session) {
               df7$`Δ47 (‰)` <- formatC(df7$`Δ47 (‰)`, digits = 3, format = "f")
               df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 4, format = "f")
               df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 3, format = "f")
-              df7$`± (°C)` <- formatC(df7$`± (°C)`, digits = 3, format = "f")
+              df7$`SE (°C)` <- formatC(df7$`SE (°C)`, digits = 3, format = "f")
               head(df7)
             },
               caption = "Deming regression",
@@ -1284,18 +1271,17 @@ server <- function(input, output, session) {
                                                         mixed = TRUE
               )
               
-
               sink()
 
               df0 <- infTempBayesian
-              names(df0) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+              names(df0) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
               rownames(df0) <- NULL
               
               output$BpredictionsErrors <- renderTable({
                 df0$`Δ47 (‰)` <- formatC(df0$`Δ47 (‰)`, digits = 3, format = "f")
                 df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 3, format = "f")
-                df0$`± (°C)` <- formatC(df0$`± (°C)`, digits = 3, format = "f")
+                df0$`SE (°C)` <- formatC(df0$`SE (°C)`, digits = 3, format = "f")
                 head(df0)
               },
               caption = "Bayesian predictions (BLM_errors)",
@@ -1303,13 +1289,11 @@ server <- function(input, output, session) {
               rownames = FALSE,
               spacing = "m",
               align = "c"
-              
               )
 
-              
               ##Without errors
               df0.1 <- infTempBayesian_NE
-              names(df0.1) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+              names(df0.1) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
               rownames(df0.1) <- NULL
               
               output$Bpredictions <- renderTable({
@@ -1317,7 +1301,7 @@ server <- function(input, output, session) {
                 df0.1$`Δ47 (‰)` <- formatC(df0.1$`Δ47 (‰)`, digits = 3, format = "f")
                 df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 3, format = "f")
-                df0.1$`± (°C)` <- formatC(df0.1$`± (°C)`, digits = 3, format = "f")
+                df0.1$`SE (°C)` <- formatC(df0.1$`SE (°C)`, digits = 3, format = "f")
                 head(df0.1)
               },
               caption = "Bayesian predictions (BLM without errors)",
@@ -1330,14 +1314,14 @@ server <- function(input, output, session) {
               
               
               df0.2 <- infTempBayesian_Mixed
-              names(df0.2) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "± (°C)")
+              names(df0.2) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SE (°C)")
               rownames(df0.2) <- NULL
               
               output$BpredictionsBLMM <- renderTable({
                 df0.2$`Δ47 (‰)` <- formatC(df0.2$`Δ47 (‰)`, digits = 3, format = "f")
                 df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 3, format = "f")
-                df0.2$`± (°C)` <- formatC(df0.2$`± (°C)`, digits = 3, format = "f")
+                df0.2$`SE (°C)` <- formatC(df0.2$`SE (°C)`, digits = 3, format = "f")
                 head(df0.2)
               },
               caption = "Bayesian predictions under a Bayesian linear mixed model",
@@ -1365,17 +1349,10 @@ server <- function(input, output, session) {
               
 
               print(noquote("Bayesian linear reconstructions complete"))
-              
-              
-            
-              
+
             }
           }
-          
-          
-          
         })
-      
     }
   })
   
