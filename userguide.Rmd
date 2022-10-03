@@ -118,6 +118,7 @@ The default calibration datasets may be used individually or in combination to c
 - Please make sure that uncertainties are all ` > 0`. The app will not run otherwise and will print a message to the console.
 - The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
 - If a sample was analyzed under a single replicate, please assign the instrument's uncertainty as the error.
+- BayClump assumes that uncertainties in the calibration dataset for temperature and $Δ_{47}$ are in standard deviation.
 
 <center>
 
@@ -187,28 +188,19 @@ $$
 $$
 
 
-The `Weak` prior reflects the mean slope ($\beta$) and intercept ($\alpha$) but has a twofold larger standard deviation than the one defined for the `Informative` setting.
+The `Weak` prior reflects the mean slope ($\beta$) and intercept ($\alpha$) but has an standard deviation of `1`.
 
 
 $$
-\alpha \propto N(0.231, 0.195)
+\alpha \propto N(0.231, 1)
 $$
 
 $$
-\beta \propto N(0.039, 0.012)
+\beta \propto N(0.039, 1)
 $$
 
 
-The `Uninformative` prior reflects the no previous knowledge on the distribution of these two parameters.
-
-
-$$
-\alpha \propto N(0.01, 0.01)
-$$
-
-$$
-\beta \propto N(0.01, 0.01)
-$$
+The `Uninformative` prior reflects the no previous knowledge on the distribution of these two parameters. We recommend using `Weak` priors.
 
 
 ### Calibration model descriptions  
@@ -274,6 +266,7 @@ Once calibration model runs are complete, the Calibration Plots tab will update 
 - **Do not change column headings or orders. Do not enter extra columns - these will not be used by the app and may create problems.**  
 - The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
 - If a sample was analyzed using a single replicate, please assign the instrument's uncertainty as the error.
+- BayClump assumes that uncertainties in that target $\Delta_{47}$ are in standard deviation
 
 ### Reconstruction options  
 
