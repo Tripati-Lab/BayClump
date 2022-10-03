@@ -49,18 +49,18 @@ Aradhna Tripati [atripati@g.ucla.edu](mailto:atripati@g.ucla.edu)
 
 `BayClump` now runs on `stan`!
 
-We have fully migrated `BayClump's` Bayes engine from JAGS 4.3.0 to `stan` 2.30.0 (<https://mc-stan.org/>) via the `rstan` package (<http://mc-stan.org/rstan/>). This change speeds up calculations and improves overall performance.  
+We have fully migrated `BayClump's` Bayes engine from JAGS 4.3.0 to `stan` 2.30.0 (<https://mc-stan.org/>) via the `rstan` package (<http://mc-stan.org/rstan/>). This change speeds up calculations and improves overall performance. Furthermore, we have standarized all the user inputs and BayClump's outputs to increase the consistency of the app. Users are expected to provide uncertainty in the form of standard deviations. BayClump will provide results on parameter and temperature uncertainty in standard error.  
 
 ### Updates to the user interface 
 
-Changes to the Calibration tab:  
+Changes to the `Calibration` tab:  
 - You can now select the number of Bayesian iterations to keep rather than setting a total number of Bayesian iteration to run (default is 3,000)  
-- You can now elect to use Informative, Weakly Informative, or Uninformative priors for fitting Bayesian models  
+- You can now select to use `Informative`, `Weakly Informative`, or `Uninformative` priors for fitting Bayesian models. We recommend using `Weak` priors.  
 - Model selection for Bayesian models now uses log likelihoods from `loo` 2.5.1 (<https://mc-stan.org/loo/>)  
 
 Changes to the Reconstruction tab:  
 - Removed option for the Classic Calibration Approach  
-- Added an option for model inversion to follow the inverse prediction interval (IPI) approach of [McClelland et al. (2021)](https://doi.org/10.1029/2021GL092773)  
+- Uncertainty is presented in 1 SE
 
 *March 28th, 2022* -- *`BayClump` v 0.9.1*  
 
@@ -70,22 +70,21 @@ We have a News and Updates section now! Stay tuned for info on what's new with `
 
 The BayClump team is grateful to Ilja Kocken, author of the `clumpedr` package, for alerting us to a problem with the way `clumpedr's` `revcal` function propagates uncertainties and deals with covariance between slope and intercept. You can see the issue on `BayClump`'s GitHub repo here: [Issue #7](https://github.com/Tripati-Lab/BayClump/issues/7) and the subsequent update to `clumpedr` here on [Ilja's GitHub repo](https://github.com/isoverse/clumpedr/commit/31a60b10f3d36b395722a1a4ee11884a34480ae9).  
 
-The latest version of `BayClump` propagates uncertainties using two alternative approaches that are outlined in detail in our [paper](https://www.essoar.org/doi/abs/10.1002/essoar.10507995.2). In general, the inversion process for estimating $T_{(^\circ C)}$ follows the following structure:
+The latest version of `BayClump` propagates uncertainties using two alternative approaches that are outlined in detail in our [paper](https://www.essoar.org/doi/abs/10.1002/essoar.10507995.2). In general, the inversion process for estimating $T_{(^\circ C)}$ follows the common practice in the field:
 
 $$
 T_{(^\circ C)}= \sqrt{\frac{\beta * 10^6}{\Delta_{47} - \alpha}} - 273.15
 $$
 
-Temperature error is propagated in a Bayesian framework based on parameter uncertainty and uncertainty in the analyzed $\Delta_{47}$. For non-Bayesian models, uncertainty is calculated as the difference between the point estimates of $T_{(^\circ C)}$ for $\Delta_{47}$ and $\Delta_{47} + SE(\Delta_{47})$.
+Temperature error is propagated in a Bayesian framework based on parameter uncertainty and uncertainty in the analyzed $\Delta_{47}$ using the posterior distribution of parameters during the calibration step and a prior distribution on temperature. For non-Bayesian models, uncertainty is calculated as the difference between the point estimates of $T_{(^\circ C)}$ for $\Delta_{47}$ and $\Delta_{47} + SE(\Delta_{47})$.
 
 ### Updates to the user interface  
 
 Lots has changed with this update!  
 
-Additions to the Calibration tab include:  
+Additions to the `Calibration` tab include:  
 - A slider that allows users to select the temperature range for estimation of confidence intervals  
-- The option to change the number of iterations to use for Bayesian models (default is 20,000)  
-- The option to change the number of observations per bootstrap sample (default scales to the calibration data selected)  
+- The option to change the number of iterations to keep for Bayesian models (default is 3,000)  
 - The option to multicore Deming regressions to improve computing time  
 - A menu to select either informative or diffuse priors for Bayesian models  
 - Additional download buttons for raw Bayesian outputs, posteriors, and priors  

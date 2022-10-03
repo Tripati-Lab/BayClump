@@ -466,22 +466,26 @@ Cristian Román-Palacios <a href="mailto:cromanpa94@arizona.edu">cromanpa@g.ucla
 <p>We have fully migrated <code>BayClump&#39;s</code> Bayes engine from JAGS
 4.3.0 to <code>stan</code> 2.30.0 (<a href="https://mc-stan.org/" class="uri">https://mc-stan.org/</a>) via the <code>rstan</code> package
 (<a href="http://mc-stan.org/rstan/" class="uri">http://mc-stan.org/rstan/</a>). This change speeds up
-calculations and improves overall performance.</p>
+calculations and improves overall performance. Furthermore, we have
+standarized all the user inputs and BayClump’s outputs to increase the
+consistency of the app. Users are expected to provide uncertainty in the
+form of standard deviations. BayClump will provide results on parameter
+and temperature uncertainty in standard error.</p>
 <div id="updates-to-the-user-interface" class="section level3">
 <h3>Updates to the user interface</h3>
 <p>Changes to the Calibration tab:<br />
 - You can now select the number of Bayesian iterations to keep rather
 than setting a total number of Bayesian iteration to run (default is
 3,000)<br />
-- You can now elect to use Informative, Weakly Informative, or
-Uninformative priors for fitting Bayesian models<br />
+- You can now select to use <code>Informative</code>,
+<code>Weakly Informative</code>, or <code>Uninformative</code> priors
+for fitting Bayesian models. We recommend using <code>Weak</code>
+priors.<br />
 - Model selection for Bayesian models now uses log likelihoods from
 <code>loo</code> 2.5.1 (<a href="https://mc-stan.org/loo/" class="uri">https://mc-stan.org/loo/</a>)</p>
 <p>Changes to the Reconstruction tab:<br />
 - Removed option for the Classic Calibration Approach<br />
-- Added an option for model inversion to follow the inverse prediction
-interval (IPI) approach of <a href="https://doi.org/10.1029/2021GL092773">McClelland et
-al. (2021)</a></p>
+- BayClump expects users</p>
 <p><em>March 28th, 2022</em> – <em><code>BayClump</code> v
 0.9.1</em></p>
 <p>We have a News and Updates section now! Stay tuned for info on what’s
@@ -585,6 +589,9 @@ app will not run otherwise and will print a message to the console.</li>
 expected to reflect replicates per sample.</li>
 <li>If a sample was analyzed under a single replicate, please assign the
 instrument’s uncertainty as the error.</li>
+<li>BayClump assumes that uncertainties in the calibration dataset for
+temperature and <span class="math inline">\(Δ_{47}\)</span> are in
+standard deviation.</li>
 </ul>
 <center>
 <div class="figure">
@@ -718,23 +725,17 @@ studies.</p>
 <p><span class="math display">\[
 \beta \propto N(0.039,0.004)
 \]</span></p>
-<p>The <code>Weak</code> prior reflects the mean slope (<span class="math inline">\(\beta\)</span>) and intercept (<span class="math inline">\(\alpha\)</span>) but has a twofold larger standard
-deviation than the one defined for the <code>Informative</code>
-setting.</p>
+<p>The <code>Weak</code> prior reflects the mean slope (<span class="math inline">\(\beta\)</span>) and intercept (<span class="math inline">\(\alpha\)</span>) but has an standard deviation of
+<code>1</code>.</p>
 <p><span class="math display">\[
-\alpha \propto N(0.231, 0.195)
+\alpha \propto N(0.231, 1)
 \]</span></p>
 <p><span class="math display">\[
-\beta \propto N(0.039, 0.012)
+\beta \propto N(0.039, 1)
 \]</span></p>
 <p>The <code>Uninformative</code> prior reflects the no previous
-knowledge on the distribution of these two parameters.</p>
-<p><span class="math display">\[
-\alpha \propto N(0.01, 0.01)
-\]</span></p>
-<p><span class="math display">\[
-\beta \propto N(0.01, 0.01)
-\]</span></p>
+knowledge on the distribution of these two parameters. We recommend
+using <code>Weak</code> priors.</p>
 </div>
 <div id="calibration-model-descriptions" class="section level3">
 <h3>Calibration model descriptions</h3>
@@ -879,6 +880,8 @@ problems.</strong><br />
 expected to reflect replicates per sample.</li>
 <li>If a sample was analyzed using a single replicate, please assign the
 instrument’s uncertainty as the error.</li>
+<li>BayClump assumes that uncertainties in that target <span class="math inline">\(\Delta_{47}\)</span> are in standard
+deviation</li>
 </ul>
 </div>
 <div id="reconstruction-options" class="section level3">
