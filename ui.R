@@ -107,7 +107,7 @@ body <- dashboardBody(
                          # Run models
                          div(style="display:inline-block; vertical-align:top;", 
                              actionButton('runmods', "Run selected models", 
-                                          icon = icon("cogs", lib = "font-awesome")
+                                          icon = icon("cogs", lib = "font-awesome", verify_fa = FALSE)
                              )
                          ),
                      #    div(style="display:inline-block; vertical-align:top;", 
@@ -233,7 +233,7 @@ body <- dashboardBody(
                          
                          div(style="display:inline-block; vertical-align:top;", 
                              actionButton('runrec', "Run reconstructions", 
-                                          icon = icon("cogs", lib = "font-awesome")
+                                          icon = icon("cogs", lib = "font-awesome", verify_fa = FALSE)
                              )
                          ),
                          verbatimTextOutput("recresults"),
@@ -323,51 +323,51 @@ sidebar <- dashboardSidebar(width = 200,
                             tags$script(JS("document.getElementsByClassName('sidebar-toggle')[0].style.visibility = 'hidden';")),
                             sidebarMenu(
                               menuItem("Calibrations", tabName = "calibration", 
-                                       icon = icon("drafting-compass", lib = "font-awesome")
+                                       icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
                               menuItem("Calibration Plots", tabName = "plots", 
-                                       icon =icon("chart-bar", lib = "font-awesome")
+                                       icon =icon("chart-bar", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
 
                               menuItem("Reconstructions", tabName = "reconstruction", 
-                                       icon = icon("chart-area", lib = "font-awesome")
+                                       icon = icon("chart-area", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
                        #       menuItem("Bayesian Priors", tabName = "priors", 
-                      #                 icon =icon("rotate-left", lib = "font-awesome")
+                      #                 icon =icon("rotate-left", lib = "font-awesome", verify_fa = FALSE)
                        #       ),
                               
                               menuItem("User Manual", tabName = "usermanual", 
-                                       icon = icon("question-circle", lib = "font-awesome")
+                                       icon = icon("question-circle", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
                               menuItem("BayWatch", tabName = "demo", 
-                                       icon = icon("glasses", lib = "font-awesome")
+                                       icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
                               menuItem("Citations", tabName = "citations", 
-                                       icon = icon("align-right", lib = "font-awesome")
+                                       icon = icon("align-right", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
                               menuItem("Manuscript", tabName = "manuscript", 
-                                       icon = icon("scroll", lib = "font-awesome")
+                                       icon = icon("scroll", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
                               menuItem("Download BayClump", tabName = "download", 
-                                       icon = icon("laptop-code", lib = "font-awesome")
+                                       icon = icon("laptop-code", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
-                              menuItem("Contacts", icon = icon("address-card", lib = "font-awesome"),
+                              menuItem("Contacts", icon = icon("address-card", lib = "font-awesome"), verify_fa = FALSE,
                                        a(actionButton(inputId = "email1", label = "Email", 
-                                                      icon = icon("envelope", lib = "font-awesome")),
+                                                      icon = icon("envelope", lib = "font-awesome", verify_fa = FALSE)),
                                          href="mailto:hannah.carroll@paleoeco.org"),
                                        a(actionButton(inputId = "github", label = "GitHub", 
-                                                      icon = icon("github", lib = "font-awesome"),
+                                                      icon = icon("github", lib = "font-awesome", verify_fa = FALSE),
                                                       onclick ="window.open('https://github.com/Tripati-Lab/BayClump/', '_blank')")),
                                        a(actionButton(inputId = "bugs", label = "Submit a Bug Report", 
-                                                      icon = icon("bug", lib = "font-awesome"),
+                                                      icon = icon("bug", lib = "font-awesome", verify_fa = FALSE),
                                                       onclick ="window.open('https://github.com/Tripati-Lab/BayClump/issues', '_blank')")
                                        )
                               )

@@ -9,7 +9,7 @@ server <- function(input, output, session) {
   })
   
   get_bib <- reactive({
-    ## insert your get bib logic here
+    ## Bib logic here
     pkgbib <- bibtex::read.bib("Rpackages.bib")
     
     df <- bib2df(get_path()) %>% dplyr::select(BIBTEXKEY, NOTE, AUTHOR, TITLE, YEAR, JOURNAL, VOLUME, PAGES, URL)
@@ -282,7 +282,7 @@ server <- function(input, output, session) {
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>",
                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                          "Type: ", as.character(calibrationData()$Material),
+                          "Material: ", as.character(calibrationData()$Material),
                           "<extra></extra>"))
             lmfig <- lmfig %>% 
               add_ribbons(data = lmcalci,
@@ -356,7 +356,7 @@ server <- function(input, output, session) {
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>",
                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                          "Type: ", as.character(calibrationData()$Material),
+                          "Material: ", as.character(calibrationData()$Material),
                           "<extra></extra>")) %>%
               add_ribbons(data = lminversecalci,
                           x = ~x,
@@ -433,7 +433,7 @@ server <- function(input, output, session) {
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>",
                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                          "Type: ", as.character(calibrationData()$Material),
+                          "Material: ", as.character(calibrationData()$Material),
                           "<extra></extra>")) %>%
               add_ribbons(data = yorkcalci,
                           x = ~x,
@@ -506,7 +506,7 @@ server <- function(input, output, session) {
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>",
                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                          "Type: ", as.character(calibrationData()$Material),
+                          "Material: ", as.character(calibrationData()$Material),
                           "<extra></extra>")) %>%
               add_ribbons(data = demingcalci,
                           x = ~x,
@@ -564,12 +564,14 @@ server <- function(input, output, session) {
             lapply(1:ncol(bayeslincals$BLM1_fit_NoErrors), function(x) {
             mcmc(as.array(bayeslincals$BLM1_fit_NoErrors)[,x,])
             })))
+          
           PostBLM1_fit_NoErrors <- PostBLM1_fit_NoErrors[,-grep("log_lik", colnames(PostBLM1_fit_NoErrors))]
           
           PostBLM1_fit <- do.call(rbind, mcmc.list(
             lapply(1:ncol(bayeslincals$BLM1_fit), function(x) {
               mcmc(as.array(bayeslincals$BLM1_fit)[,x,])
             })))
+          
           PostBLM1_fit <- PostBLM1_fit[,-grep("log_lik", colnames(PostBLM1_fit))]
           
           PostBLM3_fit <- do.call(rbind, mcmc.list(
@@ -604,7 +606,7 @@ server <- function(input, output, session) {
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>",
                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                          "Type: ", as.character(calibrationData()$Material),
+                          "Material: ", as.character(calibrationData()$Material),
                           "<extra></extra>")) %>%
               add_ribbons(data = bayeslincalcinoerror,
                           x = ~x,
@@ -678,8 +680,7 @@ server <- function(input, output, session) {
           conv_BLM_errors <- summary(bayeslincals$BLM1_fit)$summary
           conv_BLM <- cbind.data.frame(parameter=row.names(conv_BLM),conv_BLM)
           conv_BLM_errors <- cbind.data.frame(parameter=row.names(conv_BLM_errors),conv_BLM_errors)
-          
-          
+
           addWorksheet(wb3, "Bayesian model no errors") # Add a blank sheet
           addWorksheet(wb3, "Bayesian model with errors") # Add a blank sheet
           writeData(wb3, sheet = "Bayesian model no errors", conv_BLM) # Write regression data
@@ -764,9 +765,9 @@ server <- function(input, output, session) {
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                           "Δ<sub>47</sub> (‰): %{y}<br>",
                           "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                          "Type: ", as.character(calibrationData()$Material),
+                          "Material: ", as.character(calibrationData()$Material),
                           "<extra></extra>")) 
-            colsTarget <- rainbow(nmat)
+            colsTarget <- viridis(nmat, option = "D", end = 0.9)
             materials <- unique(bayeslmmincalciwitherror$Material)
             
             for(y in 1:nmat){
@@ -779,14 +780,14 @@ server <- function(input, output, session) {
                           line = list(color = colsTarget[y]),
                           fillcolor = colsTarget[y],
                           opacity = 0.5,
-                          name = "95% CI - with error",
+                          name = paste("95% CI - with error, Material ", materials[y]), 
                           hovertemplate = paste(
                             "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                             "Δ<sub>47</sub> (‰): %{y}<br>")) %>%
               add_lines(data = bayeslmmincalciwitherror[bayeslmmincalciwitherror$Material==materials[y],],
                         x = ~x,
                         y = ~median_est,
-                        name = "Mean estimate - with error",
+                        name = paste("Mean estimate - with error, Material ", materials[y]),
                         line = list(color = colsTarget[y], dash = "dash"),
                         hovertemplate = paste(
                           "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
@@ -870,7 +871,7 @@ server <- function(input, output, session) {
                              "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                              "Δ<sub>47</sub> (‰): %{y}<br>",
                              "Mineralogy: ", as.character(calibrationData()$Mineralogy),"<br>",
-                             "Type: ", as.character(calibrationData()$Material),
+                             "Material: ", as.character(calibrationData()$Material),
                              "<extra></extra>"))
       rawcalfig <- rawcalfig %>% layout(title = "<b> Raw calibration data from user input </b>",
                                         legend=list(title=list(text="Material and mineralogy")),
@@ -897,7 +898,7 @@ server <- function(input, output, session) {
                                "<b>Sample: %{text}</b><br><br>",
                                "Temperature (10<sup>6</sup>/T<sup>2</sup>): %{x}<br>",
                                "Δ<sub>47</sub> (‰): %{y}<br>",
-                               "Type: ", as.character(calibrationData()$Material),
+                               "Material: ", as.character(calibrationData()$Material),
                                "<extra></extra>"))
         rawcalfig <- rawcalfig %>% layout(title = "<b> Raw calibration data from user input </b>",
                                           legend=list(title=list(text="Material")),

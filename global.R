@@ -23,8 +23,10 @@ library(ggridges)
 library(ggpubr)
 library(openxlsx)
 library(bib2df)
-
-
+library(htmlwidgets)
+library(coda)
+library(rstan)
+library(data.table)
 library(bayclumpr)
 
 
@@ -51,7 +53,3 @@ set.seed(4)
 # Load necessary functions
 #sapply(list.files('Functions', full.names = T), source)
 
-# Set number of cores
-#options(mc.cores = parallel::detectCores())
-# Throttle memory usage
-unix::rlimit_as(1e12, 1e12)
