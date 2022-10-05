@@ -118,7 +118,7 @@ server <- function(input, output, session) {
     {removeWorksheet(wb6, "Settings")}
     if("Distributions" %in% names(wb6) == TRUE) 
     {removeWorksheet(wb6, "Distributions") }
-    pd <- plot.cal.prior(prior = priors)
+    pd <- cal.prior(prior = priors)
     addWorksheet(wb6, "Settings") # Add a blank sheet
     writeData(wb6, sheet = "Settings", attr(pd, "params")) # Write regression data
     addWorksheet(wb6, "Distributions") # Add a blank sheet
@@ -140,7 +140,7 @@ server <- function(input, output, session) {
     {removeWorksheet(wb7, "Settings")}
     if("Distributions" %in% names(wb7) == TRUE) 
     {removeWorksheet(wb7, "Distributions") }
-    pd <- plot.rec.priors(prior = priors)
+    pd <- rec.prior(prior = priors)
     addWorksheet(wb7, "Settings") # Add a blank sheet
     writeData(wb7, sheet = "Settings", attr(pd, "params")) # Write regression data
     addWorksheet(wb7, "Distributions") # Add a blank sheet
@@ -262,7 +262,7 @@ server <- function(input, output, session) {
           sink()
           incProgress(1/TotProgress, detail="...Done fitting the OLS...")
           
-          lmci <<- plot.cal.ci(data = lmcals, from = minLim, to = maxLim)
+          lmci <<- cal.ci(data = lmcals, from = minLim, to = maxLim)
           lmcalci <- as.data.frame(lmci)
           
           output$lmcalibration <- renderPlotly({
@@ -336,7 +336,7 @@ server <- function(input, output, session) {
           sink()
           incProgress(1/TotProgress, detail="...Done fitting weighted OLS...")
           
-          lminverseci <- plot.cal.ci(data = lminversecals, from = minLim, to = maxLim)
+          lminverseci <- cal.ci(data = lminversecals, from = minLim, to = maxLim)
           lminversecalci <- as.data.frame(lminverseci)
           
           output$lminversecalibration <- renderPlotly({
@@ -413,7 +413,7 @@ server <- function(input, output, session) {
           sink()
           incProgress(1/TotProgress, detail="...Done fitting York regression...")
           
-          yorkci <- plot.cal.ci(data = yorkcals, from = minLim, to = maxLim)
+          yorkci <- cal.ci(data = yorkcals, from = minLim, to = maxLim)
           yorkcalci <- as.data.frame(yorkci)
           
           output$yorkcalibration <- renderPlotly({
@@ -486,7 +486,7 @@ server <- function(input, output, session) {
           sink()
           incProgress(1/TotProgress, detail="...Done fitting Deming regression model...")
           
-          demingci <- plot.cal.ci(data = demingcals, from = minLim, to = maxLim)
+          demingci <- cal.ci(data = demingcals, from = minLim, to = maxLim)
           demingcalci <- as.data.frame(demingci)
           
           output$demingcalibration <- renderPlotly({
@@ -584,9 +584,9 @@ server <- function(input, output, session) {
           sink()
           incProgress(1/TotProgress, detail="...Done fitting the Bayesian linear regression model...")
           
-          bayeslincinoerror <- plot.cal.ci(data = PostBLM1_fit_NoErrors, from = minLim, to = maxLim)
+          bayeslincinoerror <- cal.ci(data = PostBLM1_fit_NoErrors, from = minLim, to = maxLim)
           bayeslincalcinoerror <- as.data.frame(bayeslincinoerror)
-          bayeslinciwitherror <- plot.cal.ci(data = PostBLM1_fit, from = minLim, to = maxLim)
+          bayeslinciwitherror <- cal.ci(data = PostBLM1_fit, from = minLim, to = maxLim)
           bayeslincalciwitherror <- as.data.frame(bayeslinciwitherror)
           
           output$bayeslincalibration <- renderPlotly({
@@ -723,7 +723,7 @@ server <- function(input, output, session) {
           
           bayeslmminciwitherror <- lapply(1:nmat, function(x){
             subset <- cbind.data.frame("alpha" =  outBLMM2_alpha[,x], "beta" = outBLMM2_beta[,x])
-            plot.cal.ci(data = subset, from = minLim, to = maxLim)[[1]]
+            cal.ci(data = subset, from = minLim, to = maxLim)[[1]]
           })
 
           bayeslmminciwitherror <- rbindlist(bayeslmminciwitherror, idcol="Material")
@@ -1190,11 +1190,11 @@ server <- function(input, output, session) {
               sink("out/bayespredictions.txt", type = "output")
               
 
-              infTempBayesian <- rec.bayesian(calModel = bayeslincals$BLM1_fit, recData = recData)
+              infTempBayesian <- rec.bayesian(calModel = bayeslincals$BLM1_fit, recData = recData, postcalsamples = 100)
               
-              infTempBayesian_NE <- rec.bayesian(calModel = bayeslincals$BLM1_fit_NoErrors, recData = recData)
+              infTempBayesian_NE <- rec.bayesian(calModel = bayeslincals$BLM1_fit_NoErrors, recData = recData, postcalsamples = 100)
 
-              infTempBayesian_Mixed <- rec.bayesian(calModel = bayeslincals$BLM3_fit, recData = recData, mixed = TRUE)
+              infTempBayesian_Mixed <- rec.bayesian(calModel = bayeslincals$BLM3_fit, recData = recData, mixed = TRUE, postcalsamples = 100)
               
               sink()
 
