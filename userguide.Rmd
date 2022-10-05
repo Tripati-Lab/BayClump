@@ -49,7 +49,7 @@ Aradhna Tripati [atripati@g.ucla.edu](mailto:atripati@g.ucla.edu)
 
 `BayClump` now runs on `stan`!
 
-We have fully migrated `BayClump's` Bayes engine from JAGS 4.3.0 to `stan` 2.30.0 (<https://mc-stan.org/>) via the `rstan` package (<http://mc-stan.org/rstan/>). This change speeds up calculations and improves overall performance. Furthermore, we have standarized all the user inputs and BayClump's outputs to increase the consistency of the app. Users are expected to provide uncertainty in the form of standard deviations. BayClump will provide results on parameter and temperature uncertainty in standard error.  
+We have fully migrated `BayClump's` Bayes engine from JAGS 4.3.0 to `stan` 2.30.0 (<https://mc-stan.org/>) via the `rstan` package (<http://mc-stan.org/rstan/>). This change speeds up calculations and improves overall performance. Furthermore, we have standarized all the user inputs and BayClump's outputs to increase the consistency of the app. Users are expected to provide uncertainty in the form of standard deviations. BayClump will provide results on parameter uncertainty in standard error and temperature reconstruction in standard deviation.  
 
 ### Updates to the user interface 
 
@@ -137,13 +137,11 @@ Below, we provide a brief description of the columns that are required in the ca
 
 - **D47:** The final $Δ_{47}$ value of the sample after completing all appropriate quality assurance steps. This must be numeric - no letters or special characters except for periods and minus signs are accepted. Provide as many decimal places as possible to improve calculations.  
 
-- **D47error:** The standard error around $Δ_{47}$ after completing all appropriate quality assurance steps. This should be the combined measurement and correction error. This must be numeric - no letters or special characters except for periods are accepted. Provide as many decimal places as possible to improve calculations. **Please make sure that this column has no negative numbers**.
+- **D47error:** The standard deviation around $Δ_{47}$ after completing all appropriate quality assurance steps. This should be the combined measurement and correction error. This must be numeric - no letters or special characters except for periods are accepted. Provide as many decimal places as possible to improve calculations. **Please make sure that this column has no negative numbers**.
 
 - **Temperature:** Growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods and minus signs are accepted.  
 
 - **TempError:** Absolute error of the growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods are accepted. **Please make sure that this column has no negative numbers**.
-
-**Note: You must provide EITHER the number of replicates OR $Δ_{47}$ standard error. Providing both will not cause problems. If N is provided instead of error, the error will be calculated by the app.**
 
 ## Selecting calibration options
 
@@ -212,15 +210,15 @@ This regression model is the simplest model used in this study. The simple linea
 
 #### Inverse weighted linear model  
 
-Simple linear regression fit under least squares, with observations being weighted based on the inverse of their squared uncertainty in the measured $Δ_{47}$. Note that, although this approach indirectly accounts for uncertainty in $Δ_{47}$, weighted models analyzed in this study do not explicitly account for measurement error in $10^6/T^2$. The weighted simple linear regression was fit using the `lm` function in the `stats` `R` package. The weights argument was set to the $1/(standard error)^2$ of each observation. Therefore, observations with higher uncertainty (standard error) had less importance at estimating the error of alternative proposed lines during the least square optimization of the model.   
+Simple linear regression fit under least squares, with observations being weighted based on the inverse of their squared uncertainty in the residual $Δ_{47}$. Note that, although this approach indirectly accounts for uncertainty in $Δ_{47}$, weighted models analyzed in this study do not explicitly account for measurement error in $10^6/T^2$. The weighted simple linear regression was fit using the `lm` function in the `stats` `R` package.   
 
 #### Deming regression  
 
-The Deming model also fits under least squares, and the optimization steps while fitting the straight line follow the algorithm of Deming (1943). This model explicitly accounts for measurement error in both $Δ_{47}$ and $10^6/T^2$. Under the Deming regression, the ratio of the weights (related to their uncertainty) in $Δ_{47}$ and $10^6/T^2$ is constant over all data points (Martin 2000). To fit this model, we specified observations in $Δ_{47}$ and $10^6/T^2$, along with the corresponding standard error in each observation. Note that although the Deming model also fits under least squares, the optimization steps while fitting the straight line follows the algorithm presented in Deming (1943).  
+The Deming model also fits under least squares, and the optimization steps while fitting the straight line follow the algorithm of Deming (1943). This model explicitly accounts for measurement error in both $Δ_{47}$ and $10^6/T^2$. Under the Deming regression, the ratio of the weights (related to their uncertainty) in $Δ_{47}$ and $10^6/T^2$ is constant over all data points (Martin 2000). To fit this model, we specified observations in $Δ_{47}$ and $10^6/T^2$, along with the corresponding error in each observation. Note that although the Deming model also fits under least squares, the optimization steps while fitting the straight line follows the algorithm presented in Deming (1943).  
 
 #### York regression  
 
-The York model is closely related to the Deming regression model. However, under the York model, the ratio of the weights (related to their uncertainty) in $Δ_{47}$ and $10^6/T^2$ varies over data points (Martin 2000). Therefore, the York model is slightly more complex than the Deming regression model. We specified observations in $Δ_{47}$ and $10^6/T^2$, along with the corresponding standard error in each observation, when fitting this regression model.  
+The York model is closely related to the Deming regression model. However, under the York model, the ratio of the weights (related to their uncertainty) in $Δ_{47}$ and $10^6/T^2$ varies over data points (Martin 2000). Therefore, the York model is slightly more complex than the Deming regression model. We specified observations in $Δ_{47}$ and $10^6/T^2$, along with the corresponding error in each observation, when fitting this regression model.  
 
 #### Bayesian simple linear model  
 
