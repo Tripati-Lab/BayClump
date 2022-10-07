@@ -37,7 +37,15 @@ body <- dashboardBody(
     tabItem(tabName = "bayclump",
             fluidRow(
               column(12,
-                     h2("Welcome to BayClump!")))),
+                     h2("Welcome to BayClump!"),
+                     h4("Placeholders"),
+                     h4("To support the use of Bayesian models and the analytical framework developed in Román-Palacios et al. (2022) 
+                     for clumped isotope calibration and for temperature reconstructions, and to facilitate comparisons of Bayesian 
+                     and classical models, we present a self-contained R package and associated Shiny Dashboard application, bayclumpr 
+                     and BayClump, respectively. bayclumpr (and BayClump) fits both frequentist and Bayesian linear regressions to calibration 
+                     datasets and performs temperature reconstructions under both frameworks. You can find more details on how to use bayclumpr in this website."
+                     )
+                     ))),
     tabItem(tabName = "calibration",
             fluidRow(
               box(width = 4, 
@@ -60,13 +68,6 @@ body <- dashboardBody(
                          
                          # Summary stats panel
                          tableOutput("contents"),
-                         
-                         
-                         # Uncertainties
-                      #   radioButtons("uncertainties", " ",
-                      #                c("My data contain uncertainties" = "myuncertainties",
-                      #                  "Use uncertainties from Daëron et al., 2020" = "usedaeron")
-                      #   ),
                          
                          # Reference frame
                          div(style="display:inline-block; vertical-align:top;", 
@@ -251,23 +252,42 @@ body <- dashboardBody(
             
     ),
     
-    
-    #Priors tab
-#    tabItem(tabName = "priors",
-#            fluidRow(
-#              box(width = 12, 
-#                  title = "Bayesian Priors", solidHeader = TRUE,
-#                  column(12, tags$b("Information on the priors goes here!"),
-#                  )
-#              )
-#            )
-#    ),
-    
     #User manual
-    tabItem(tabName = "usermanual",
+    tabItem(tabName = "quick",
             fluidRow(
               column(12,
-                     withMathJax(includeMarkdown("userguide.Rmd"))
+                     withMathJax(includeMarkdown("doc/quick.Rmd"))
+              ))),
+    
+    tabItem(tabName = "calTab",
+            fluidRow(
+              column(12,
+                     withMathJax(includeMarkdown("doc/calTab.Rmd"))
+              ))),
+    
+
+    tabItem(tabName = "updatesTab",
+            fluidRow(
+              column(12,
+                     withMathJax(includeMarkdown("doc/updatesTab.Rmd"))
+              ))),
+    
+    tabItem(tabName = "recTab",
+            fluidRow(
+              column(12,
+                     withMathJax(includeMarkdown("doc/recTab.Rmd"))
+              ))),
+    
+    tabItem(tabName = "calPlots",
+            fluidRow(
+              column(12,
+                     withMathJax(includeMarkdown("doc/calPlots.Rmd"))
+              ))),
+    
+    tabItem(tabName = "models",
+            fluidRow(
+              column(12,
+                     withMathJax(includeMarkdown("doc/models.Rmd"))
               ))),
     
     #BayWatch
@@ -314,7 +334,7 @@ sidebar <- dashboardSidebar(width = 200,
                             tags$script(JS("document.getElementsByClassName('sidebar-toggle')[0].style.visibility = 'hidden';")),
                             sidebarMenu(
                               menuItem("BayClump", tabName = "bayclump", 
-                                       icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
+                                       icon = icon("thermometer", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               menuItem("Calibrations", tabName = "calibration", 
                                        icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
@@ -329,17 +349,21 @@ sidebar <- dashboardSidebar(width = 200,
                                        icon = icon("chart-area", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
-                       #       menuItem("Bayesian Priors", tabName = "priors", 
-                      #                 icon =icon("rotate-left", lib = "font-awesome", verify_fa = FALSE)
-                       #       ),
-                              
                               menuItem("User Manual", tabName = "usermanual", 
-                                       icon = icon("question-circle", lib = "font-awesome", verify_fa = FALSE)
+                                       icon = icon("question-circle", lib = "font-awesome", verify_fa = FALSE),
+                                       menuSubItem('Quick start',
+                                                   tabName = 'quick'),
+                                       menuSubItem('Calibrations',
+                                                   tabName = 'calTab'),
+                                       menuSubItem('Calibration plots',
+                                                   tabName = 'calPlots'),
+                                       menuSubItem('Reconstructions',
+                                                   tabName = 'recTab'),
+                                       menuSubItem('Models',
+                                                   tabName = 'models'),
+                                       menuSubItem('Updates!',
+                                                   tabName = 'updatesTab')
                               ),
-                              
-                              # menuItem("BayWatch", tabName = "demo", 
-                              #          icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
-                              # ),
                               
                               menuItem("Citations", tabName = "citations", 
                                        icon = icon("align-right", lib = "font-awesome", verify_fa = FALSE)

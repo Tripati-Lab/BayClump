@@ -6,6 +6,7 @@ date: "Table of Contents"
 output:
   html_document: 
     toc: yes
+    toc_float: true
     theme: cosmo
     fig_width: 5
     fig_height: 3
@@ -14,6 +15,7 @@ output:
     toc: yes
     latex_engine: xelatex
 urlcolor: blue
+runtime: shiny
 ---
 
 ## Publication Information  
@@ -252,6 +254,7 @@ Once calibration model runs are complete, the Calibration Plots tab will update 
 
 <hr />  
 
+
 ## The Reconstructions Tab
 
 ### Uploading reconstruction data
@@ -265,19 +268,7 @@ Once calibration model runs are complete, the Calibration Plots tab will update 
 - If a sample was analyzed using a single replicate, please assign the instrument's uncertainty as the error.
 - BayClump assumes that uncertainties in that target $\Delta_{47}$ are in standard deviation
 
-### Reconstruction options  
-
-Only models that that were analyzed `Calibrations` can be used in the `Reconstructions` Tab. `BayClump` propagate uncertainties using two alternative approaches that are outlined in detail in our [paper](https://www.essoar.org/doi/abs/10.1002/essoar.10507995.2). In general, the inversion process for estimating $T_{(^\circ C)}$ follows the following structure:
-
-$$
-T_{(^\circ C)}= \sqrt{\frac{\beta * 10^6}{\Delta_{47} - \alpha}} - 273.15
-$$
-
-Temperature error is propagated in a Bayesian framework based on parameter uncertainty and uncertainty in the analyzed $\Delta_{47}$. For non-Bayesian models, uncertainty is calculated as the difference between the point estimates of $T_{(^\circ C)}$ for $\Delta_{47}$ and $\Delta_{47} + SE(\Delta_{47})$.
-
-
-### Reconstruction output  
-By default, up to six rows of data for each reconstruction model are displayed in the output. This may be copied and pasted directly into external software if desired. The download button will provide a multi-tabbed spreadsheet in `.xlsx` format containing the full output from all selected models. The output includes sample names, examined $\Delta_{47}$ and their error, along with materials (when relevant), temperature and its uncertainty.   
-
 <hr /> 
+
+
 

@@ -1,0 +1,38 @@
+---
+title: "User Manual"
+author: "Updated September 26th, 2022"
+subtitle: "`BayClump` v. 1.0.0"
+date: "Table of Contents"
+output:
+  html_document: 
+    toc: yes
+    toc_float: true
+    theme: cosmo
+    fig_width: 5
+    fig_height: 3
+    fig_caption: yes
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+urlcolor: blue
+runtime: shiny
+---
+
+
+# The Reconstructions Tab
+
+### Uploading reconstruction data
+
+`BayClump` provides a template for users to upload reconstruction data. It can be downloaded from the `Reconstructions` tab. Sample data are shown in the first ten rows of the template and should be overwritten. A few notes on the structure of the reconstruction file:
+
+- The template must be left in `.csv` format, although the user is free to change the name of the spreadsheet as needed. 
+- Materials (i.e. numbers) must correspond to those used in the `Calibrations` tab. Users can skip numbers in the `Reconstructions` tab (not allowed in the `Calibrations` tab).
+- **Do not change column headings or orders. Do not enter extra columns - these will not be used by the app and may create problems.**  
+- The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
+- If a sample was analyzed using a single replicate, please assign the instrument's uncertainty as the error.
+- BayClump assumes that uncertainties in that target $\Delta_{47}$ are in standard deviation
+
+<hr /> 
+
+
+

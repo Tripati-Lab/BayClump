@@ -1,0 +1,40 @@
+---
+title: "User Manual"
+author: "Updated September 26th, 2022"
+subtitle: "`BayClump` v. 1.0.0"
+date: "Table of Contents"
+output:
+  html_document: 
+    toc: yes
+    toc_float: true
+    theme: cosmo
+    fig_width: 5
+    fig_height: 3
+    fig_caption: yes
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+urlcolor: blue
+runtime: shiny
+---
+
+# The Calibration Plots Tab
+
+All plots are created in `plotly` version 4.9.3 (Sievert 2020). They are fully interactive and downloadable. Plots download at web viewing resolution (`72` dpi), `1244x400` pixels, and in `.png` format by default, but may be scaled and resized in external software if desired.  
+
+<center>
+![Default (Model 1) calibration data plot](caldatexample.png)
+</center>  
+
+The Calibration Plots tab will display raw calibration data based on user input. The default display is of calibration data for `Model 1`. It will automatically update to reflect the choice of calibration data made on the Calibrations tab.  
+
+Once calibration model runs are complete, the Calibration Plots tab will update to show plots of raw data on the $10^6/T^2$ temperature scale, with overlaid 95% confidence intervals (credible intervals in the case of the Bayesian model), and a median line.  
+
+<center>
+![Example calibration model plot with confidence intervals](ciexample.png)  
+</center>  
+
+<hr />  
+
+
+

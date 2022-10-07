@@ -1,0 +1,80 @@
+---
+title: "User Manual"
+author: "Updated September 26th, 2022"
+subtitle: "`BayClump` v. 1.0.0"
+date: "Table of Contents"
+output:
+  html_document: 
+    toc: yes
+    toc_float: true
+    theme: cosmo
+    fig_width: 5
+    fig_height: 3
+    fig_caption: yes
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+urlcolor: blue
+runtime: shiny
+---
+
+# Default calibration data
+
+Two calibration datasets are included in `BayClump` by default. Model 1 is based on the reprocessed datasets of [Petersen et al. (2019)](http://dx.doi.org/10.1029/2018GC008127). Model 2 is based on the reprocessed and original datasets of [Anderson et al. (2021)](https://doi.org/10.1029/2020GL092069). The datasets from Petersen et al. (2019) have been reprojected into the I-CDES reference frame after [Bernasconi et al. (2021)](https://doi.org/10.1029/2020GC009588) at a growth temperature of 90°C, so as to be compatible with the datasets of Anderson et al. (2021). Throughout, we refer to this as $I-CDES_{90}$.
+
+The default calibration datasets may be used individually or in combination to create calibration models, and may also be combined with the user's own calibration data in the I-CDES 90 reference frame. The user may also choose to work exclusively with their own calibration data in $I-CDES_{90}$ or another reference frame if desired. At this time, `BayClump` does not provide the option to reproject the default calibration datasets into a different reference frame.
+
+### Uploading calibration data
+
+`BayClump` provides a template for users to upload calibration data. It can be downloaded from the `Calibrations` tab. Sample data are shown in the first ten rows of the template and should be overwritten. A few important notes on the structure of your calibration dataset:
+
+- The template must be left in `.csv` format, although the user is free to change the name of the spreadsheet as needed. Do not change column headings or orders.
+- Do not enter extra columns - these will not be used by the app and may create problems.  
+- Please make sure that uncertainties are all ` > 0`. The app will not run otherwise and will print a message to the console.
+- The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
+- If a sample was analyzed under a single replicate, please assign the instrument's uncertainty as the error.
+- BayClump assumes that uncertainties in the calibration dataset for temperature and $Δ_{47}$ are in standard deviation.
+
+<center>
+
+![The `BayClump` calibration data template](Calibration_template.png)
+
+</center>
+
+Below, we provide a brief description of the columns that are required in the calibration dataset.
+
+- **Sample Name:** This should be a unique identifier for each sample. Combinations of letters, numbers, spaces, and special characters may be used. It is best to avoid number signs (`#`) as this may cause the code behind `BayClump` to malfunction.  
+
+- **Mineralogy:** This should be the full, capitalized name, i.e., Aragonite, Calcite, Dolomite, Mixed, Unknown, etc.  
+
+- **Material:** This must be entered as a number. If you are using any of the preloaded calibration sets, be sure to follow the convention 1 = Natural, 2 = Synthetic, and 3 = Biogenic to match those datasets. Additional numbers may be used as necessary. If you are using strictly your own calibration data, you can select your own convention. We only ask that the sequence of materials that you select must start at 1 and that you should not skip numbers (e.g. Incorrect: `1` = Natural, `3` = Synthetic).    
+
+- **N:** The number of replicates measured to produce the final value. This must be numeric - no letters or special characters are accepted.  
+
+- **D47:** The final $Δ_{47}$ value of the sample after completing all appropriate quality assurance steps. This must be numeric - no letters or special characters except for periods and minus signs are accepted. Provide as many decimal places as possible to improve calculations.  
+
+- **D47error:** The standard deviation around $Δ_{47}$ after completing all appropriate quality assurance steps. This should be the combined measurement and correction error. This must be numeric - no letters or special characters except for periods are accepted. Provide as many decimal places as possible to improve calculations. **Please make sure that this column has no negative numbers**.
+
+- **Temperature:** Growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods and minus signs are accepted.  
+
+- **TempError:** Absolute error of the growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods are accepted. **Please make sure that this column has no negative numbers**.
+
+## Selecting calibration options
+
+## Calibration Model Setup and Selection
+
+`BayClump` offers five calibration model options. Bootstrapping is used to produce robust estimates of regression coefficients for non-Bayesian models. The user is able to type in the number of replicates or use the default `100` bootstrap. We recommend that the number of bootstrap replicates chosen be at least `10` times the number of unique samples, with a minimum of `50` and a maximum of `1,000`. For example, if you have `10` unique samples you wish to use in calibration models, you should choose at least `100` bootstrap replicates (`10` x `10`). If you have `3` or fewer samples, do not exceed `50` bootstrap replicates.  
+
+- **Warning: Selecting all available calibration models and a large number of bootstraps will require significant processing time. This may exceed 30-40 minutes if server traffic is heavy. The app may appear to hang while calculations are being performed, but should complete normally. Do not disconnect from the app during the calibration run**  
+
+- **Important: Calibration data should be entered into the template in $10^6/T^2$ format, where temperature, T, is in Kelvin.**  
+
+### Number of iterations for Bayesian models  
+
+The number of iterations needed to allow models to converge properly varies by dataset, but the default of `20,000` will be appropriate for most applications. Reduce this number to improve times, or increase the number if the models are having issues converging. Increasing the number of iterations takes more time.
+
+### Number of observations per bootstrap sample
+
+This parameter allow users select the number of replicates to be included in each bootstrap replicate. For instance, users can choose to select the total number of samples to be analyzed per bootstrap (sampled with replacement). Users can also choose to fit each bootstrap based on a limited number of samples of the calibration dataset.
+
+

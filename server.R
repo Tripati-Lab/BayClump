@@ -1,6 +1,6 @@
 # Define server logic
 server <- function(input, output, session) {
-  
+ 
     output$priors <-  renderUI({
       if (input$cal.bayesian) {
         conditionalPanel(
@@ -252,9 +252,9 @@ server <- function(input, output, session) {
         TotProgress <- length(which(totalModels == TRUE))
         
         if(input$cal.ols != FALSE) {
-          sink(file = "out/linmodtext.txt", type = "output")
+          #sink(file = "out/linmodtext.txt", type = "output")
           lmcals <<- cal.ols(calData, replicates = replicates)
-          sink()
+          #sink()
           incProgress(1/TotProgress, detail="...Done fitting the OLS...")
           
           lmci <<- cal.ci(data = lmcals, from = minLim, to = maxLim)
@@ -326,9 +326,9 @@ server <- function(input, output, session) {
         }
         
         if(input$cal.wols != FALSE) {
-          sink(file = "out/inverselinmodtext.txt", type = "output")
+          #sink(file = "out/inverselinmodtext.txt", type = "output")
           lminversecals <<- cal.wols(calData, replicates = replicates)
-          sink()
+          #sink()
           incProgress(1/TotProgress, detail="...Done fitting weighted OLS...")
           
           lminverseci <- cal.ci(data = lminversecals, from = minLim, to = maxLim)
@@ -403,9 +403,9 @@ server <- function(input, output, session) {
         }
         
         if(input$cal.york != FALSE) {
-          sink(file = "out/yorkmodtext.txt", type = "output")
+          #sink(file = "out/yorkmodtext.txt", type = "output")
           yorkcals <<- cal.york(calData, replicates = replicates)
-          sink()
+          #sink()
           incProgress(1/TotProgress, detail="...Done fitting York regression...")
           
           yorkci <- cal.ci(data = yorkcals, from = minLim, to = maxLim)
@@ -476,9 +476,9 @@ server <- function(input, output, session) {
         }
         
         if(input$cal.deming != FALSE) {
-          sink(file = "out/demingmodtext.txt", type = "output")
+          #sink(file = "out/demingmodtext.txt", type = "output")
           demingcals <<- cal.deming(calData, replicates = replicates)
-          sink()
+          #sink()
           incProgress(1/TotProgress, detail="...Done fitting Deming regression model...")
           
           demingci <- cal.ci(data = demingcals, from = minLim, to = maxLim)
@@ -542,7 +542,7 @@ server <- function(input, output, session) {
           
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
-              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x),7))
+              cbind.data.frame(Mean= round(mean(x), 4),`SD`=round(sd(x),7))
             }))
           })
           
@@ -550,7 +550,7 @@ server <- function(input, output, session) {
         
         if(input$cal.bayesian != FALSE) {
           
-          sink(file = "out/Bayeslinmodtext.txt", type = "output")
+          #sink(file = "out/Bayeslinmodtext.txt", type = "output")
           bayeslincals <<- cal.bayesian(calibrationData = calData, 
                                                  priors = priors,
                                                  numSavedSteps = ngenerationsBayes)
@@ -576,7 +576,7 @@ server <- function(input, output, session) {
           
           PostBLM3_fit <- PostBLM3_fit[,-grep("log_lik", colnames(PostBLM3_fit))]
           
-          sink()
+          #sink()
           incProgress(1/TotProgress, detail="...Done fitting the Bayesian linear regression model...")
           
           bayeslincinoerror <- cal.ci(data = PostBLM1_fit_NoErrors, from = minLim, to = maxLim)
@@ -1021,11 +1021,11 @@ server <- function(input, output, session) {
             
             if(is.null(lmcals)) { print(noquote("Please run the calibration step for linear models first")) }else{
               
-              sink("out/LMpredictions.txt", type = "output")
+              #sink("out/LMpredictions.txt", type = "output")
             
               lmrec <<-  rec.clumped(recData = recData, obCal = lmcals)
             
-            sink()
+            #sink()
             df1 <- lmrec
             
             names(df1) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SD (°C)")
@@ -1056,11 +1056,9 @@ server <- function(input, output, session) {
           if( input$cal.wolsRec ) {
             if(is.null(lminversecals)) { print(noquote("Please run the calibration step for weighted OLS models first")) }else{
               
-            sink("out/wLMpredictions.txt", type = "output")
-              
+            #sink("out/wLMpredictions.txt", type = "output")
               lminverserec <<- rec.clumped(recData = recData, obCal = lminversecals)
-
-              sink()
+            #sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the weighted OLS...")
             
             
@@ -1094,14 +1092,9 @@ server <- function(input, output, session) {
           if( input$cal.yorkRec) {
             if(is.null(yorkcals)) { print(noquote("Please run the calibration step for York models first")) }else{
               
-              sink("out/Yorkpredictions.txt", type = "output")
-              
-
-
+            #sink("out/Yorkpredictions.txt", type = "output")
             yorkrec <<-  rec.clumped(recData = recData, obCal = yorkcals)
-            
-            
-              sink()
+            #sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the York regression...")
             
 
@@ -1136,14 +1129,9 @@ server <- function(input, output, session) {
           if( input$cal.demingRec) {
             if(is.null(demingcals) ) { print(noquote("Please run the calibration step for Deming models first")) }else{
               
-              sink("out/Demingpredictions.txt", type = "output")
-              
-              
-              
+            #sink("out/Demingpredictions.txt", type = "output")
             demingrec <<- rec.clumped(recData = recData, obCal = demingcals)
-            
-            
-            sink()
+            #sink()
             incProgress(1/totalModelsRecs, detail="...Done fitting the Deming regression...")
             
             
@@ -1179,16 +1167,15 @@ server <- function(input, output, session) {
             if(is.null(bayeslincals)) { print(noquote("Please run the calibration step for Bayesian linear models first")) }else{
               
               ##This function runs only Bayesian predictions
-              sink("out/bayespredictions.txt", type = "output")
+              #sink("out/bayespredictions.txt", type = "output")
               
-
               infTempBayesian <- rec.bayesian(calModel = bayeslincals$BLM1_fit, recData = recData, postcalsamples = 100, iter = 3000)
               
               infTempBayesian_NE <- rec.bayesian(calModel = bayeslincals$BLM1_fit_NoErrors, recData = recData, postcalsamples = 100, iter = 3000)
 
               infTempBayesian_Mixed <- rec.bayesian(calModel = bayeslincals$BLM3_fit, recData = recData, mixed = TRUE, postcalsamples = 100, iter = 3000)
               
-              sink()
+              #sink()
 
               df0 <- infTempBayesian
               names(df0) <- c("Sample", "Δ47 (‰)", "Δ47 (‰) error", "Temperature (°C)", "SD (°C)")

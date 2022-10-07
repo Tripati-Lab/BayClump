@@ -1,0 +1,84 @@
+---
+title: "User Manual"
+author: "Updated September 26th, 2022"
+subtitle: "`BayClump` v. 1.0.0"
+date: "Table of Contents"
+output:
+  html_document: 
+    toc: yes
+    toc_float: true
+    theme: cosmo
+    fig_width: 5
+    fig_height: 3
+    fig_caption: yes
+  pdf_document:
+    toc: yes
+    latex_engine: xelatex
+urlcolor: blue
+runtime: shiny
+---
+
+# Calibration model descriptions  
+
+**Note: The descriptions provided below are taken from the publication this app accompanies.** For additional information, please see Román-Palacios et al. *under revision*.  
+
+#### Simple linear model  
+
+This regression model is the simplest model used in this study. The simple linear regression does not explicitly account for measurement error in $10^6/T^2$. We fit the simple linear regression model using the `lm` function in the `stats` `R` package under default parameters. Note that the approach implemented in the `lm` function in `R` is based on least squares. Under least squares, the resulting regression model is selected as the line that minimizes the sum of squared error (*i.e.*, sum over the squared differences between the points and the line) in the relationship between $10^6/T^2$ or $Δ_{47}$.  
+
+#### Inverse weighted linear model  
+
+Simple linear regression fit under least squares, with observations being weighted based on the inverse of their squared uncertainty in the residual $Δ_{47}$. Note that, although this approach indirectly accounts for uncertainty in $Δ_{47}$, weighted models analyzed in this study do not explicitly account for measurement error in $10^6/T^2$. The weighted simple linear regression was fit using the `lm` function in the `stats` `R` package.   
+
+#### Deming regression  
+
+The Deming model also fits under least squares, and the optimization steps while fitting the straight line follow the algorithm of Deming (1943). This model explicitly accounts for measurement error in both $Δ_{47}$ and $10^6/T^2$. Under the Deming regression, the ratio of the weights (related to their uncertainty) in $Δ_{47}$ and $10^6/T^2$ is constant over all data points (Martin 2000). To fit this model, we specified observations in $Δ_{47}$ and $10^6/T^2$, along with the corresponding error in each observation. Note that although the Deming model also fits under least squares, the optimization steps while fitting the straight line follows the algorithm presented in Deming (1943).  
+
+#### York regression  
+
+The York model is closely related to the Deming regression model. However, under the York model, the ratio of the weights (related to their uncertainty) in $Δ_{47}$ and $10^6/T^2$ varies over data points (Martin 2000). Therefore, the York model is slightly more complex than the Deming regression model. We specified observations in $Δ_{47}$ and $10^6/T^2$, along with the corresponding error in each observation, when fitting this regression model.  
+
+#### Bayesian simple linear model  
+
+This model is the simplest Bayesian model currently implemented in the app. This Bayesian model is equivalent to the simple linear regression model. However, instead of parameter estimates based on least squares, optimization of regression parameters is conducted under a Bayesian framework. This model is fit using `stan` with priors on the slope and intercept defined in the previous section.  
+
+#### Bayesian linear regression model with error in variables  
+
+This model explicitly accounts for measurement error in both $10^6/T^2$ and $Δ_{47}$ during parameter estimation. The Bayesian linear model with error in variables is close to the classical calibration model used in the field, a York model. This model is fit using `stan` with priors on the slope and intercept defined in the previous section.  
+
+#### Bayesian linear mixed model  
+
+In some situations, it is desirable to account for potential differences in the relationship between $Δ_{47}$ and $10^6/T^2$ between a factor (*e.g.* material, species). Under the Bayesian linear mixed model, parameter estimates are performed in accordance with a specific factor. Therefore, this model could be used to examine for potential differences in slope/intercept for a particular grouping variable of interest. We also note that parameter estimates under the Bayesian linear mixed model account for error in both $Δ_{47}$ and $10^6/T^2$. This model is fit using `stan` with priors on the slope and intercept defined in the previous section.  
+
+<hr />  
+
+
+
+### Bayesian priors
+
+We have implemented three alternative sets of distributions that are used to define the prior distributions on the slope ($\beta$) and intercept ($\alpha$). Two of the priors include information that was based on a review of parameter estimates from previous calibration studies (see the preprint). The `Informative` prior reflects the mean and standard deviation in slope ($\beta$) and intercept ($\alpha$) across the analyzed studies.
+
+$$
+\alpha \propto N(0.231, 0.065)
+$$
+
+$$
+\beta \propto N(0.039,0.004)
+$$
+
+
+The `Weak` prior reflects the mean slope ($\beta$) and intercept ($\alpha$) but has an standard deviation of `1`.
+
+
+$$
+\alpha \propto N(0.231, 1)
+$$
+
+$$
+\beta \propto N(0.039, 1)
+$$
+
+
+The `Uninformative` prior reflects the no previous knowledge on the distribution of these two parameters. We recommend using `Weak` priors.
+
+
