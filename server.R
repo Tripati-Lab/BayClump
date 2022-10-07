@@ -1,5 +1,17 @@
 # Define server logic
-server <- function(input, output, session) { 
+server <- function(input, output, session) {
+  
+    output$priors <-  renderUI({
+      if (input$cal.bayesian) {
+        conditionalPanel(
+          condition = "input$cal.bayesian",
+          style = "margin-left: 20px;",
+      checkboxInput("priors", label = "Weak priors", value = TRUE)
+        )
+      }
+    })
+
+  
   options(shiny.maxRequestSize=800*1024^2) 
   
   # Show package citations
@@ -33,8 +45,6 @@ server <- function(input, output, session) {
       write.csv(BayClump_calibration_template, file, row.names = FALSE)
     }
   )
-  
-  
   
   calibrationData = reactive({
     switch(input$calset,
@@ -72,13 +82,7 @@ server <- function(input, output, session) {
   if(exists("wb5")) rm(wb5) # Delete any existing workbook in preparation for new results
   wb5 <- createWorkbook("Bayesian reconstruction posterior output") # Prepare a workbook for calibration outputs
   
-  observeEvent(calibrationData(),{
-  output$myList <-  renderUI({
-    numericInput("samples", min = 3, max = nrow(calibrationData()), 
-                label = paste0("Number of observations per bootstrap sample (max. recommended: ", nrow(calibrationData()) ,")" ), 
-                value =  nrow(calibrationData()))
-  })
-  })
+
   
   observe({
     output$contents <- renderTable({
@@ -107,6 +111,7 @@ server <- function(input, output, session) {
     } 
     
     priors <<- input$priors
+    priors <<- ifelse(isTRUE(priors), "Weak", "Informative")
     replicates <<- input$replication
     ngenerationsBayes <<- input$generations
     ngenerationsrec.bayesian <<- input$generations
@@ -215,23 +220,13 @@ server <- function(input, output, session) {
     }
     
     ##Limits of the CI
-    minLim <- ifelse(input$range[1]==0, min(calData$Temperature),input$range[1])
-    maxLim <- ifelse(input$range[2]==0, max(calData$Temperature),input$range[2])
+    minLim <- min(calData$Temperature)
+    maxLim <- max(calData$Temperature)
     
-    NegErrors <- any(calData$D47error <= 0) | any(calData$TempError <= 0)
-    if(NegErrors) {
-      print(noquote("Invalid input: 0 or negative uncertainty values"))
-      }
-
-    if(input$cal.ols == FALSE &
-       input$cal.wols == FALSE &
-       input$cal.york == FALSE &
-       input$cal.deming == FALSE &
-       input$cal.bayesian == FALSE) {
-      print(noquote("Please select at least one model"))
-      }
+    observeEvent(input$max, {
+      updateSliderInput(inputId = "n", max = input$max)
+    })
     
-   if(NegErrors == FALSE){
     
     if(input$cal.ols != FALSE |
        input$cal.wols != FALSE |
@@ -254,7 +249,7 @@ server <- function(input, output, session) {
         
         totalModels <- c(input$cal.ols, input$cal.wols, input$cal.york,
                          input$cal.deming, input$cal.bayesian)
-        TotProgress <- length(which(totalModels==T))
+        TotProgress <- length(which(totalModels == TRUE))
         
         if(input$cal.ols != FALSE) {
           sink(file = "out/linmodtext.txt", type = "output")
@@ -324,7 +319,7 @@ server <- function(input, output, session) {
           
           output$lmcal <- renderPrint({
             do.call(rbind.data.frame,apply(lmcals, 2, function(x){
-              cbind.data.frame(Mean= round(mean(x), 4), `SE`=round(sd(x)/sqrt(length(x)),7))
+              cbind.data.frame(Mean= round(mean(x), 4), `SD`=round(sd(x),7))
             }))
           })
           
@@ -401,7 +396,7 @@ server <- function(input, output, session) {
           
           output$lminversecal <- renderPrint({
             do.call(rbind.data.frame,apply(lminversecals, 2, function(x){
-              cbind.data.frame(Mean= round(mean(x), 4),`SE` = round(sd(x)/sqrt(length(x)),7))
+              cbind.data.frame(Mean= round(mean(x), 4),`SD` = round(sd(x),7))
             }))
           })
           
@@ -474,7 +469,7 @@ server <- function(input, output, session) {
           
           output$york <- renderPrint({
             do.call(rbind.data.frame,apply(yorkcals, 2, function(x){
-              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
+              cbind.data.frame(Mean= round(mean(x), 4),`SD`=round(sd(x),7))
             }))
           })
           
@@ -547,7 +542,7 @@ server <- function(input, output, session) {
           
           output$deming <- renderPrint({
             do.call(rbind.data.frame,apply(demingcals, 2, function(x){
-              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x)/sqrt(length(x)),7))
+              cbind.data.frame(Mean= round(mean(x), 4),`SE`=round(sd(x),7))
             }))
           })
           
@@ -697,20 +692,26 @@ server <- function(input, output, session) {
           outBLM <- summary(bayeslincals$BLM1_fit_NoErrors)$summary
           
           output$blinnoerr <- renderPrint({
-            round(outBLM[c(1:2),c(1,2)],7)
+            ret <- outBLM[c(1:2),c(1,3)]
+            cbind.data.frame(Mean= round(ret[,1], 4),`SD`=round(ret[,2],7))
           })
           
           outBLMerrors <- summary(bayeslincals$BLM1_fit)$summary
 
           output$blinwerr <- renderPrint({
-             round(outBLMerrors[c(1:2),c(1,2)],7)
+            ret <- outBLMerrors[c(1:2),c(1,3)]
+            cbind.data.frame(Mean= round(ret[,1], 4),`SD`=round(ret[,2],7))
           })
           
           outBLMM <- summary(bayeslincals$BLM3_fit)$summary
           outBLMM <- as.data.frame(outBLMM[grep("alpha|beta", row.names(outBLMM)),] )
 
-          output$blinmwerr <- renderPrint(
-            round(outBLMM[,c(1,2)],7)
+          output$blinmwerr <- renderPrint({
+            ret <- outBLMM[,c(1,3)]
+            ret2 <- cbind.data.frame(Mean= round(ret[,1], 4),`SD`=round(ret[,2],7))
+            row.names(ret2) <- row.names(ret)
+            ret2
+          }
           ) 
 
           outBLMM2 <- PostBLM3_fit
@@ -810,7 +811,7 @@ server <- function(input, output, session) {
       }
       })
     }
-   }
+   
   })
   
   output$modresults <- renderPrint({
@@ -1036,7 +1037,7 @@ server <- function(input, output, session) {
               df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 4, format = "f")
               df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 3, format = "f")
               df1$`SD (°C)` <- formatC(df1$`SD (°C)`, digits = 3, format = "f")
-              head(df1)
+              df1
             },
               caption = "Linear model",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1047,9 +1048,7 @@ server <- function(input, output, session) {
             
             addWorksheet(wb2, "Linear") # Add a blank sheet
             writeData(wb2, sheet = "Linear", df1) # Write reconstruction data
-            print(noquote("Linear reconstruction complete"))
-            
-          
+
             }
             }
           
@@ -1075,7 +1074,7 @@ server <- function(input, output, session) {
               df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 4, format = "f")
               df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 3, format = "f")
               df3$`SD (°C)` <- formatC(df3$`SD (°C)`, digits = 3, format = "f")
-              head(df3)
+              df3
             },
               caption = "Inverse weighted linear model",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1087,10 +1086,7 @@ server <- function(input, output, session) {
             
             addWorksheet(wb2, "Inverse linear") # Add a blank sheet
             writeData(wb2, sheet = "Inverse linear", df3) # Write reconstruction data
-            print(noquote("Inverse weighted linear reconstruction complete"))
-            
-            
-          
+
             }
             }
           
@@ -1120,7 +1116,7 @@ server <- function(input, output, session) {
               df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 4, format = "f")
               df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 3, format = "f")
               df5$`SD (°C)` <- formatC(df5$`SD (°C)`, digits = 3, format = "f")
-              head(df5)
+              df5
             },
               caption = "York regression",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1132,9 +1128,7 @@ server <- function(input, output, session) {
             
             addWorksheet(wb2, "York") # Add a blank sheet
             writeData(wb2, sheet = "York", df5) # Write reconstruction data
-            print(noquote("York reconstruction complete"))
 
-          
             }
             }
           
@@ -1163,7 +1157,7 @@ server <- function(input, output, session) {
               df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 4, format = "f")
               df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 3, format = "f")
               df7$`SD (°C)` <- formatC(df7$`SD (°C)`, digits = 3, format = "f")
-              head(df7)
+              df7
             },
               caption = "Deming regression",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1176,8 +1170,6 @@ server <- function(input, output, session) {
             
             addWorksheet(wb2, "Deming") # Add a blank sheet
             writeData(wb2, sheet = "Deming", df7) # Write reconstruction data
-            print(noquote("Deming reconstruction complete"))
- 
             }
             }
 
@@ -1190,11 +1182,11 @@ server <- function(input, output, session) {
               sink("out/bayespredictions.txt", type = "output")
               
 
-              infTempBayesian <- rec.bayesian(calModel = bayeslincals$BLM1_fit, recData = recData, postcalsamples = 100)
+              infTempBayesian <- rec.bayesian(calModel = bayeslincals$BLM1_fit, recData = recData, postcalsamples = 100, iter = 3000)
               
-              infTempBayesian_NE <- rec.bayesian(calModel = bayeslincals$BLM1_fit_NoErrors, recData = recData, postcalsamples = 100)
+              infTempBayesian_NE <- rec.bayesian(calModel = bayeslincals$BLM1_fit_NoErrors, recData = recData, postcalsamples = 100, iter = 3000)
 
-              infTempBayesian_Mixed <- rec.bayesian(calModel = bayeslincals$BLM3_fit, recData = recData, mixed = TRUE, postcalsamples = 100)
+              infTempBayesian_Mixed <- rec.bayesian(calModel = bayeslincals$BLM3_fit, recData = recData, mixed = TRUE, postcalsamples = 100, iter = 3000)
               
               sink()
 
@@ -1207,7 +1199,7 @@ server <- function(input, output, session) {
                 df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 3, format = "f")
                 df0$`SD (°C)` <- formatC(df0$`SD (°C)`, digits = 3, format = "f")
-                head(df0)
+               df0
               },
               caption = "Bayesian predictions (BLM_errors)",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1227,7 +1219,7 @@ server <- function(input, output, session) {
                 df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 3, format = "f")
                 df0.1$`SD (°C)` <- formatC(df0.1$`SD (°C)`, digits = 3, format = "f")
-                head(df0.1)
+               df0.1
               },
               caption = "Bayesian predictions (BLM without errors)",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1247,7 +1239,7 @@ server <- function(input, output, session) {
                 df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 3, format = "f")
                 df0.2$`SD (°C)` <- formatC(df0.2$`SD (°C)`, digits = 3, format = "f")
-                head(df0.2)
+                df0.2
               },
               caption = "Bayesian predictions under a Bayesian linear mixed model",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1272,9 +1264,6 @@ server <- function(input, output, session) {
               writeData(wb5, sheet = "Bayesian model with errors", infTempBayesian ) # Write regression data
               writeData(wb5, sheet = "Bayesian linear mixed model", infTempBayesian_Mixed ) # Write regression data
               
-
-              print(noquote("Bayesian linear reconstructions complete"))
-
             }
           }
         })

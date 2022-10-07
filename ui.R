@@ -34,6 +34,10 @@ body <- dashboardBody(
   
   ################# Tabs #################
   tabItems(
+    tabItem(tabName = "bayclump",
+            fluidRow(
+              column(12,
+                     h2("Welcome to BayClump!")))),
     tabItem(tabName = "calibration",
             fluidRow(
               box(width = 4, 
@@ -53,6 +57,10 @@ body <- dashboardBody(
                          # Upload data
                          fileInput("calibrationdata", "Select calibration data file", accept = ".csv" 
                          ),
+                         
+                         # Summary stats panel
+                         tableOutput("contents"),
+                         
                          
                          # Uncertainties
                       #   radioButtons("uncertainties", " ",
@@ -82,47 +90,31 @@ body <- dashboardBody(
               box(width = 4,
                   title = h4("Step 2: Select Models"), solidHeader = FALSE,
                   column(12, #h5("For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual"),
-                         numericInput("replication", label = "Number of bootstrap replicates for non-Bayesian models", 
+                         numericInput("replication", label = "Number of bootstrap replicates", 
                                       100, min = 2, max = 10000),
-                        sliderInput("range", label = HTML(paste0("Temperature range to use for CI estimation (10",tags$sup("6"),"/T",tags$sup("2"),")")),
-                                    min = 0, max = 30, value = c(1, 14)),
-                        numericInput("generations", label = "Iterations to keep for Bayesian models", 
+                        numericInput("generations", label = "Number of posterior samples to analize", 
                                      3000, min = 100, max = 7000),
-                        #checkboxInput("multicore", "Multicore for Deming regression", FALSE),
-                         #uiOutput("myList"),
-                         selectInput("priors", label = "Bayesian priors", 
-                                    choices = c("Informative", "Weak", "Uninformative"), selected = "Weak"),
                          checkboxInput("cal.ols", "Linear model", FALSE),
                          checkboxInput("cal.wols", "Inverse weighted linear model", FALSE),
                          checkboxInput("cal.york", "York regression", FALSE),
                          checkboxInput("cal.deming", "Deming regression", FALSE),
                          checkboxInput("cal.bayesian", "Bayesian linear models", FALSE),
-                         bsTooltip('cal.bayesian', "Running Bayesian models can take a few minutes. Please be patient.",
-                                   placement = "bottom", trigger = "hover",
-                                   options = NULL),
-                         
-                         # Summary stats panel
-                         tableOutput("contents"),
-                         
+                         uiOutput('priors'),
+
                          # Run models
                          div(style="display:inline-block; vertical-align:top;", 
                              actionButton('runmods', "Run selected models", 
                                           icon = icon("cogs", lib = "font-awesome", verify_fa = FALSE)
                              )
                          ),
-                     #    div(style="display:inline-block; vertical-align:top;", 
-                    #         actionButton('reset', "Reset ALL", 
-                    #                      icon = icon("trash-alt", lib = "font-awesome"))),
-                    #     bsTooltip('reset', "Warning: This resets EVERYTHING, including data inputs",
-                    #               placement = "bottom", trigger = "hover",
-                    #               options = NULL),
-                         verbatimTextOutput("modresults")
+                    br(),     
+                    verbatimTextOutput("modresults")
                          
                   )
               ),
               box(width = 4,
                   title = h4("Step 3: Calibration Output"), solidHeader = FALSE,
-                  column(12, "Truncated output from each selected model",
+                  column(12,
                          tags$h4("Linear model"),
                          verbatimTextOutput("lmcal", placeholder = TRUE),
                          tags$h4("Inverse weighted linear model"),
@@ -140,10 +132,9 @@ body <- dashboardBody(
                   ),
                   
                   # Download all calibration data
-                  downloadButton("downloadcalibrations", label = "Download full calibration output"),
-                  downloadButton("downloadBayesian", label = "Download raw results for Bayesian models"),
-                  downloadButton("downloadPosteriorCalibration", label = "Download posterior one Bayesian replicate"),
-                  downloadButton("downloadPriorsCalibration", label = "Download priors")
+                  downloadButton("downloadcalibrations", label = "Raw results"),
+                  downloadButton("downloadBayesian", label = "Bayesian summary"),
+                  downloadButton("downloadPosteriorCalibration", label = "Bayesian posteriors")
               )
             )
     ),
@@ -238,15 +229,15 @@ body <- dashboardBody(
                          ),
                          verbatimTextOutput("recresults"),
                          # Download all reconstruction data
-                         downloadButton("downloadreconstructions", label = "Download reconstruction output"),
-                         downloadButton("downloadreconstructionsPosterior", label = "Download posterior reconstruction output"),
-                         downloadButton("downloadPriorsReconstruction", label = "Download priors")
+                         downloadButton("downloadreconstructions", label = "Download results") #,
+                         #downloadButton("downloadreconstructionsPosterior", label = "Download posterior reconstruction output"),
+                         #downloadButton("downloadPriorsReconstruction", label = "Download priors")
                          
                   )
               ),
               box(width = 7,
                   title = "Step 2: Temperature reconstructions", solidHeader = TRUE,
-                  column(12, "Truncated output from each selected model",
+                  column(12,
                          tableOutput("lmrecswun"),
                          tableOutput("lminverserecswun"),
                          tableOutput("yorkrecswun"),
@@ -322,6 +313,9 @@ body <- dashboardBody(
 sidebar <- dashboardSidebar(width = 200,
                             tags$script(JS("document.getElementsByClassName('sidebar-toggle')[0].style.visibility = 'hidden';")),
                             sidebarMenu(
+                              menuItem("BayClump", tabName = "bayclump", 
+                                       icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
+                              ),
                               menuItem("Calibrations", tabName = "calibration", 
                                        icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
                               ),
@@ -343,9 +337,9 @@ sidebar <- dashboardSidebar(width = 200,
                                        icon = icon("question-circle", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
-                              menuItem("BayWatch", tabName = "demo", 
-                                       icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
-                              ),
+                              # menuItem("BayWatch", tabName = "demo", 
+                              #          icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
+                              # ),
                               
                               menuItem("Citations", tabName = "citations", 
                                        icon = icon("align-right", lib = "font-awesome", verify_fa = FALSE)

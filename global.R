@@ -50,6 +50,3 @@ Complete_Calibration_List <- NULL
 # Improve reproducibility
 set.seed(4)
 
-# Load necessary functions
-#sapply(list.files('Functions', full.names = T), source)
-
