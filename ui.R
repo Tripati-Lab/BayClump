@@ -442,7 +442,6 @@ sidebar <- dashboardSidebar(width = 200,
 )
 
 
-library(fresh)
 theme <- create_theme(
   theme = "journal",
   adminlte_color(
@@ -455,7 +454,6 @@ theme <- create_theme(
     purple = "#615cbf",
     maroon = "#b659c9",
     light_blue = "#F78A54"
-    #FAE6C2
   ),
   adminlte_sidebar(
     dark_bg = "#FAE6C2",

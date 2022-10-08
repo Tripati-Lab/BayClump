@@ -33,6 +33,8 @@ install.packages("openxlsx")
 install.packages("devtools")
 install.packages("bib2df")
 install.packages("fresh")
+install.packages("dashboardthemes")
+install.packages("shinydashboardPlus")
 #install.packages("loo")
 #install.packages("coda")
 

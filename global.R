@@ -6,6 +6,9 @@ if(!"bayclumpr" %in% installed.packages()) {
   install_github("Tripati-Lab/bayclumpr")
   } 
 if("fresh" %in% installed.packages() == FALSE) {install.packages("fresh")} 
+if("dashboardthemes" %in% installed.packages() == FALSE) {install.packages("dashboardthemes")} 
+if("shinydashboardPlus" %in% installed.packages() == FALSE) {install.packages("shinydashboardPlus")} 
+
 
 
 # To work in shinyapps.io, each package has be loaded individually instead of with lapply
@@ -30,6 +33,8 @@ library(rstan)
 library(data.table)
 library(bayclumpr)
 library(fresh)
+library(dashboardthemes)
+library(shinydashboardPlus)
 
 
 # Create automatic bibliography containing loaded packages and their dependencies
