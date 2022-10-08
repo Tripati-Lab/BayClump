@@ -32,6 +32,7 @@ install.packages("pbmcapply")
 install.packages("openxlsx")
 install.packages("devtools")
 install.packages("bib2df")
+install.packages("fresh")
 #install.packages("loo")
 #install.packages("coda")
 

@@ -82,15 +82,21 @@ server <- function(input, output, session) {
   if(exists("wb5")) rm(wb5) # Delete any existing workbook in preparation for new results
   wb5 <- createWorkbook("Bayesian reconstruction posterior output") # Prepare a workbook for calibration outputs
   
-
+  
+  observeEvent(input$calset,{
+    req(input$calset == "mycal")
+    showModal(modalDialog(
+      fileInput("calibrationdata", "Select calibration data file", accept = ".csv" )
+    ))}
+  )
   
   observe({
     output$contents <- renderTable({
       calsummary <- calibrationData() %>%
         summarize(
-          "Total samples" = length(calibrationData()$Sample.Name),
-          "Unique samples" = length(unique(calibrationData()$Sample.Name)),
-          "Total replicates" = sum(calibrationData()$N),
+          "Samples" = length(calibrationData()$Sample.Name),
+          #"Unique samples" = length(unique(calibrationData()$Sample.Name)),
+          #"Total replicates" = sum(calibrationData()$N),
           "Materials" = length(unique(calibrationData()$Material))
         )
       return(calsummary)

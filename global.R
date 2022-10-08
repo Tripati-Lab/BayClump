@@ -5,6 +5,7 @@ if(!"bayclumpr" %in% installed.packages()) {
   library(devtools)
   install_github("Tripati-Lab/bayclumpr")
   } 
+if("fresh" %in% installed.packages() == FALSE) {install.packages("fresh")} 
 
 
 # To work in shinyapps.io, each package has be loaded individually instead of with lapply
@@ -28,6 +29,7 @@ library(coda)
 library(rstan)
 library(data.table)
 library(bayclumpr)
+library(fresh)
 
 
 # Create automatic bibliography containing loaded packages and their dependencies

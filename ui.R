@@ -1,7 +1,16 @@
 # Define UI for application
 
-header <-  dashboardHeader(title = "BayClump: Bayesian methods for clumped isotope paleothermometry",
-                           titleWidth = 700
+header <-  dashboardHeader(#title = "BayClump: Bayesian methods for clumped isotope paleothermometry",
+                           titleWidth = 750,    title = shinyDashboardLogoDIY(
+                             boldText = "BayClump"
+                             ,mainText = ""
+                             ,textSize = 22
+                             ,badgeText = "v1.0"
+                             ,badgeTextColor = "black"
+                             ,badgeTextSize = 2
+                             ,badgeBackColor = "white"
+                             ,badgeBorderRadius = 3
+                           )
 )
 
 
@@ -9,6 +18,7 @@ header <-  dashboardHeader(title = "BayClump: Bayesian methods for clumped isoto
 
 body <- dashboardBody(
   tags$head(tags$style(HTML('
+      .main-sidebar { font-size: 15px; }
       .form-group, .selectize-control {
            margin-bottom: 3px;
       }
@@ -37,8 +47,16 @@ body <- dashboardBody(
     tabItem(tabName = "bayclump",
             fluidRow( align = "center",
               column(12,
-                     h2("Welcome to BayClump!"),
+                     h1("Welcome to BayClump!"),
+                     h5("Bayesian methods for clumped isotope paleothermometry"),
                      br(),
+                     
+                     tags$img(
+                       src = "bayclump.png",
+                       alt = "Success, you are correct",
+                       width = 200
+                       #, height = 25
+                     ), 
                      h4("BayClump is developed to support and facilitate the use of Bayesian models and analyses involving clumped isotope calibration datasets and
                      associated temperature reconstructions. BayClump, a self-contained a Shiny Dashboard application, facilitates the comparisons of Bayesian 
                      and frequentist models for analyzing clumped isotopes datasets for paleoclimatic reconstructions."
@@ -55,9 +73,18 @@ body <- dashboardBody(
                      h4("Enjoy using the app and please do reach out if you have any questions, concerns, or comments!")
                      ))),
     tabItem(tabName = "calibration",
+            fluidRow( align = "center",
+                      column(12,
+                             h1("Calibrations"),
+                             h5("Please select a combination of calibration dataset(s) and regressions models. 
+                                Information in this tab will be passed on to both the calibrations plot and reconstructions tab.
+                                Feel free to either select any of the pre-loaded datasets or upload your own. 
+                                If you decide to use your local dataset for the analyses, please make sure to follow
+                                the structure outlined in the template.")
+                      )),
             fluidRow(
               box(width = 4, 
-                  title = h4("Step 1: Calibration Options"), solidHeader = FALSE,
+                  title = h4(HTML("<b>Step 1: Calibration Options</b>"), align='center'), solidHeader = FALSE,
                   column(12,
                          radioButtons("calset", "Select calibration set",
                                       choices = c('Román-Palacios et al. - Model 1' = 'model1',
@@ -67,27 +94,24 @@ body <- dashboardBody(
                                                   "Use all" = "all")
                          ),
                          
-                         # Download template
-                         downloadButton("BayClump_cal_temp", label = "Download calibration data template"),
-                         
-                         # Upload data
-                         fileInput("calibrationdata", "Select calibration data file", accept = ".csv" 
-                         ),
-                         
                          # Summary stats panel
-                         tableOutput("contents"),
+                         column(12, align="center", tableOutput("contents"),
                          
+                         # Download template
+                         downloadButton("BayClump_cal_temp", label = "Download template")
+),
+
                          # Reference frame
-                         div(style="display:inline-block; vertical-align:top;", 
-                             radioButtons("refframe", "Reference frame",
-                                          c("Use the Intercarb carbon dioxide equilibrium scale at 90°C (I-CDES 90)" = "icdes90",
-                                            "I am using my own calibration data in a different reference frame" = "myown")
-                             ),                    
-                             bsTooltip('refframe', "I-CDES 90 must be chosen if using calibration data from Román-Palacios et al.",
-                                       placement = "bottom", trigger = "hover",
-                                       options = NULL)
-                         ),
-                      
+                         # div(style="display:inline-block; vertical-align:top;", 
+                         #     radioButtons("refframe", "Reference frame",
+                         #                  c("Use the Intercarb carbon dioxide equilibrium scale at 90°C (I-CDES 90)" = "icdes90",
+                         #                    "I am using my own calibration data in a different reference frame" = "myown")
+                         #     ),                    
+                         #     bsTooltip('refframe', "I-CDES 90 must be chosen if using calibration data from Román-Palacios et al.",
+                         #               placement = "bottom", trigger = "hover",
+                         #               options = NULL)
+                         # ),
+                         # 
                          # Misc options
                          #tags$b("Miscellaneous options"),
                          #checkboxInput("scale" ,'Scale data')
@@ -97,11 +121,11 @@ body <- dashboardBody(
               
               # Model selection
               box(width = 4,
-                  title = h4("Step 2: Select Models"), solidHeader = FALSE,
+                  title = h4(HTML("<b>Step 2: Select Models</b>"), align='center'), solidHeader = FALSE,
                   column(12, #h5("For help choosing an appropriate number of bootstrap replicates or the temperature range for CI estimation, see the User Manual"),
                          numericInput("replication", label = "Number of bootstrap replicates", 
                                       100, min = 2, max = 10000),
-                        numericInput("generations", label = "Number of posterior samples to analize", 
+                        numericInput("generations", label = "Number of posterior samples", 
                                      3000, min = 100, max = 7000),
                          checkboxInput("cal.ols", "Linear model", FALSE),
                          checkboxInput("cal.wols", "Inverse weighted linear model", FALSE),
@@ -122,7 +146,7 @@ body <- dashboardBody(
                   )
               ),
               box(width = 4,
-                  title = h4("Step 3: Calibration Output"), solidHeader = FALSE,
+                  title = h4(HTML("<b>Step 3: Calibration Output</b>"), align='center'), solidHeader = FALSE,
                   column(12,
                          tags$h4("Linear model"),
                          verbatimTextOutput("lmcal", placeholder = TRUE),
@@ -141,15 +165,24 @@ body <- dashboardBody(
                   ),
                   
                   # Download all calibration data
-                  downloadButton("downloadcalibrations", label = "Raw results"),
-                  downloadButton("downloadBayesian", label = "Bayesian summary"),
-                  downloadButton("downloadPosteriorCalibration", label = "Bayesian posteriors")
+                  column(12, align="center",
+                         downloadButton("downloadcalibrations", label = "Raw results"),
+                         downloadButton("downloadBayesian", label = "Bayesian summary"),
+                         downloadButton("downloadPosteriorCalibration", label = "Bayesian posteriors")
+                  )
               )
             )
     ),
     
     #Calibration plot tab
     tabItem(tabName = "plots",
+            fluidRow( align = "center",
+                      column(12,
+                             h1("Calibration plots"),
+                             h5("BayClump allows for a quick visualization of the calibrations performed
+                                within the app. Interactive visualizations, conducted using plotly, can be downloaded to
+                                still images.")
+                      )),
             fluidRow(
               box(width = 12,
                   column(12,
@@ -192,24 +225,30 @@ body <- dashboardBody(
                   column(12,
                          plotlyOutput("bayesmixedcalibration")
                   )))
-            
-            
     ),
 
     
     #Reconstruction tab
     tabItem(tabName = "reconstruction",
+            fluidRow( align = "center",
+                      column(12,
+                             h1("Reconstructions tab"),
+                             h5("This section of BayClump focuses on deriving teperature reconstructions
+                                from existing calibrations. Note that  parameters for the selected models are automatically transferred from the Calibration tab.
+                                Please follow the structure of the template file provided in BayClump to upload your own data.")
+                      )),
             fluidRow(
               box(width = 5, 
-                  title = "Step 1: Reconstruction setup", solidHeader = TRUE,
-                  column(12, tags$b("Parameters for the selected models are automatically transferred from the Calibration tab to this tab."),
-                         tags$br(),
+                  title = h4(HTML("<b>Step 1: Reconstruction setup</b>") , align='center') ,solidHeader = TRUE,
+                  column(12, #("Parameters for the selected models are automatically transferred from the Calibration tab."),
+                         #tags$br(),
+                         column(12, align="center",
                          # Download templates
-                         downloadButton("BayClump_reconstruction_template.csv", label = "Download reconstruction data template"),
+                         downloadButton("BayClump_reconstruction_template.csv", label = "Download template"),
                          
                          # Upload data
                          fileInput("reconstructiondata", "Select reconstruction data file", accept = ".csv" 
-                         ),
+                         )),
                          
                          # Summary stats panel
                          tableOutput("contents2"),
@@ -220,32 +259,21 @@ body <- dashboardBody(
                          checkboxInput("cal.yorkRec", "York regression", FALSE),
                          checkboxInput("cal.demingRec", "Deming regression", FALSE),
                          checkboxInput("rec.bayesian", "Bayesian linear models", FALSE),
-                         #numericInput("TPriorMean", label = "Mean value for the prior distribution on temperature (10^6/T^2)", 
-                          #            11, min = 0, max = 20),
-                         #numericInput("TPriorSd", label = "Standard deviation value for the prior distribution on temperature (10^6/T^2)", 
-                          #            0.01, min = 0.0001, max = 0.09),
-                         bsTooltip('BayesianCalibrationsRec', "This can take several minutes to an hour for large datasets",
-                                   placement = "bottom", trigger = "hover",
-                                   options = NULL),
-                         bsTooltip('simpleInversion', "Uses IPI method from McClelland et al. (2021)",
-                                   placement = "bottom", trigger = "hover",
-                                   options = NULL),
                          
+                         column(12, align="center",
                          div(style="display:inline-block; vertical-align:top;", 
                              actionButton('runrec', "Run reconstructions", 
                                           icon = icon("cogs", lib = "font-awesome", verify_fa = FALSE)
                              )
                          ),
-                         verbatimTextOutput("recresults"),
-                         # Download all reconstruction data
-                         downloadButton("downloadreconstructions", label = "Download results") #,
+                         verbatimTextOutput("recresults")) #,
                          #downloadButton("downloadreconstructionsPosterior", label = "Download posterior reconstruction output"),
                          #downloadButton("downloadPriorsReconstruction", label = "Download priors")
                          
                   )
               ),
               box(width = 7,
-                  title = "Step 2: Temperature reconstructions", solidHeader = TRUE,
+                  title = h4(HTML("<b>Step 2: Temperature reconstructions</b>"), align = 'center'), solidHeader = TRUE,
                   column(12,
                          tableOutput("lmrecswun"),
                          tableOutput("lminverserecswun"),
@@ -253,7 +281,11 @@ body <- dashboardBody(
                          tableOutput("demingrecswun"),
                          tableOutput("Bpredictions"),
                          tableOutput("BpredictionsErrors"),
-                         tableOutput("BpredictionsBLMM")
+                         tableOutput("BpredictionsBLMM"),
+                         # Download all reconstruction data
+                         column(12, align="center",
+                         downloadButton("downloadreconstructions", label = "Download results")
+                         )
                   )
               )
             ),  
@@ -313,21 +345,26 @@ body <- dashboardBody(
     
     #Manuscript
     tabItem(tabName = "manuscript", 
+            fluidRow( align = "center",
+                      column(12,
+                             h1("Manusscript tab"),
+                             h5("Below we provide a copy of the latest version of the manuscript associated with BayClump. 
+                                Note: This is a preprint and has not yet been accepted for publication. Updates will be posted here.")
+                      )),
             fluidRow(
-              box(width = 12, title = "Note: This is a preprint and has not yet been accepted for publication. Updates will be posted here.",
-                  solidHeader = TRUE,
-              column(12, 
-                     uiOutput("msframe")
-                     )
-                   )
+              uiOutput("msframe")
             )
             ),
     
     #Download
     tabItem(tabName = "download",
-            fluidRow(
-              column(12,
-                     "BayClump will be made available as a standalone Electron app upon acceptance for publication, and a download link will be provided here")))
+            fluidRow( align = "center",
+                      column(12,
+                             h1("Download BayClump"),
+                             h5("BayClump will be made available as a standalone 
+                                Electron app upon acceptance for publication, and a download link 
+                                will be provided here")
+                      )))
   )
 )
 
@@ -344,19 +381,6 @@ sidebar <- dashboardSidebar(width = 200,
                               menuItem("BayClump", tabName = "bayclump", 
                                        icon = icon("thermometer", lib = "font-awesome", verify_fa = FALSE)
                               ),
-                              menuItem("Calibrations", tabName = "calibration", 
-                                       icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
-                              ),
-                              
-                              menuItem("Calibration Plots", tabName = "plots", 
-                                       icon =icon("chart-bar", lib = "font-awesome", verify_fa = FALSE)
-                              ),
-                              
-
-                              menuItem("Reconstructions", tabName = "reconstruction", 
-                                       icon = icon("chart-area", lib = "font-awesome", verify_fa = FALSE)
-                              ),
-                              
                               menuItem("User Manual", tabName = "usermanual", 
                                        icon = icon("question-circle", lib = "font-awesome", verify_fa = FALSE),
                                        menuSubItem('Quick start',
@@ -372,11 +396,19 @@ sidebar <- dashboardSidebar(width = 200,
                                        menuSubItem('Updates!',
                                                    tabName = 'updatesTab')
                               ),
-                              
-                              menuItem("Citations", tabName = "citations", 
-                                       icon = icon("align-right", lib = "font-awesome", verify_fa = FALSE)
+                              menuItem("Calibrations", tabName = "calibration", 
+                                       icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
+                              menuItem("Calibration Plots", tabName = "plots", 
+                                       icon =icon("chart-bar", lib = "font-awesome", verify_fa = FALSE)
+                              ),
+                              
+                              
+                              menuItem("Reconstructions", tabName = "reconstruction", 
+                                       icon = icon("chart-area", lib = "font-awesome", verify_fa = FALSE)
+                              ),
+
                               menuItem("Manuscript", tabName = "manuscript", 
                                        icon = icon("scroll", lib = "font-awesome", verify_fa = FALSE)
                               ),
@@ -396,20 +428,52 @@ sidebar <- dashboardSidebar(width = 200,
                                                       icon = icon("bug", lib = "font-awesome", verify_fa = FALSE),
                                                       onclick ="window.open('https://github.com/Tripati-Lab/BayClump/issues', '_blank')")
                                        )
+                              ),
+                              menuItem("Citations", tabName = "citations", 
+                                       icon = icon("align-right", lib = "font-awesome", verify_fa = FALSE)
                               )
                             )
 )
 
 
+library(fresh)
+theme <- create_theme(
+  theme = "journal",
+  adminlte_color(
+    green = "#3fff2d",
+    blue = "#2635ff",
+    red = " #ff2b2b",
+    yellow = "#feff6e",
+    fuchsia = "#ff5bf8",
+    navy = "#374c92",
+    purple = "#615cbf",
+    maroon = "#b659c9",
+    light_blue = "#F78A54"
+    #FAE6C2
+  ),
+  adminlte_sidebar(
+    dark_bg = "#FAE6C2",
+    dark_hover_bg = "#F78A54",
+    dark_color = "#2E3440",
+    dark_submenu_color = "#2E3440",
+    light_submenu_hover_color = "#81A1C1",
+    light_submenu_bg = "#81A1C1"
+  ),
+  adminlte_global(
+    content_bg = "white",
+    box_bg = "#b2d4d9", 
+    info_box_bg = "#93B8B1"
+  )
+)
+
+
 ########### Dashboard page ####################
 dashboardPage(
-  skin = "black",
+  freshTheme = theme,
+  #skin = "blue-light",
   header,
   sidebar,
   body
-  ,tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
-  )
 )
 
 
