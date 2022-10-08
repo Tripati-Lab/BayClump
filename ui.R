@@ -332,9 +332,12 @@ body <- dashboardBody(
     
     #BayWatch
     tabItem(tabName = "demo",
-            fluidRow(
-              column(12,
-                     "Recorded demo here"))),
+            
+            fluidRow( align = "center",
+                      column(12,
+                             h1("Baywatch"),
+                             h5("A recorded tutorial of BayClump.")
+                      ))),
     
     #Citations tab
     tabItem(tabName = "citations",
@@ -347,7 +350,7 @@ body <- dashboardBody(
     tabItem(tabName = "manuscript", 
             fluidRow( align = "center",
                       column(12,
-                             h1("Manusscript tab"),
+                             h1("Manuscript tab"),
                              h5("Below we provide a copy of the latest version of the manuscript associated with BayClump. 
                                 Note: This is a preprint and has not yet been accepted for publication. Updates will be posted here.")
                       )),
@@ -395,6 +398,9 @@ sidebar <- dashboardSidebar(width = 200,
                                                    tabName = 'models'),
                                        menuSubItem('Updates!',
                                                    tabName = 'updatesTab')
+                              ),
+                              menuItem("Baywatch", tabName = "demo", 
+                                       icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               menuItem("Calibrations", tabName = "calibration", 
                                        icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
