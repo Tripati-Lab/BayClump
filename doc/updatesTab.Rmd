@@ -20,13 +20,11 @@ runtime: shiny
 
 # News and Updates
 
-*September 26th, 2022* -- *`BayClump` v 1.0.0*  
+## *September 26th, 2022 -- *`BayClump` v 1.0.0*  
 
 `BayClump` now runs on `stan`!
 
-We have fully migrated `BayClump's` Bayes engine from JAGS 4.3.0 to `stan` 2.30.0 (<https://mc-stan.org/>) via the `rstan` package (<http://mc-stan.org/rstan/>). This change speeds up calculations and improves overall performance. Furthermore, we have standarized all the user inputs and BayClump's outputs to increase the consistency of the app. Users are expected to provide uncertainty in the form of standard deviations. BayClump will provide results on parameter uncertainty in standard error and temperature reconstruction in standard deviation.  
-
-### Updates to the user interface 
+We have fully migrated `BayClump's` Bayes engine from JAGS 4.3.0 to `stan` 2.30.0 (<https://mc-stan.org/>) via the `rstan` package (<http://mc-stan.org/rstan/>). This change speeds up calculations and improves overall performance. Furthermore, we have standarized all the user inputs and BayClump's outputs to increase the consistency of the app. Users are expected to provide uncertainty in the form of standard deviations. BayClump will provide results on parameter uncertainty in standard error and temperature reconstruction in standard deviation.  Below, we provide a list of additional changes in different tabs.
 
 Changes to the `Calibration` tab:  
 - You can now select the number of Bayesian iterations to keep rather than setting a total number of Bayesian iteration to run (default is 3,000)  
@@ -37,11 +35,9 @@ Changes to the Reconstruction tab:
 - Removed option for the Classic Calibration Approach  
 - Uncertainty is presented in 1 SE
 
-*March 28th, 2022* -- *`BayClump` v 0.9.1*  
+## *March 28th, 2022* -- *`BayClump` v 0.9.1*  
 
-We have a News and Updates section now! Stay tuned for info on what's new with `BayClump`.  
-
-### Updates to functions  
+We have a News and Updates section now! Stay tuned for info on what's new with `BayClump`.  Updates to functions  
 
 The BayClump team is grateful to Ilja Kocken, author of the `clumpedr` package, for alerting us to a problem with the way `clumpedr's` `revcal` function propagates uncertainties and deals with covariance between slope and intercept. You can see the issue on `BayClump`'s GitHub repo here: [Issue #7](https://github.com/Tripati-Lab/BayClump/issues/7) and the subsequent update to `clumpedr` here on [Ilja's GitHub repo](https://github.com/isoverse/clumpedr/commit/31a60b10f3d36b395722a1a4ee11884a34480ae9).  
 
@@ -53,7 +49,7 @@ $$
 
 Temperature error is propagated in a Bayesian framework based on parameter uncertainty and uncertainty in the analyzed $\Delta_{47}$ using the posterior distribution of parameters during the calibration step and a prior distribution on temperature. For non-Bayesian models, uncertainty is calculated as the difference between the point estimates of $T_{(^\circ C)}$ for $\Delta_{47}$ and $\Delta_{47} + SE(\Delta_{47})$.
 
-### Updates to the user interface  
+## *Pre March 28th, 2021* -- *`BayClump` v 0.9*   
 
 Lots has changed with this update!  
 

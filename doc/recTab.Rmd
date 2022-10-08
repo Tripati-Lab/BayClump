@@ -21,7 +21,7 @@ runtime: shiny
 
 # The Reconstructions Tab
 
-### Uploading reconstruction data
+## Uploading reconstruction data
 
 `BayClump` provides a template for users to upload reconstruction data. It can be downloaded from the `Reconstructions` tab. Sample data are shown in the first ten rows of the template and should be overwritten. A few notes on the structure of the reconstruction file:
 

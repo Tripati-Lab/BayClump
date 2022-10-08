@@ -35,16 +35,24 @@ body <- dashboardBody(
   ################# Tabs #################
   tabItems(
     tabItem(tabName = "bayclump",
-            fluidRow(
+            fluidRow( align = "center",
               column(12,
                      h2("Welcome to BayClump!"),
-                     h4("Placeholders"),
-                     h4("To support the use of Bayesian models and the analytical framework developed in Román-Palacios et al. (2022) 
-                     for clumped isotope calibration and for temperature reconstructions, and to facilitate comparisons of Bayesian 
-                     and classical models, we present a self-contained R package and associated Shiny Dashboard application, bayclumpr 
-                     and BayClump, respectively. bayclumpr (and BayClump) fits both frequentist and Bayesian linear regressions to calibration 
-                     datasets and performs temperature reconstructions under both frameworks. You can find more details on how to use bayclumpr in this website."
-                     )
+                     br(),
+                     h4("BayClump is developed to support and facilitate the use of Bayesian models and analyses involving clumped isotope calibration datasets and
+                     associated temperature reconstructions. BayClump, a self-contained a Shiny Dashboard application, facilitates the comparisons of Bayesian 
+                     and frequentist models for analyzing clumped isotopes datasets for paleoclimatic reconstructions."
+                     ),
+                     h4("BayClump is divided into two main sections. First, users can fit linear models using published datasets or their own
+                        calibration data. Second, based on the calibration analyses, users can subsequently conduct temperature reconstructions
+                        based on parameter distributions derived from the initial calibration step."),
+                     h4("We provide additional documentation under the User Manual tab, include details on how to run basic analyses
+                        in BayClump under the BayWatch tab, and list additional resources including the source code, citations, 
+                        among others, in the remaining tabs."),
+                     h4("Finally, note that the code implemented in BayClump is part the an R package bayclumpr. Users interested in
+                        analyzing their own data with more flexibility should definitively explore bayclumpr as an option."),
+                     br(),
+                     h4("Enjoy using the app and please do reach out if you have any questions, concerns, or comments!")
                      ))),
     tabItem(tabName = "calibration",
             fluidRow(

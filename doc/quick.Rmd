@@ -24,5 +24,7 @@ runtime: shiny
 
 `BayClump` is separated into calibration and reconstruction workflows. Any calibration models selected on the Calibrations tab are automatically made available for use in the Reconstructions tab. At this time, only $Δ_{47}$-based calibrations and reconstructions are supported.
 
+Please review the documentation presented under the user manual before using the app. We note that the code provided in the app is also available in an R package, `bayclumpr`.
+
 
 

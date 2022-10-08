@@ -18,13 +18,13 @@ urlcolor: blue
 runtime: shiny
 ---
 
-# Default calibration data
+# Calibration data
 
 Two calibration datasets are included in `BayClump` by default. Model 1 is based on the reprocessed datasets of [Petersen et al. (2019)](http://dx.doi.org/10.1029/2018GC008127). Model 2 is based on the reprocessed and original datasets of [Anderson et al. (2021)](https://doi.org/10.1029/2020GL092069). The datasets from Petersen et al. (2019) have been reprojected into the I-CDES reference frame after [Bernasconi et al. (2021)](https://doi.org/10.1029/2020GC009588) at a growth temperature of 90°C, so as to be compatible with the datasets of Anderson et al. (2021). Throughout, we refer to this as $I-CDES_{90}$.
 
 The default calibration datasets may be used individually or in combination to create calibration models, and may also be combined with the user's own calibration data in the I-CDES 90 reference frame. The user may also choose to work exclusively with their own calibration data in $I-CDES_{90}$ or another reference frame if desired. At this time, `BayClump` does not provide the option to reproject the default calibration datasets into a different reference frame.
 
-### Uploading calibration data
+## Uploading calibration data
 
 `BayClump` provides a template for users to upload calibration data. It can be downloaded from the `Calibrations` tab. Sample data are shown in the first ten rows of the template and should be overwritten. A few important notes on the structure of your calibration dataset:
 
@@ -58,8 +58,6 @@ Below, we provide a brief description of the columns that are required in the ca
 - **Temperature:** Growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods and minus signs are accepted.  
 
 - **TempError:** Absolute error of the growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods are accepted. **Please make sure that this column has no negative numbers**.
-
-## Selecting calibration options
 
 ## Calibration Model Setup and Selection
 
