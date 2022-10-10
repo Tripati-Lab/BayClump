@@ -87,9 +87,9 @@ body <- dashboardBody(
                   title = h4(HTML("<b>Step 1: Calibration Options</b>"), align='center'), solidHeader = FALSE,
                   column(12,
                          radioButtons("calset", "Select calibration set",
-                                      choices = c('Román-Palacios et al. - Model 1' = 'model1',
-                                                  'Román-Palacios et al. - Model 2' = 'model2',
-                                                  "Use Román-Palacios et al. - Models 1 & 2" = 'model1and2',
+                                      choices = c('Román-Palacios et al. - Dataset 1' = 'model1',
+                                                  'Román-Palacios et al. - Dataset 2' = 'model2',
+                                                  "Use Román-Palacios et al. - Datasets 1 & 2" = 'model1and2',
                                                   "Upload my own calibration data" = 'mycal',
                                                   "Use all" = "all")
                          ),
