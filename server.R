@@ -6,7 +6,7 @@ server <- function(input, output, session) {
         conditionalPanel(
           condition = "input$cal.bayesian",
           style = "margin-left: 20px;",
-      checkboxInput("priors", label = "Weak priors", value = TRUE)
+      checkboxInput("priors", label = "Weak priors (Recommended)", value = TRUE)
         )
       }
     })

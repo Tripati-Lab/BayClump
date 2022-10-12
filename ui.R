@@ -48,7 +48,7 @@ body <- dashboardBody(
             fluidRow( align = "center",
               column(12,
                      h1("Welcome to BayClump!"),
-                     h5("Bayesian methods for clumped isotope paleothermometry"),
+                     h3("Bayesian methods for clumped isotope paleothermometry"),
                      br(),
                      
                      tags$img(
@@ -57,9 +57,11 @@ body <- dashboardBody(
                        width = 200
                        #, height = 25
                      ), 
-                     h4("BayClump is developed to support and facilitate the use of Bayesian models and analyses involving clumped isotope calibration datasets and
+                     br(),
+                     br(),
+                     h4("BayClump was developed to support and facilitate the use of Bayesian models and analyses involving clumped isotope calibration datasets and
                      associated temperature reconstructions. BayClump, a self-contained a Shiny Dashboard application, facilitates the comparisons of Bayesian 
-                     and frequentist models for analyzing clumped isotopes datasets for paleoclimatic reconstructions."
+                     and frequentist models for analyzing clumped isotope datasets for paleoclimatic reconstructions."
                      ),
                      h4("BayClump is divided into two main sections. First, users can fit linear models using published datasets or their own
                         calibration data. Second, based on the calibration analyses, users can subsequently conduct temperature reconstructions
@@ -67,8 +69,8 @@ body <- dashboardBody(
                      h4("We provide additional documentation under the User Manual tab, include details on how to run basic analyses
                         in BayClump under the BayWatch tab, and list additional resources including the source code, citations, 
                         among others, in the remaining tabs."),
-                     h4("Finally, note that the code implemented in BayClump is part the an R package bayclumpr. Users interested in
-                        analyzing their own data with more flexibility should definitively explore bayclumpr as an option."),
+                     h4("Finally, note that the code implemented in BayClump is part the R package bayclumpr. Users interested in
+                        analyzing their own data with more flexibility should explore bayclumpr as an option."),
                      br(),
                      h4("Enjoy using the app and please do reach out if you have any questions, concerns, or comments!")
                      ))),
@@ -180,7 +182,7 @@ body <- dashboardBody(
                       column(12,
                              h1("Calibration plots"),
                              h5("BayClump allows for a quick visualization of the calibrations performed
-                                within the app. Interactive visualizations, conducted using plotly, can be downloaded to
+                                within the app. Interactive visualizations, produced using Plotly, can be downloaded to
                                 still images.")
                       )),
             fluidRow(
@@ -399,9 +401,7 @@ sidebar <- dashboardSidebar(width = 200,
                                        menuSubItem('Updates!',
                                                    tabName = 'updatesTab')
                               ),
-                              menuItem("Baywatch", tabName = "demo", 
-                                       icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
-                              ),
+
                               menuItem("Calibrations", tabName = "calibration", 
                                        icon = icon("drafting-compass", lib = "font-awesome", verify_fa = FALSE)
                               ),
@@ -410,11 +410,13 @@ sidebar <- dashboardSidebar(width = 200,
                                        icon =icon("chart-bar", lib = "font-awesome", verify_fa = FALSE)
                               ),
                               
-                              
                               menuItem("Reconstructions", tabName = "reconstruction", 
                                        icon = icon("chart-area", lib = "font-awesome", verify_fa = FALSE)
                               ),
-
+                              
+                              menuItem("Baywatch", tabName = "demo", 
+                                       icon = icon("glasses", lib = "font-awesome", verify_fa = FALSE)
+                              ),
                               menuItem("Manuscript", tabName = "manuscript", 
                                        icon = icon("scroll", lib = "font-awesome", verify_fa = FALSE)
                               ),

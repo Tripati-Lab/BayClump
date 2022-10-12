@@ -1,6 +1,6 @@
 ---
 title: "User Manual"
-author: "Updated September 26th, 2022"
+author: "Updated October 12th, 2022"
 subtitle: "`BayClump` v. 1.0.0"
 date: "Table of Contents"
 output:
@@ -20,7 +20,7 @@ runtime: shiny
 
 # Calibration data
 
-Two calibration datasets are included in `BayClump` by default. Model 1 is based on the reprocessed datasets of [Petersen et al. (2019)](http://dx.doi.org/10.1029/2018GC008127). Model 2 is based on the reprocessed and original datasets of [Anderson et al. (2021)](https://doi.org/10.1029/2020GL092069). The datasets from Petersen et al. (2019) have been reprojected into the I-CDES reference frame after [Bernasconi et al. (2021)](https://doi.org/10.1029/2020GC009588) at a growth temperature of 90°C, so as to be compatible with the datasets of Anderson et al. (2021). Throughout, we refer to this as $I-CDES_{90}$.
+Two calibration datasets are included in `BayClump` by default. Dataset 1 is based on the reprocessed datasets of [Petersen et al. (2019)](http://dx.doi.org/10.1029/2018GC008127). Dataset 2 is based on the reprocessed and original datasets of [Anderson et al. (2021)](https://doi.org/10.1029/2020GL092069). The datasets from Petersen et al. (2019) have been reprojected into the I-CDES reference frame after [Bernasconi et al. (2021)](https://doi.org/10.1029/2020GC009588) at a growth temperature of 90°C, so as to be compatible with the datasets of Anderson et al. (2021). Throughout, we refer to this as $I-CDES_{90}$.
 
 The default calibration datasets may be used individually or in combination to create calibration models, and may also be combined with the user's own calibration data in the I-CDES 90 reference frame. The user may also choose to work exclusively with their own calibration data in $I-CDES_{90}$ or another reference frame if desired. At this time, `BayClump` does not provide the option to reproject the default calibration datasets into a different reference frame.
 
@@ -33,7 +33,7 @@ The default calibration datasets may be used individually or in combination to c
 - Please make sure that uncertainties are all ` > 0`. The app will not run otherwise and will print a message to the console.
 - The dataset MUST present sample-level observations. Rows are not expected to reflect replicates per sample.
 - If a sample was analyzed under a single replicate, please assign the instrument's uncertainty as the error.
-- BayClump assumes that uncertainties in the calibration dataset for temperature and $Δ_{47}$ are in standard deviation.
+- BayClump assumes that uncertainties in the calibration dataset for temperature and $Δ_{47}$ are in **standard deviation**.
 
 <center>
 
@@ -57,7 +57,7 @@ Below, we provide a brief description of the columns that are required in the ca
 
 - **Temperature:** Growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods and minus signs are accepted.  
 
-- **TempError:** Absolute error of the growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods are accepted. **Please make sure that this column has no negative numbers**.
+- **TempError:** Standard deviation around the growth temperature in $10^6/T^2$, where temperature, T, is in Kelvin. This must be numeric - no letters or special characters except for periods are accepted. **Please make sure that this column has no negative numbers**.
 
 ## Calibration Model Setup and Selection
 
@@ -67,9 +67,9 @@ Below, we provide a brief description of the columns that are required in the ca
 
 - **Important: Calibration data should be entered into the template in $10^6/T^2$ format, where temperature, T, is in Kelvin.**  
 
-### Number of iterations for Bayesian models  
+### Number of posterior samples for Bayesian models  
 
-The number of iterations needed to allow models to converge properly varies by dataset, but the default of `20,000` will be appropriate for most applications. Reduce this number to improve times, or increase the number if the models are having issues converging. Increasing the number of iterations takes more time.
+The number of iterations needed to allow models to converge properly varies by dataset. The number of retained posterior samples will likewise vary, but the default of `3,000` will be appropriate for most applications. Reduce this number to improve times, or increase the number if the models are having issues converging. Increasing the number of posterior samples takes more time.
 
 ### Number of observations per bootstrap sample
 

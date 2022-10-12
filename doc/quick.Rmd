@@ -1,6 +1,6 @@
 ---
 title: "User Manual"
-author: "Updated September 26th, 2022"
+author: "Updated October 12th, 2022"
 subtitle: "`BayClump` v. 1.0.0"
 date: "Table of Contents"
 output:
