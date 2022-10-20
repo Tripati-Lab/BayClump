@@ -1043,7 +1043,7 @@ server <- function(input, output, session) {
               df1$`Δ47 (‰) error` <- formatC(df1$`Δ47 (‰) error`, digits = 4, format = "f")
               df1$`Temperature (°C)` <- formatC(df1$`Temperature (°C)`, digits = 3, format = "f")
               df1$`SD (°C)` <- formatC(df1$`SD (°C)`, digits = 3, format = "f")
-              df1
+              head(df1)
             },
               caption = "Linear model",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1078,7 +1078,7 @@ server <- function(input, output, session) {
               df3$`Δ47 (‰) error` <- formatC(df3$`Δ47 (‰) error`, digits = 4, format = "f")
               df3$`Temperature (°C)` <- formatC(df3$`Temperature (°C)`, digits = 3, format = "f")
               df3$`SD (°C)` <- formatC(df3$`SD (°C)`, digits = 3, format = "f")
-              df3
+              head(df3)
             },
               caption = "Inverse weighted linear model",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1115,7 +1115,7 @@ server <- function(input, output, session) {
               df5$`Δ47 (‰) error` <- formatC(df5$`Δ47 (‰) error`, digits = 4, format = "f")
               df5$`Temperature (°C)` <- formatC(df5$`Temperature (°C)`, digits = 3, format = "f")
               df5$`SD (°C)` <- formatC(df5$`SD (°C)`, digits = 3, format = "f")
-              df5
+              head(df5)
             },
               caption = "York regression",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1151,7 +1151,7 @@ server <- function(input, output, session) {
               df7$`Δ47 (‰) error` <- formatC(df7$`Δ47 (‰) error`, digits = 4, format = "f")
               df7$`Temperature (°C)` <- formatC(df7$`Temperature (°C)`, digits = 3, format = "f")
               df7$`SD (°C)` <- formatC(df7$`SD (°C)`, digits = 3, format = "f")
-              df7
+              head(df7)
             },
               caption = "Deming regression",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1192,7 +1192,7 @@ server <- function(input, output, session) {
                 df0$`Δ47 (‰) error` <- formatC(df0$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0$`Temperature (°C)` <- formatC(df0$`Temperature (°C)`, digits = 3, format = "f")
                 df0$`SD (°C)` <- formatC(df0$`SD (°C)`, digits = 3, format = "f")
-               df0
+               head(df0)
               },
               caption = "Bayesian predictions (BLM_errors)",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1212,7 +1212,7 @@ server <- function(input, output, session) {
                 df0.1$`Δ47 (‰) error` <- formatC(df0.1$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.1$`Temperature (°C)` <- formatC(df0.1$`Temperature (°C)`, digits = 3, format = "f")
                 df0.1$`SD (°C)` <- formatC(df0.1$`SD (°C)`, digits = 3, format = "f")
-               df0.1
+                head(df0.1)
               },
               caption = "Bayesian predictions (BLM without errors)",
               caption.placement = getOption("xtable.caption.placement", "top"),
@@ -1232,7 +1232,7 @@ server <- function(input, output, session) {
                 df0.2$`Δ47 (‰) error` <- formatC(df0.2$`Δ47 (‰) error`, digits = 4, format = "f")
                 df0.2$`Temperature (°C)` <- formatC(df0.2$`Temperature (°C)`, digits = 3, format = "f")
                 df0.2$`SD (°C)` <- formatC(df0.2$`SD (°C)`, digits = 3, format = "f")
-                df0.2
+                head(df0.2)
               },
               caption = "Bayesian predictions under a Bayesian linear mixed model",
               caption.placement = getOption("xtable.caption.placement", "top"),
