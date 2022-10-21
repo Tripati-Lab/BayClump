@@ -1,4 +1,15 @@
+
 if("tidyverse" %in% installed.packages() == TRUE) {remove.packages("tidyverse")} # Tidyverse breaks the app by calling sample.int instead of sample if it's even installed
+if(!"devtools" %in% installed.packages()) {install.packages("devtools")} 
+if(!"bayclumpr" %in% installed.packages()) {
+  library(devtools)
+  install_github("Tripati-Lab/bayclumpr")
+  } 
+if("fresh" %in% installed.packages() == FALSE) {install.packages("fresh")} 
+if("dashboardthemes" %in% installed.packages() == FALSE) {install.packages("dashboardthemes")} 
+if("shinydashboardPlus" %in% installed.packages() == FALSE) {install.packages("shinydashboardPlus")} 
+
+
 
 # To work in shinyapps.io, each package has be loaded individually instead of with lapply
 library(shiny)
@@ -7,25 +18,24 @@ library(plyr)
 library(dplyr)
 library(xtable)
 library(viridis)
-library(data.table)
 library(plotly)
 library(bibtex)
 library(readxl)
-library(lme4)
-library(R2jags)
-library(IsoplotR)
-library(investr)
-library(DT)
 library(knitcitations)
-library(deming)
 library(shinyBS)
 library(ggridges)
 library(ggpubr)
-library(parallel)
 library(openxlsx)
 library(bib2df)
-#library(loo)
-#library(coda)
+library(htmlwidgets)
+library(coda)
+library(rstan)
+library(data.table)
+library(bayclumpr)
+library(fresh)
+library(dashboardthemes)
+library(shinydashboardPlus)
+
 
 # Create automatic bibliography containing loaded packages and their dependencies
 bibtex::write.bib(loadedNamespaces(), file = "Rpackages.bib", append = FALSE, verbose = TRUE)
@@ -46,8 +56,4 @@ Complete_Calibration_List <- NULL
 
 # Improve reproducibility
 set.seed(4)
-
-# Load necessary functions
-sapply(list.files('Functions', full.names = T), source)
-
 
