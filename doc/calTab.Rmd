@@ -5,14 +5,14 @@ subtitle: "`BayClump` v. 1.0.0"
 date: "Table of Contents"
 output:
   html_document: 
-    toc: yes
+    toc: true
     toc_float: true
     theme: cosmo
     fig_width: 5
     fig_height: 3
-    fig_caption: yes
+    fig_caption: true
   pdf_document:
-    toc: yes
+    toc: true
     latex_engine: xelatex
 urlcolor: blue
 runtime: shiny
